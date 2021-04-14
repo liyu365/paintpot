@@ -6,7 +6,10 @@
     "serve": "http-server build"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "copy-webpack-plugin": "^5.1.1",
+    "eslint": "^7.24.0",
     "http-server": "^0.12.1",
     "lodash": "^4.17.15",
     "ts-loader": "^7.0.0",
