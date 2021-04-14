@@ -22,10 +22,10 @@ module.exports = {
     ],
   },
   plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: './html',
-      }
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: "html", to: "" },
+      ],
+    })
   ],
 };

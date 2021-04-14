@@ -147,7 +147,7 @@ export class SpriteFactory {
     public static endCLipShape : IShape  = new EndClipShape ( ) ;
 
     public static createClipSprite ( ) : ISprite {
-        let spr : ISprite = new Sprite2D ( SpriteFactory . endCLipShape , name ) ;
+        let spr : ISprite = new Sprite2D ( SpriteFactory . endCLipShape , 'clipSprite' ) ;
         spr . renderType = ERenderType . CLIP ;
         return spr ;
     }
