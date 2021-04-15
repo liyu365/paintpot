@@ -40,7 +40,10 @@ export class RectSpr extends Sprite2D {
         const newPosition = Math2D.transform(parentSpr.getLocalMatrix(), position); // 把鼠标的坐标用父sprite的局部矩阵进行转换
         this.x = newPosition.x
         this.y = newPosition.y
+        console.log('全局坐标', Math2D.transform(parentSpr.getWorldMatrix(), new vec2(this.x, this.y)))
+        console.log('局部坐标', new vec2(this.x, this.y))
       }
+
     }
   }
 }

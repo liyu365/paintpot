@@ -167,12 +167,7 @@ class topologyApplication {
 
 
     const root = this._app.rootContainer as SpriteNode
-    this._linkGroups.forEach(node => {
-      root.addChild(node);
-    });
-    this._cNodes.forEach(node => {
-      root.addChild(node);
-    });
+
 
     const containerSpr: Sprite2D = new ContainerSprite()
     containerSpr.x = 500
@@ -181,16 +176,31 @@ class topologyApplication {
 
     const rectSpr1: Sprite2D = new RectSpr()
     const rectSpr2: Sprite2D = new RectSpr()
+    const rectSpr3: Sprite2D = new RectSpr()
     rectSpr2.x = 60
     rectSpr2.y = 60
     containerSpr.owner.addSprite(rectSpr1)
     containerSpr.owner.addSprite(rectSpr2)
+    root.addSprite(rectSpr3)
+
+    this.createLink(rectSpr1, rectSpr2, '2->3');
+    this.createLink(rectSpr1, node2.sprite, '2->3');
+
+
+    this._linkGroups.forEach(node => {
+      root.addChild(node);
+    });
+    this._cNodes.forEach(node => {
+      root.addChild(node);
+    });
 
   }
 
 
   private handleCircleEvent(spr: ISprite, evt: CanvasMouseEvent): void {
-    //console.log('handleCircleEvent', spr)
+    const position = new vec2(spr.x, spr.y)
+    console.log('position1', position)
+    console.log('position2', Math2D.transform(spr.getLocalMatrix(), position))
     if (evt.type === EInputEventType.MOUSEDRAG) {
       const root = this._app.rootContainer as SpriteNode
       if (root.sprite) {
@@ -210,8 +220,17 @@ class topologyApplication {
   private handleLinkGroupUpdate(spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void {
     const linkGroup = spr.owner as SpriteNodeGroup
     const children = linkGroup.children
-    const pt1: vec2 = new vec2(linkGroup.params.from.x, linkGroup.params.from.y)
-    const pt2: vec2 = new vec2(linkGroup.params.to.x, linkGroup.params.to.y)
+    let from: Sprite2D = linkGroup.params.from
+    let to: Sprite2D = linkGroup.params.to
+    let pt1: vec2 = new vec2(from.x, from.y)
+    let pt2: vec2 = new vec2(to.x, to.y)
+    let fromParentSpr = from.owner.getParentSprite()
+    let toParentSpr = to.owner.getParentSprite()
+    if (fromParentSpr && toParentSpr) {
+      pt1 = Math2D.transform(fromParentSpr.getWorldMatrix(), pt1)
+      pt2 = Math2D.transform(toParentSpr.getWorldMatrix(), pt2)
+    }
+    //console.log(pt1, pt2)
     const d = Math.sqrt((pt2.y - pt1.y) * (pt2.y - pt1.y) + (pt2.x - pt1.x) * (pt2.x - pt1.x))
     const linkGroupAngle = vec2.getOrientation(pt1, pt2)
     if (linkGroup.sprite) {
