@@ -42,11 +42,11 @@ export class ContainerShap extends BaseShape2D {
   }
 }
 
-let containerShap = new ContainerShap(0, 0, 50, 50)
+//let containerShap = new ContainerShap(0, 0, 50, 50)
 
 export class ContainerSprite extends Sprite2D {
   public constructor() {
-    super(containerShap, 'containerSprite')
+    super(new ContainerShap(0, 0, 50, 50), 'containerSprite')
   }
   public fillStyle = 'rgba(0,0,0,.3)'
   public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
