@@ -3,16 +3,8 @@ import { Sprite2DApplication } from "./src/spriteSystem/sprite2DApplication";
 import { CanvasMouseEvent, EInputEventType, CanvasKeyBoardEvent } from "./src/application";
 import { mat2d, vec2, Inset, Math2D } from "./src/math2d";
 import { Line, EmptyShape, BaseShape2D } from "./src/spriteSystem/shapes";
-import { SpriteNode } from './src/spriteSystem/sprite2dHierarchicalSystem'
+import { SpriteNode, SpriteNodeGroup } from './src/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from './src/spriteSystem/sprite2d'
-
-class SpriteNodeGroup extends SpriteNode {
-  public params: any
-  public constructor(params: any, parent: SpriteNode | undefined = undefined, name = "SpriteNodeGroup") {
-    super(SpriteFactory.createSprite(new EmptyShape), parent, name);
-    this.params = params
-  }
-}
 
 class CNodeTextShap extends BaseShape2D {
 
