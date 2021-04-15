@@ -1,7 +1,7 @@
-import { ISprite, SpriteFactory, IShape, EOrder, ITransformable, IRenderState } from "../lib/spriteSystem/interface";
+import { ITransformable, IRenderState } from "../lib/spriteSystem/interface";
 import { BaseShape2D } from "../lib/spriteSystem/shapes";
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
-import { vec2, Math2D } from "../lib/math2d";
+import { vec2 } from "../lib/math2d";
 
 export class LinkTextShap extends BaseShape2D {
 

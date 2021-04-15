@@ -2,12 +2,14 @@ import { ISprite, SpriteFactory, IShape, EOrder } from "./lib/spriteSystem/inter
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
 import { CanvasMouseEvent, EInputEventType } from "./lib/application";
 import { vec2, Math2D } from "./lib/math2d";
-import { Line } from "./lib/spriteSystem/shapes";
+import { Line, Rect } from "./lib/spriteSystem/shapes";
 import { SpriteNode, SpriteNodeGroup } from './lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from './lib/spriteSystem/sprite2d'
 
 import { CNodeTextShap } from './shaps/CNodeTextShap'
 import { LinkTextShap } from './shaps/LinkTextShap'
+import { ContainerSprite } from './shaps/ContainerShap'
+import { RectSpr } from './shaps/RectShap'
 
 
 class topologyApplication {
@@ -171,6 +173,13 @@ class topologyApplication {
     this._cNodes.forEach(node => {
       root.addChild(node);
     });
+
+    const containerSpr: Sprite2D = new ContainerSprite()
+    root.addSprite(containerSpr)
+
+    const rectSpr: Sprite2D = new RectSpr()
+    containerSpr.owner.addSprite(rectSpr)
+
   }
 
 
