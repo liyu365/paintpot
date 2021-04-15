@@ -1,7 +1,7 @@
 import { SpriteNode } from './../lib/spriteSystem/sprite2dHierarchicalSystem';
 import { Sprite2D } from './../lib/spriteSystem/sprite2d';
-import { ITransformable, IRenderState, ISprite, IShape } from "../lib/spriteSystem/interface";
-import { BaseShape2D, Rect } from "../lib/spriteSystem/shapes";
+import { ITransformable, IRenderState, ISprite, EOrder } from "../lib/spriteSystem/interface";
+import { BaseShape2D } from "../lib/spriteSystem/shapes";
 import { vec2, Math2D } from "../lib/math2d";
 import { CanvasMouseEvent, EInputEventType } from "../lib/application";
 
@@ -32,51 +32,8 @@ export class ContainerShap extends BaseShape2D {
     context.lineTo(this.x + this.w, this.y + this.h);
     context.lineTo(this.x, this.y + this.h);
     context.closePath();
-
     context.fill();
     context.restore()
-
-    let padding: number = 20
-    let minX = 1e7
-    let minY = 1e7
-    let maxW = -1e7
-    let maxH = -1e7
-    let parentSpr = transformable as Sprite2D
-    let parentSprNode = parentSpr.owner as SpriteNode
-    if (parentSprNode && parentSprNode.children && parentSprNode.children.length > 0) {
-      parentSprNode.children.forEach(childSprNode => {
-        let childSpr = childSprNode.data as Sprite2D
-        if (childSpr.x < minX) {
-          minX = childSpr.x
-        }
-
-        if (childSpr.y < minY) {
-          minY = childSpr.y
-        }
-
-        if (childSpr.x + 20 > maxW) {
-          maxW = childSpr.x + 20
-        }
-
-        if (childSpr.y + 20 > maxH) {
-          maxH = childSpr.y + 20
-        }
-      })
-    }
-
-    this.x = minX
-    this.w = maxW - minX
-    this.y = minY
-    this.h = maxH - minY
-
-    if (padding > 0) {
-      this.x = minX - padding
-      this.w = maxW - minX + padding * 2
-      this.y = minY - padding
-      this.h = maxH - minY + padding * 2
-    }
-
-
     //super.draw(transformable, state, context);
   }
 
@@ -102,5 +59,48 @@ export class ContainerSprite extends Sprite2D {
         this.y = newPosition.y
       }
     }
+  }
+  public updateEvent = (spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void => {
+    let padding: number = 20
+    let minX = 1e7
+    let minY = 1e7
+    let maxW = -1e7
+    let maxH = -1e7
+
+    let parentSprNode = spr.owner as SpriteNode
+
+    if (parentSprNode && parentSprNode.children && parentSprNode.children.length > 0) {
+
+      parentSprNode.children.forEach(childSprNode => {
+        let childSpr = childSprNode.data as Sprite2D
+        if (childSpr.x < minX) {
+          minX = childSpr.x
+        }
+        if (childSpr.y < minY) {
+          minY = childSpr.y
+        }
+        if (childSpr.x + 20 > maxW) {
+          maxW = childSpr.x + 20
+        }
+        if (childSpr.y + 20 > maxH) {
+          maxH = childSpr.y + 20
+        }
+      })
+
+      let shape = spr.shape as ContainerShap
+
+      shape.x = minX
+      shape.w = maxW - minX
+      shape.y = minY
+      shape.h = maxH - minY
+
+      if (padding > 0) {
+        shape.x = minX - padding
+        shape.w = maxW - minX + padding * 2
+        shape.y = minY - padding
+        shape.h = maxH - minY + padding * 2
+      }
+    }
+
   }
 }
