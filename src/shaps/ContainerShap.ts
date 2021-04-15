@@ -48,7 +48,7 @@ export class ContainerSprite extends Sprite2D {
   public constructor() {
     super(containerShap, 'containerSprite')
   }
-  public fillStyle = 'silver'
+  public fillStyle = 'rgba(0,0,0,.3)'
   public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
     let parentSpr = spr.owner.getParentSprite()
     if (evt.type === EInputEventType.MOUSEDRAG) {

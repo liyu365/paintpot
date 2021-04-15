@@ -224,11 +224,13 @@ class topologyApplication {
     let to: Sprite2D = linkGroup.params.to
     let pt1: vec2 = new vec2(from.x, from.y)
     let pt2: vec2 = new vec2(to.x, to.y)
+    const root = this._app.rootContainer as SpriteNode
+    let rootSpr = root.sprite
     let fromParentSpr = from.owner.getParentSprite()
     let toParentSpr = to.owner.getParentSprite()
     if (fromParentSpr && toParentSpr) {
-      pt1 = Math2D.transform(fromParentSpr.getWorldMatrix(), pt1)
-      pt2 = Math2D.transform(toParentSpr.getWorldMatrix(), pt2)
+      pt1 = Math2D.transform(fromParentSpr.getWorldMatrix2(), pt1)
+      pt2 = Math2D.transform(toParentSpr.getWorldMatrix2(), pt2)
     }
     //console.log(pt1, pt2)
     const d = Math.sqrt((pt2.y - pt1.y) * (pt2.y - pt1.y) + (pt2.x - pt1.x) * (pt2.x - pt1.x))

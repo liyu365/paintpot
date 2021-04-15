@@ -21,6 +21,7 @@ export interface ITransformable {
   scaleY: number;
 
   getWorldMatrix(): mat2d;
+  getWorldMatrix2(): mat2d;
   getLocalMatrix(): mat2d;
 
 }
