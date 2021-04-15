@@ -1,10 +1,10 @@
-import { ISprite, SpriteFactory, IShape, ISpriteContainer, EOrder, ITransformable, IRenderState } from "./src/spriteSystem/interface";
-import { Sprite2DApplication } from "./src/spriteSystem/sprite2DApplication";
-import { CanvasMouseEvent, EInputEventType, CanvasKeyBoardEvent } from "./src/application";
-import { mat2d, vec2, Inset, Math2D } from "./src/math2d";
-import { Line, EmptyShape, BaseShape2D } from "./src/spriteSystem/shapes";
-import { SpriteNode, SpriteNodeGroup } from './src/spriteSystem/sprite2dHierarchicalSystem'
-import { Sprite2D } from './src/spriteSystem/sprite2d'
+import { ISprite, SpriteFactory, IShape, ISpriteContainer, EOrder, ITransformable, IRenderState } from "./lib/spriteSystem/interface";
+import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
+import { CanvasMouseEvent, EInputEventType } from "./lib/application";
+import { vec2, Math2D } from "./lib/math2d";
+import { Line, BaseShape2D } from "./lib/spriteSystem/shapes";
+import { SpriteNode, SpriteNodeGroup } from './lib/spriteSystem/sprite2dHierarchicalSystem'
+import { Sprite2D } from './lib/spriteSystem/sprite2d'
 
 class CNodeTextShap extends BaseShape2D {
 
