@@ -175,10 +175,15 @@ class topologyApplication {
     });
 
     const containerSpr: Sprite2D = new ContainerSprite()
+    containerSpr.x = 500
+    containerSpr.y = 300
     root.addSprite(containerSpr)
 
-    const rectSpr: Sprite2D = new RectSpr()
-    containerSpr.owner.addSprite(rectSpr)
+    const rectSpr1: Sprite2D = new RectSpr()
+    const rectSpr2: Sprite2D = new RectSpr()
+    rectSpr2.x = 60
+    containerSpr.owner.addSprite(rectSpr1)
+    containerSpr.owner.addSprite(rectSpr2)
 
   }
 

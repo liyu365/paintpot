@@ -1,23 +1,66 @@
+import { SpriteNode } from './../lib/spriteSystem/sprite2dHierarchicalSystem';
+import { Sprite2D } from './../lib/spriteSystem/sprite2d';
 import { ITransformable, IRenderState, ISprite, IShape } from "../lib/spriteSystem/interface";
 import { BaseShape2D, Rect } from "../lib/spriteSystem/shapes";
-import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { vec2, Math2D } from "../lib/math2d";
 import { CanvasMouseEvent, EInputEventType } from "../lib/application";
 
-export class ContainerShap extends Rect {
-  public constructor(w: number = 1, h: number = 1, u: number = 0, v: number = 0) {
-    super(w, h, u, v);
+export class ContainerShap extends BaseShape2D {
+
+  public x: number;
+  public y: number;
+  public w: number;
+  public h: number;
+
+  public constructor(x: number, y: number, w: number, h: number) {
+    super()
+    this.x = x
+    this.y = y
+    this.w = w
+    this.h = h
+  }
+
+  public hitTest(localPt: vec2, transform: ITransformable): boolean {
+    return Math2D.isPointInRect(localPt.x, localPt.y, this.x, this.y, this.w, this.h);
   }
 
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
-    // context.beginPath();
-    // context.moveTo(this.x, this.y);
-    // context.lineTo(this.x + this.width, this.y);
-    // context.lineTo(this.x + this.width, this.y + this.height);
-    // context.lineTo(this.x, this.y + this.height);
-    // context.closePath();
-    // this.width = 200
-    super.draw(transformable, state, context);
+    context.save()
+    context.beginPath();
+    context.moveTo(this.x, this.y);
+    context.lineTo(this.x + this.w, this.y);
+    context.lineTo(this.x + this.w, this.y + this.h);
+    context.lineTo(this.x, this.y + this.h);
+    context.closePath();
+    context.fillStyle = "red"
+    context.fill();
+    context.restore()
+
+    let padding: number = 20
+    let minX = 1e7
+    let minY = 1e7
+    let maxW = -1e7
+    let maxH = -1e7
+    let parentSpr = transformable as Sprite2D
+    let parentSprNode = parentSpr.owner as SpriteNode
+    if (parentSprNode && parentSprNode.children && parentSprNode.children.length > 0) {
+      parentSprNode.children.forEach(childSprNode => {
+        let childSpr = childSprNode.data as Sprite2D
+        if (childSpr.x < minX) {
+          minX = childSpr.x
+        }
+        if (childSpr.x + 20 > maxW) {
+          maxW = childSpr.x + 20
+        }
+      })
+    }
+
+    this.x = minX
+    this.w = maxW - minX
+    // this.x = minX - padding
+    // this.w = maxW - minX + padding * 2
+
+    //super.draw(transformable, state, context);
   }
 
   public get type(): string {
@@ -25,7 +68,7 @@ export class ContainerShap extends Rect {
   }
 }
 
-let containerShap = new ContainerShap(50, 50)
+let containerShap = new ContainerShap(0, 0, 50, 50)
 
 export class ContainerSprite extends Sprite2D {
   public constructor() {
