@@ -182,6 +182,7 @@ class topologyApplication {
     const rectSpr1: Sprite2D = new RectSpr()
     const rectSpr2: Sprite2D = new RectSpr()
     rectSpr2.x = 60
+    rectSpr2.y = 60
     containerSpr.owner.addSprite(rectSpr1)
     containerSpr.owner.addSprite(rectSpr2)
 

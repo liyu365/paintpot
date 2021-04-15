@@ -32,7 +32,7 @@ export class ContainerShap extends BaseShape2D {
     context.lineTo(this.x + this.w, this.y + this.h);
     context.lineTo(this.x, this.y + this.h);
     context.closePath();
-    context.fillStyle = "red"
+
     context.fill();
     context.restore()
 
@@ -49,16 +49,33 @@ export class ContainerShap extends BaseShape2D {
         if (childSpr.x < minX) {
           minX = childSpr.x
         }
+
+        if (childSpr.y < minY) {
+          minY = childSpr.y
+        }
+
         if (childSpr.x + 20 > maxW) {
           maxW = childSpr.x + 20
+        }
+
+        if (childSpr.y + 20 > maxH) {
+          maxH = childSpr.y + 20
         }
       })
     }
 
     this.x = minX
     this.w = maxW - minX
-    // this.x = minX - padding
-    // this.w = maxW - minX + padding * 2
+    this.y = minY
+    this.h = maxH - minY
+
+    if (padding > 0) {
+      this.x = minX - padding
+      this.w = maxW - minX + padding * 2
+      this.y = minY - padding
+      this.h = maxH - minY + padding * 2
+    }
+
 
     //super.draw(transformable, state, context);
   }
@@ -74,7 +91,7 @@ export class ContainerSprite extends Sprite2D {
   public constructor() {
     super(containerShap, 'containerSprite')
   }
-  public fillStyle = 'red'
+  public fillStyle = 'silver'
   public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
     let parentSpr = spr.owner.getParentSprite()
     if (evt.type === EInputEventType.MOUSEDRAG) {
