@@ -10,13 +10,6 @@ export class MyRect extends Rect {
   }
 
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
-    // context.beginPath();
-    // context.moveTo(this.x, this.y);
-    // context.lineTo(this.x + this.width, this.y);
-    // context.lineTo(this.x + this.width, this.y + this.height);
-    // context.lineTo(this.x, this.y + this.height);
-    // context.closePath();
-    // this.width = 200
     super.draw(transformable, state, context);
   }
 
@@ -25,25 +18,31 @@ export class MyRect extends Rect {
   }
 }
 
-let myRect = new MyRect(20, 20)
+let myRect = new MyRect(20, 20, 0.5, 0.5)
 
 export class RectSpr extends Sprite2D {
   public constructor() {
     super(myRect, 'RectSpr')
   }
   public fillStyle = 'orange'
+  public diffX = 0
+  public diffY = 0
   public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
     let parentSpr = spr.owner.getParentSprite()
-    if (evt.type === EInputEventType.MOUSEDRAG) {
-      if (parentSpr) {
-        const position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
-        const newPosition = Math2D.transform(parentSpr.getLocalMatrix(), position); // 把鼠标的坐标用父sprite的局部矩阵进行转换
-        this.x = newPosition.x
-        this.y = newPosition.y
-        console.log('全局坐标', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
-        console.log('局部坐标', new vec2(this.x, this.y))
+    if (parentSpr) {
+      const worldPosition = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
+      const localPosition = Math2D.transform(parentSpr.getLocalMatrix(), worldPosition) // 把鼠标的坐标用父sprite的局部矩阵进行转换
+      if (evt.type === EInputEventType.MOUSEDOWN) {
+        this.diffX = localPosition.x - this.x
+        this.diffY = localPosition.y - this.y
       }
-
+      if (evt.type === EInputEventType.MOUSEDRAG) {
+        this.x = localPosition.x - this.diffX
+        this.y = localPosition.y - this.diffY
+        // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
+        // console.log('局部坐标', new vec2(this.x, this.y))
+      }
     }
+
   }
 }
