@@ -187,16 +187,16 @@ class topologyApplication {
     this.createLink(rectSpr1, node2.sprite, '2->3');
 
 
-    const containerSpr2: Sprite2D = new ContainerSprite()
-    containerSpr2.x = 0
-    containerSpr2.y = 0
-    containerSpr.owner.addSprite(containerSpr2)
+    // const containerSpr2: Sprite2D = new ContainerSprite()
+    // containerSpr2.x = 0
+    // containerSpr2.y = 0
+    // containerSpr.owner.addSprite(containerSpr2)
 
-    const rectSpr2_1: Sprite2D = new RectSpr()
-    const rectSpr2_2: Sprite2D = new RectSpr()
-    rectSpr2_2.y = 80
-    containerSpr2.owner.addSprite(rectSpr2_1)
-    containerSpr2.owner.addSprite(rectSpr2_2)
+    // const rectSpr2_1: Sprite2D = new RectSpr()
+    // const rectSpr2_2: Sprite2D = new RectSpr()
+    // rectSpr2_2.y = 80
+    // containerSpr2.owner.addSprite(rectSpr2_1)
+    // containerSpr2.owner.addSprite(rectSpr2_2)
 
 
     this._linkGroups.forEach(node => {

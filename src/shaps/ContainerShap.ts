@@ -62,7 +62,7 @@ export class ContainerSprite extends Sprite2D {
   }
   public updateEvent = (spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void => {
     let padding: number = 20
-    let minX = 1e7
+    let minX = 0
     let minY = 1e7
     let maxW = -1e7
     let maxH = -1e7
@@ -71,8 +71,50 @@ export class ContainerSprite extends Sprite2D {
 
     if (parentSprNode && parentSprNode.children && parentSprNode.children.length > 0) {
 
+      let shape = spr.shape as ContainerShap
+
+      let childSprArr: Array<Sprite2D> = []
       parentSprNode.children.forEach(childSprNode => {
         let childSpr = childSprNode.data as Sprite2D
+        childSprArr.push(childSpr)
+      })
+
+      // childSprArr.forEach(childSpr => {
+      //   if (childSpr.x < 0) {
+      //     let move = childSpr.x
+      //     childSpr.x = 0
+      //     spr.x = spr.x + move
+      //     childSprArr.forEach(cspr => {
+      //       if (cspr !== childSpr) {
+      //         cspr.x = cspr.x - move
+      //       }
+      //     })
+      //   }
+      //   if (childSpr.x + 20 > shape.w) {
+      //     shape.w = childSpr.x + 20
+      //   }
+      //   if (childSpr.y < 0) {
+      //     let move = childSpr.y
+      //     childSpr.y = 0
+      //     spr.y = spr.y + move
+      //     childSprArr.forEach(cspr => {
+      //       if (cspr !== childSpr) {
+      //         cspr.y = cspr.y - move
+      //       }
+      //     })
+      //   }
+      //   if (childSpr.y + 20 > shape.h) {
+      //     shape.h = childSpr.y + 20
+      //   }
+      // })
+
+      let padding: number = 20
+      let minX = 1e7
+      let minY = 1e7
+      let maxW = -1e7
+      let maxH = -1e7
+
+      childSprArr.forEach(childSpr => {
         if (childSpr.x < minX) {
           minX = childSpr.x
         }
@@ -87,19 +129,59 @@ export class ContainerSprite extends Sprite2D {
         }
       })
 
-      let shape = spr.shape as ContainerShap
+      if (padding === 0) {
+        spr.x = spr.x + minX
+        childSprArr.forEach(cspr => {
+          cspr.x = cspr.x - minX
+        })
 
-      shape.x = minX
-      shape.w = maxW - minX
-      shape.y = minY
-      shape.h = maxH - minY
+        spr.y = spr.y + minY
+        childSprArr.forEach(cspr => {
+          cspr.y = cspr.y - minY
+        })
 
-      if (padding > 0) {
-        shape.x = minX - padding
-        shape.w = maxW - minX + padding * 2
-        shape.y = minY - padding
-        shape.h = maxH - minY + padding * 2
+        shape.w = maxW
+        shape.h = maxH
+      } else if (padding > 0) {
+        spr.x = spr.x + minX - padding
+        childSprArr.forEach(cspr => {
+          cspr.x = cspr.x - minX + padding
+        })
+
+        spr.y = spr.y + minY - padding
+        childSprArr.forEach(cspr => {
+          cspr.y = cspr.y - minY + padding
+        })
+
+        shape.w = maxW + padding
+        shape.h = maxH + padding
       }
+
+
+      // let parentSpr = spr.owner.getParentSprite()
+      // if (parentSpr) {
+      //   let dot1 = Math2D.transform(spr.getWorldMatrix2(), new vec2(minX, minY))
+      //   let dot2 = Math2D.transform(spr.getWorldMatrix2(), new vec2(maxW - minX, maxH - minY))
+      //   spr.x = dot1.x
+      //   spr.y = dot1.y
+      // }
+
+
+
+
+      // let shape = spr.shape as ContainerShap
+
+      // shape.x = minX
+      // shape.w = maxW - minX
+      // shape.y = minY
+      // shape.h = maxH - minY
+
+      // if (padding > 0) {
+      //   shape.x = minX - padding
+      //   shape.w = maxW - minX + padding * 2
+      //   shape.y = minY - padding
+      //   shape.h = maxH - minY + padding * 2
+      // }
     }
 
   }
