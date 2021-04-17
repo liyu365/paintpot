@@ -25,39 +25,25 @@ export class RectSpr extends Sprite2D {
     super(myRect, 'RectSpr')
   }
   public fillStyle = 'orange'
-  public diffX = 0
-  public diffY = 0
+  // public diffX = 0
+  // public diffY = 0
 
-  public getBounding(): Bounding {
-    let shap: MyRect = this.shape as MyRect
-    let top = shap.y
-    let bottom = shap.y + shap.height
-    let left = shap.x
-    let right = shap.x + shap.width
-    return {
-      top,
-      bottom,
-      left,
-      right
-    }
-  }
+  // public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
+  //   let parentSpr = spr.owner.getParentSprite()
+  //   if (parentSpr) {
+  //     const worldPosition = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
+  //     const localPosition = Math2D.transform(parentSpr.getLocalMatrix(), worldPosition) // 把鼠标的坐标用父sprite的局部矩阵进行转换
+  //     if (evt.type === EInputEventType.MOUSEDOWN) {
+  //       this.diffX = localPosition.x - this.x
+  //       this.diffY = localPosition.y - this.y
+  //     }
+  //     if (evt.type === EInputEventType.MOUSEDRAG) {
+  //       this.x = localPosition.x - this.diffX
+  //       this.y = localPosition.y - this.diffY
+  //       // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
+  //       // console.log('局部坐标', new vec2(this.x, this.y))
+  //     }
+  //   }
 
-  public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
-    let parentSpr = spr.owner.getParentSprite()
-    if (parentSpr) {
-      const worldPosition = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
-      const localPosition = Math2D.transform(parentSpr.getLocalMatrix(), worldPosition) // 把鼠标的坐标用父sprite的局部矩阵进行转换
-      if (evt.type === EInputEventType.MOUSEDOWN) {
-        this.diffX = localPosition.x - this.x
-        this.diffY = localPosition.y - this.y
-      }
-      if (evt.type === EInputEventType.MOUSEDRAG) {
-        this.x = localPosition.x - this.diffX
-        this.y = localPosition.y - this.diffY
-        // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
-        // console.log('局部坐标', new vec2(this.x, this.y))
-      }
-    }
-
-  }
+  // }
 }

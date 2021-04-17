@@ -1,4 +1,4 @@
-import { IShape, ERenderType, ITransformable, IRenderState, Scale9Data, EImageFillType } from "./interface";
+import { IShape, ERenderType, ITransformable, IRenderState, Scale9Data, EImageFillType, Bounding } from "./interface";
 import { mat2d, Math2D, vec2, Rectangle, Size } from "../math2d"
 
 export abstract class BaseShape2D implements IShape {
@@ -10,6 +10,7 @@ export abstract class BaseShape2D implements IShape {
 
   public abstract get type(): string;
   public abstract hitTest(localPt: vec2, transform: ITransformable): boolean;
+  public abstract getBounding(): Bounding;
 
   public constructor() {
     this.axisXStyle = "rgba( 255 , 0 , 0 , 128 ) ";
@@ -78,6 +79,15 @@ export class Circle extends BaseShape2D {
     return Math2D.isPointInCircle(localPt, vec2.create(0, 0), this.radius);
   }
 
+  public getBounding(): Bounding {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
+  }
+
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D,): void {
     context.beginPath();
     context.arc(0, 0, this.radius, 0.0, Math.PI * 2.0, true);
@@ -101,6 +111,15 @@ export class Ellipse extends BaseShape2D {
   public hitTest(localPt: vec2, transform: ITransformable): boolean {
     let isHitted: boolean = Math2D.isPointInEllipse(localPt.x, localPt.y, 0, 0, this.radiusX, this.radiusY);
     return isHitted;
+  }
+
+  public getBounding(): Bounding {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
   }
 
   public draw(transform: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
@@ -133,6 +152,15 @@ export class ConvexPolygon extends BaseShape2D {
 
   public hitTest(localPt: vec2, transform: ITransformable): boolean {
     return Math2D.isPointInPolygon(localPt, this.points);
+  }
+
+  public getBounding(): Bounding {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
   }
 
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
@@ -180,6 +208,19 @@ export class Rect extends BaseShape2D {
     return Math2D.isPointInRect(localPt.x, localPt.y, this.x, this.y, this.width, this.height);
   }
 
+  public getBounding(): Bounding {
+    let top = this.y
+    let bottom = this.y + this.height
+    let left = this.x
+    let right = this.x + this.width
+    return {
+      top,
+      bottom,
+      left,
+      right
+    }
+  }
+
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
     context.beginPath();
     context.moveTo(this.x, this.y);
@@ -206,14 +247,14 @@ export class Grid extends Rect {
     context.fillRect(0, 0, this.width, this.height);
 
     context.beginPath();
-    for (var i = this.xStep + 0.5; i < this.width; i += this.xStep) {
+    for (let i = this.xStep + 0.5; i < this.width; i += this.xStep) {
       context.moveTo(i, 0);
       context.lineTo(i, this.height);
     }
     context.stroke();
 
     context.beginPath();
-    for (var i = this.yStep + 0.5; i < this.height; i += this.yStep) {
+    for (let i = this.yStep + 0.5; i < this.height; i += this.yStep) {
       context.moveTo(0, i);
       context.lineTo(this.width, i);
     }
@@ -241,6 +282,15 @@ export class BezierPath extends BaseShape2D {
   }
 
   public hitTest(localPt: vec2, transform: ITransformable): boolean { return false; }
+
+  public getBounding(): Bounding {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
+  }
 
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
     context.beginPath();
@@ -283,6 +333,15 @@ export class Line implements IShape {
 
   public hitTest(localPt: vec2, transform: ITransformable): boolean {
     return Math2D.isPointOnLineSegment(localPt, this.start, this.end);
+  }
+
+  public getBounding(): Bounding {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
   }
 
   public beginDraw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
@@ -508,6 +567,14 @@ export class EndClipShape implements IShape {
   public hitTest(localPt: vec2, transform: ITransformable): boolean {
     return false;
   }
+  public getBounding(): Bounding {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
+  }
 
   public beginDraw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void { }
 
@@ -526,6 +593,14 @@ export class EmptyShape implements IShape {
   public data: any;
   public hitTest(localPt: vec2, transform: ITransformable): boolean {
     return false;
+  }
+  public getBounding(): Bounding {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
   }
 
   public beginDraw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void { }

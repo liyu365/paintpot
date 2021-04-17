@@ -1,7 +1,7 @@
 import { SpriteNode } from './../lib/spriteSystem/sprite2dHierarchicalSystem';
 import { Sprite2D } from './../lib/spriteSystem/sprite2d';
 import { ITransformable, IRenderState, ISprite, EOrder, Bounding } from "../lib/spriteSystem/interface";
-import { BaseShape2D } from "../lib/spriteSystem/shapes";
+import { BaseShape2D, Rect } from "../lib/spriteSystem/shapes";
 import { vec2, Math2D } from "../lib/math2d";
 import { CanvasMouseEvent, EInputEventType } from "../lib/application";
 
@@ -46,20 +46,29 @@ export class ContainerShap extends BaseShape2D {
 
 export class ContainerSprite extends Sprite2D {
   public constructor() {
-    super(new ContainerShap(0, 0, 50, 50), 'containerSprite')
+    super(new Rect(0, 0, 50, 50), 'containerSprite')
   }
   public fillStyle = 'rgba(0,0,0,.3)'
-  public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
-    let parentSpr = spr.owner.getParentSprite()
-    if (evt.type === EInputEventType.MOUSEDRAG) {
-      if (parentSpr) {
-        const position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
-        const newPosition = Math2D.transform(parentSpr.getLocalMatrix(), position); // 把鼠标的坐标用父sprite的局部矩阵进行转换
-        this.x = newPosition.x
-        this.y = newPosition.y
-      }
-    }
-  }
+  // public diffX = 0
+  // public diffY = 0
+  // public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
+  //   let parentSpr = spr.owner.getParentSprite()
+  //   if (parentSpr) {
+  //     const worldPosition = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
+  //     const localPosition = Math2D.transform(parentSpr.getLocalMatrix(), worldPosition) // 把鼠标的坐标用父sprite的局部矩阵进行转换
+  //     if (evt.type === EInputEventType.MOUSEDOWN) {
+  //       this.diffX = localPosition.x - this.x
+  //       this.diffY = localPosition.y - this.y
+  //     }
+  //     if (evt.type === EInputEventType.MOUSEDRAG) {
+  //       this.x = localPosition.x - this.diffX
+  //       this.y = localPosition.y - this.diffY
+  //       // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
+  //       // console.log('局部坐标', new vec2(this.x, this.y))
+  //     }
+  //   }
+
+  // }
   public updateEvent = (spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void => {
     let padding: number = 20
     let minX = 1e7
@@ -71,7 +80,7 @@ export class ContainerSprite extends Sprite2D {
 
     if (parentSprNode && parentSprNode.children && parentSprNode.children.length > 0) {
 
-      let shape = spr.shape as ContainerShap
+      let shape = spr.shape as Rect
 
       let childSprArr: Array<Sprite2D> = []
       parentSprNode.children.forEach(childSprNode => {
@@ -111,7 +120,7 @@ export class ContainerSprite extends Sprite2D {
 
 
       childSprArr.forEach(childSpr => {
-        let bounding: Bounding = childSpr.getBounding()
+        let bounding: Bounding = childSpr.shape.getBounding()
         if (childSpr.x + bounding.left < minX) {
           minX = childSpr.x + bounding.left
         }
@@ -137,8 +146,8 @@ export class ContainerSprite extends Sprite2D {
           cspr.y = cspr.y - minY
         })
 
-        shape.w = maxW
-        shape.h = maxH
+        shape.width = maxW
+        shape.height = maxH
       } else if (padding > 0) {
         spr.x = spr.x + minX - padding
         childSprArr.forEach(cspr => {
@@ -150,8 +159,8 @@ export class ContainerSprite extends Sprite2D {
           cspr.y = cspr.y - minY + padding
         })
 
-        shape.w = maxW + padding
-        shape.h = maxH + padding
+        shape.width = maxW + padding
+        shape.height = maxH + padding
       }
 
 

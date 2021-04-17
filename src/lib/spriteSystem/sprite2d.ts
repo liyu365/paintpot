@@ -1,7 +1,8 @@
-import { mat2d, Transform2D, vec2 } from "../math2d"
-import { ISprite, MouseEventHandler, KeyboardEventHandler, UpdateEventHandler, EOrder, IShape, ERenderType, ITransformable, ISpriteContainer, RenderEventHandler, Bounding } from "./interface"
+import { mat2d, Transform2D, vec2, Math2D } from "../math2d"
+import { ISprite, MouseEventHandler, KeyboardEventHandler, UpdateEventHandler, EOrder, IShape, ERenderType, ITransformable, ISpriteContainer, RenderEventHandler } from "./interface"
 import { TreeNode } from "../treeNode";
 import { SpriteNode } from "./sprite2dHierarchicalSystem";
+import { CanvasMouseEvent, EInputEventType } from "../application";
 
 export class Sprite2D implements ISprite {
     public showCoordSystem: boolean = false;
@@ -18,7 +19,26 @@ export class Sprite2D implements ISprite {
     public data: any;
     public owner !: ISpriteContainer;
 
-    public mouseEvent: MouseEventHandler | null = null;
+    private diffX: number = 0;
+    private diffY: number = 0;
+    public mouseEvent: MouseEventHandler | null = (spr: ISprite, evt: CanvasMouseEvent): void => {
+        let parentSpr = spr.owner.getParentSprite()
+        if (parentSpr) {
+            const worldPosition = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
+            const localPosition = Math2D.transform(parentSpr.getLocalMatrix(), worldPosition) // 把鼠标的坐标用父sprite的局部矩阵进行转换
+            if (evt.type === EInputEventType.MOUSEDOWN) {
+                this.diffX = localPosition.x - this.x
+                this.diffY = localPosition.y - this.y
+            }
+            if (evt.type === EInputEventType.MOUSEDRAG) {
+                this.x = localPosition.x - this.diffX
+                this.y = localPosition.y - this.diffY
+                // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
+                // console.log('局部坐标', new vec2(this.x, this.y))
+            }
+        }
+
+    };
     public keyEvent: KeyboardEventHandler | null = null;
     public updateEvent: UpdateEventHandler | null = null;
     public renderEvent: RenderEventHandler | null = null;
@@ -126,15 +146,6 @@ export class Sprite2D implements ISprite {
         } else {
             alert("矩阵求逆失败");
             throw new Error("矩阵求逆失败");
-        }
-    }
-
-    public getBounding(): Bounding {
-        return {
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0
         }
     }
 

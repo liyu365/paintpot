@@ -56,6 +56,7 @@ export interface IDrawable {
 export interface IShape extends IHittable, IDrawable {
   readonly type: string;
   data: any;
+  getBounding(): Bounding;
 }
 
 export interface ISpriteContainer {
