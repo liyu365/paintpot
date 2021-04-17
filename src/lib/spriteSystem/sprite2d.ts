@@ -1,5 +1,5 @@
 import { mat2d, Transform2D, vec2 } from "../math2d"
-import { ISprite, MouseEventHandler, KeyboardEventHandler, UpdateEventHandler, EOrder, IShape, ERenderType, ITransformable, ISpriteContainer, RenderEventHandler } from "./interface"
+import { ISprite, MouseEventHandler, KeyboardEventHandler, UpdateEventHandler, EOrder, IShape, ERenderType, ITransformable, ISpriteContainer, RenderEventHandler, Bounding } from "./interface"
 import { TreeNode } from "../treeNode";
 import { SpriteNode } from "./sprite2dHierarchicalSystem";
 
@@ -126,6 +126,15 @@ export class Sprite2D implements ISprite {
         } else {
             alert("矩阵求逆失败");
             throw new Error("矩阵求逆失败");
+        }
+    }
+
+    public getBounding(): Bounding {
+        return {
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0
         }
     }
 

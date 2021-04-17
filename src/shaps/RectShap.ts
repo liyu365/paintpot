@@ -1,4 +1,4 @@
-import { ITransformable, IRenderState, ISprite, IShape } from "../lib/spriteSystem/interface";
+import { ITransformable, IRenderState, ISprite, IShape, Bounding } from "../lib/spriteSystem/interface";
 import { BaseShape2D, Rect } from "../lib/spriteSystem/shapes";
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { vec2, Math2D } from "../lib/math2d";
@@ -27,6 +27,21 @@ export class RectSpr extends Sprite2D {
   public fillStyle = 'orange'
   public diffX = 0
   public diffY = 0
+
+  public getBounding(): Bounding {
+    let shap: MyRect = this.shape as MyRect
+    let top = shap.y
+    let bottom = shap.y + shap.height
+    let left = shap.x
+    let right = shap.x + shap.width
+    return {
+      top,
+      bottom,
+      left,
+      right
+    }
+  }
+
   public mouseEvent = (spr: ISprite, evt: CanvasMouseEvent): void => {
     let parentSpr = spr.owner.getParentSprite()
     if (parentSpr) {

@@ -1,6 +1,6 @@
 import { SpriteNode } from './../lib/spriteSystem/sprite2dHierarchicalSystem';
 import { Sprite2D } from './../lib/spriteSystem/sprite2d';
-import { ITransformable, IRenderState, ISprite, EOrder } from "../lib/spriteSystem/interface";
+import { ITransformable, IRenderState, ISprite, EOrder, Bounding } from "../lib/spriteSystem/interface";
 import { BaseShape2D } from "../lib/spriteSystem/shapes";
 import { vec2, Math2D } from "../lib/math2d";
 import { CanvasMouseEvent, EInputEventType } from "../lib/application";
@@ -62,7 +62,7 @@ export class ContainerSprite extends Sprite2D {
   }
   public updateEvent = (spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void => {
     let padding: number = 20
-    let minX = 0
+    let minX = 1e7
     let minY = 1e7
     let maxW = -1e7
     let maxH = -1e7
@@ -108,24 +108,21 @@ export class ContainerSprite extends Sprite2D {
       //   }
       // })
 
-      let padding: number = 20
-      let minX = 1e7
-      let minY = 1e7
-      let maxW = -1e7
-      let maxH = -1e7
+
 
       childSprArr.forEach(childSpr => {
-        if (childSpr.x < minX) {
-          minX = childSpr.x
+        let bounding: Bounding = childSpr.getBounding()
+        if (childSpr.x + bounding.left < minX) {
+          minX = childSpr.x + bounding.left
         }
-        if (childSpr.y < minY) {
-          minY = childSpr.y
+        if (childSpr.y + bounding.top < minY) {
+          minY = childSpr.y + bounding.top
         }
-        if (childSpr.x + 20 > maxW) {
-          maxW = childSpr.x + 20
+        if (childSpr.x + bounding.right > maxW) {
+          maxW = childSpr.x + bounding.right
         }
-        if (childSpr.y + 20 > maxH) {
-          maxH = childSpr.y + 20
+        if (childSpr.y + bounding.bottom > maxH) {
+          maxH = childSpr.y + bounding.bottom
         }
       })
 
