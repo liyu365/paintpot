@@ -11,6 +11,8 @@ import { LinkTextShap } from './shaps/LinkTextShap'
 import { ContainerSprite } from './shaps/ContainerShap'
 import { RectSpr } from './shaps/RectShap'
 
+import { LinkNodeFactory } from './factory/LinkNodeFactory'
+
 
 class topologyApplication {
   private _app: Sprite2DApplication
@@ -24,6 +26,7 @@ class topologyApplication {
   private _linkCircleGap = 5
   private _circleRadius = 30
   private _curZoom = 1
+  private _inkNodeFactory = new LinkNodeFactory()
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
@@ -95,63 +98,8 @@ class topologyApplication {
   }
 
   private createLink(node1: ISprite | undefined, node2: ISprite | undefined, name: string): void {
-    const link: ISprite = SpriteFactory.createSprite(SpriteFactory.createXLine());
-    link.strokeStyle = 'green'
-    link.lineWidth = 4
-    link.data = {}
-    link.data.from = node1
-    link.data.to = node2
-    link.x = 0
-    link.y = 0
-
-    link.mouseEvent = this.handleLinkEvent.bind(this)
-
-    const linkN = new SpriteNode(link)
-
-    const arrow: ISprite = SpriteFactory.createSprite(this._arrowShap)
-    arrow.fillStyle = 'blue'
-    linkN.addSprite(arrow);
-
-    const textSpr: ISprite = new Sprite2D(new LinkTextShap(), 'LinkTextShap')
-    textSpr.showCoordSystem = false
-    textSpr.x = 0
-    textSpr.y = 0;
-    textSpr.data = {}
-    textSpr.data.text = name
-    linkN.addSprite(textSpr);
-
-    const newGroup = new SpriteNodeGroup({})
-    newGroup.params.from = node1
-    newGroup.params.to = node2
-    const sameGroup: SpriteNodeGroup | null = this.getSameLinkGroup(newGroup)
-
-    // 如果已经存在相同的group，则放到此group中，否则新建一个group，再作为新group的子集
-    if (!sameGroup) {
-      newGroup.addChild(linkN)
-      this._linkNodes.push(linkN)
-      this._linkGroups.push(newGroup)
-      if (newGroup.sprite) {
-        newGroup.sprite.updateEvent = this.handleLinkGroupUpdate.bind(this)
-      }
-    } else {
-      sameGroup.addChild(linkN)
-      this._linkNodes.push(linkN)
-    }
+    this._inkNodeFactory.addLink(node1, node2, name)
   }
-
-  private getSameLinkGroup(linkGroup: SpriteNodeGroup): SpriteNodeGroup | null {
-    let o = null
-    this._linkGroups.forEach(item => {
-      if (
-        (item.params.from === linkGroup.params.from && item.params.to === linkGroup.params.to) ||
-        (item.params.from === linkGroup.params.to && item.params.to === linkGroup.params.from)
-      ) {
-        o = item
-      }
-    })
-    return o
-  }
-
 
   private init(): void {
     const node1: SpriteNode = this.createCNode(new vec2(120, 120), 'node1');
@@ -183,8 +131,8 @@ class topologyApplication {
     containerSpr.owner.addSprite(rectSpr2)
     root.addSprite(rectSpr3)
 
-    this.createLink(rectSpr1, rectSpr2, '2->3');
-    this.createLink(rectSpr1, node2.sprite, '2->3');
+    this.createLink(rectSpr1, rectSpr2, 'ii');
+    this.createLink(rectSpr1, node2.sprite, '88');
 
 
     const containerSpr2: Sprite2D = new ContainerSprite()
@@ -199,7 +147,7 @@ class topologyApplication {
     containerSpr2.owner.addSprite(rectSpr2_2)
 
 
-    this._linkGroups.forEach(node => {
+    this._inkNodeFactory._linkGroups.forEach(node => {
       root.addChild(node);
     });
     this._cNodes.forEach(node => {
@@ -208,104 +156,6 @@ class topologyApplication {
 
   }
 
-
-  private handleCircleEvent(spr: ISprite, evt: CanvasMouseEvent): void {
-    const position = new vec2(spr.x, spr.y)
-    console.log('position1', position)
-    console.log('position2', Math2D.transform(spr.getLocalMatrix(), position))
-    if (evt.type === EInputEventType.MOUSEDRAG) {
-      const root = this._app.rootContainer as SpriteNode
-      if (root.sprite) {
-        const position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
-        const newPosition = Math2D.transform(root.sprite.getLocalMatrix(), position); // 把鼠标的坐标用根sprite的局部矩阵进行转换
-
-        spr.x = newPosition.x
-        spr.y = newPosition.y
-      }
-    }
-  }
-
-  private handleLinkEvent(spr: ISprite, evt: CanvasMouseEvent): void {
-    console.log('handleLinkEvent', spr)
-  }
-
-  private handleLinkGroupUpdate(spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void {
-    const linkGroup = spr.owner as SpriteNodeGroup
-    const children = linkGroup.children
-    let from: Sprite2D = linkGroup.params.from
-    let to: Sprite2D = linkGroup.params.to
-    let pt1: vec2 = new vec2(from.x, from.y)
-    let pt2: vec2 = new vec2(to.x, to.y)
-    const root = this._app.rootContainer as SpriteNode
-    let rootSpr = root.sprite
-    let fromParentSpr = from.owner.getParentSprite()
-    let toParentSpr = to.owner.getParentSprite()
-    if (fromParentSpr && toParentSpr) {
-      pt1 = Math2D.transform(fromParentSpr.getWorldMatrix2(), pt1)
-      pt2 = Math2D.transform(toParentSpr.getWorldMatrix2(), pt2)
-    }
-    //console.log(pt1, pt2)
-    const d = Math.sqrt((pt2.y - pt1.y) * (pt2.y - pt1.y) + (pt2.x - pt1.x) * (pt2.x - pt1.x))
-    const linkGroupAngle = vec2.getOrientation(pt1, pt2)
-    if (linkGroup.sprite) {
-      linkGroup.sprite.x = pt1.x
-      linkGroup.sprite.y = pt1.y
-      linkGroup.sprite.rotation = linkGroupAngle
-    }
-    if (children) {
-      const count = children.length
-      children.forEach((linkN, index) => {
-        const linkSpr = (linkN as SpriteNode).sprite
-        if (linkSpr) {
-          const gap = this._circleRadius + this._linkCircleGap
-          const line: Line = linkSpr.shape as Line
-          line.start = vec2.create(gap, 0);
-          line.end = vec2.create(d - gap, 0);
-          linkSpr.y = this._sameLinkGap * index + - (this._sameLinkGap * (count - 1)) / 2
-
-          // 此linkSpr定义的方向与包含它的linkGroup的方向相反，所以此linkSpr要反向绘制
-          if (linkSpr.data.from !== linkGroup.params.from) {
-            linkSpr.rotation = 180
-            linkSpr.x = d
-          }
-
-          const arrowNode = linkN.getChildAt(0) as SpriteNode
-          if (arrowNode) {
-            const arrow = arrowNode.sprite as Sprite2D
-            arrow.x = d - gap - 5
-          }
-
-          const lnikTextNode = linkN.getChildAt(1) as SpriteNode
-          if (lnikTextNode) {
-            const lnikTextSpr = lnikTextNode.sprite as Sprite2D
-            lnikTextSpr.x = d / 2
-            lnikTextSpr.y = 0
-            // 此linkSpr定义的方向与包含它的linkGroup的方向相反，所以此linkSpr种的文字也要反向绘制
-            if (linkSpr.data.from !== linkGroup.params.from) {
-              lnikTextSpr.data.isReverse = true // 为反向显示的linkSpr打标识
-              lnikTextSpr.rotation = 180
-            }
-
-            // 目标节点在第二、第三象限，文字需要反转，否则连线中的文字倒着显示不方便看
-            if ((linkGroupAngle > 90 && linkGroupAngle < 180) || (linkGroupAngle <= -90 && linkGroupAngle >= -180)) {
-              if (lnikTextSpr.data.isReverse === true) {
-                lnikTextSpr.rotation = 0
-              } else {
-                lnikTextSpr.rotation = 180
-              }
-            } else {
-              //不需要反转
-              if (lnikTextSpr.data.isReverse === true) {
-                lnikTextSpr.rotation = 180
-              } else {
-                lnikTextSpr.rotation = 0
-              }
-            }
-          }
-        }
-      })
-    }
-  }
 }
 
 const canvas: HTMLCanvasElement | null = document.getElementById('canvas') as HTMLCanvasElement;
