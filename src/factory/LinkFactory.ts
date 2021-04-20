@@ -11,16 +11,16 @@ import { LinkTextShap } from '../shaps/LinkTextShap'
 import { ContainerSprite } from '../shaps/ContainerShap'
 import { RectSpr } from '../shaps/RectShap'
 
-export class LinkNodeFactory {
+export class LinkFactory {
 
-  private _arrowShap: IShape = SpriteFactory.createPolygon([new vec2(5, 0), new vec2(0, 5), new vec2(0, -5)])
-  private _linkNodes: Array<SpriteNode> = []
-  public _linkGroups: Array<SpriteNodeGroup> = []
-  private _linkCircleGap = 5
-  private _circleRadius = 30
-  private _sameLinkGap = 25
+  private static _arrowShap: IShape = SpriteFactory.createPolygon([new vec2(5, 0), new vec2(0, 5), new vec2(0, -5)])
+  private static _linkNodes: Array<SpriteNode> = []
+  public static _linkGroups: Array<SpriteNodeGroup> = []
+  private static _linkCircleGap = 5
+  private static _circleRadius = 30
+  private static _sameLinkGap = 25
 
-  public addLink(node1: ISprite | undefined, node2: ISprite | undefined, name: string): void {
+  public static create(node1: ISprite | undefined, node2: ISprite | undefined, name: string): void {
     const link: ISprite = SpriteFactory.createSprite(SpriteFactory.createXLine());
     link.strokeStyle = 'green'
     link.lineWidth = 4
@@ -65,7 +65,7 @@ export class LinkNodeFactory {
     }
   }
 
-  private getSameLinkGroup(linkGroup: SpriteNodeGroup): SpriteNodeGroup | null {
+  private static getSameLinkGroup(linkGroup: SpriteNodeGroup): SpriteNodeGroup | null {
     let o = null
     this._linkGroups.forEach(item => {
       if (
@@ -78,11 +78,11 @@ export class LinkNodeFactory {
     return o
   }
 
-  private handleLinkEvent(spr: ISprite, evt: CanvasMouseEvent): void {
+  private static handleLinkEvent(spr: ISprite, evt: CanvasMouseEvent): void {
     console.log('handleLinkEvent', spr)
   }
 
-  private handleLinkGroupUpdate(spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void {
+  private static handleLinkGroupUpdate(spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void {
     const linkGroup = spr.owner as SpriteNodeGroup
     const children = linkGroup.children
     let from: Sprite2D = linkGroup.params.from

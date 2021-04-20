@@ -11,7 +11,8 @@ import { LinkTextShap } from './shaps/LinkTextShap'
 import { ContainerSprite } from './shaps/ContainerShap'
 import { RectSpr } from './shaps/RectShap'
 
-import { LinkNodeFactory } from './factory/LinkNodeFactory'
+import { LinkFactory } from './factory/LinkFactory'
+import { PanelPointFactory } from './factory/PanelPointFactory'
 
 
 class topologyApplication {
@@ -26,7 +27,7 @@ class topologyApplication {
   private _linkCircleGap = 5
   private _circleRadius = 30
   private _curZoom = 1
-  private _inkNodeFactory = new LinkNodeFactory()
+  //private _inkNodeFactory = new LinkNodeFactory()
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
@@ -75,43 +76,21 @@ class topologyApplication {
     }
   }
 
-  private createCNode(position: vec2, name: string): SpriteNode {
-    const circle: ISprite = SpriteFactory.createSprite(this._circleShap);
-    circle.fillStyle = 'red'
-    circle.x = position.x
-    circle.y = position.y
-    // circle.mouseEvent = this.handleCircleEvent.bind(this)
-
-    const circleN = new SpriteNode(circle)
-
-    const textSpr: ISprite = new Sprite2D(new CNodeTextShap(), 'textSpr')
-    textSpr.showCoordSystem = false
-    textSpr.x = 0
-    textSpr.y = this._circleRadius + 10;
-    textSpr.data = {}
-    textSpr.data.text = name
-    circleN.addSprite(textSpr);
-
-    this._cNodes.push(circleN)
-
-    return circleN
-  }
-
   private createLink(node1: ISprite | undefined, node2: ISprite | undefined, name: string): void {
-    this._inkNodeFactory.addLink(node1, node2, name)
+    //this._inkNodeFactory.addLink(node1, node2, name)
   }
 
   private init(): void {
-    const node1: SpriteNode = this.createCNode(new vec2(120, 120), 'node1');
-    const node2: SpriteNode = this.createCNode(new vec2(320, 120), 'node2');
-    const node3: SpriteNode = this.createCNode(new vec2(320, 400), 'node3');
-    this.createLink(node1.sprite, node2.sprite, '1->2');
-    this.createLink(node2.sprite, node1.sprite, '2->1');
-    this.createLink(node2.sprite, node1.sprite, '2->1');
-    this.createLink(node2.sprite, node1.sprite, '2->1');
-    this.createLink(node1.sprite, node3.sprite, '1->3');
-    this.createLink(node2.sprite, node3.sprite, '2->3');
-    this.createLink(node2.sprite, node3.sprite, '2->3');
+    const node1: SpriteNode = PanelPointFactory.create(new vec2(120, 120), 'node1');
+    const node2: SpriteNode = PanelPointFactory.create(new vec2(320, 120), 'node2');
+    const node3: SpriteNode = PanelPointFactory.create(new vec2(320, 400), 'node3');
+    LinkFactory.create(node1.sprite, node2.sprite, '1->2');
+    LinkFactory.create(node2.sprite, node1.sprite, '2->1');
+    LinkFactory.create(node2.sprite, node1.sprite, '2->1');
+    LinkFactory.create(node2.sprite, node1.sprite, '2->1');
+    LinkFactory.create(node1.sprite, node3.sprite, '1->3');
+    LinkFactory.create(node2.sprite, node3.sprite, '2->3');
+    LinkFactory.create(node2.sprite, node3.sprite, '2->3');
 
 
     const root = this._app.rootContainer as SpriteNode
@@ -131,8 +110,8 @@ class topologyApplication {
     containerSpr.owner.addSprite(rectSpr2)
     root.addSprite(rectSpr3)
 
-    this.createLink(rectSpr1, rectSpr2, 'ii');
-    this.createLink(rectSpr1, node2.sprite, '88');
+    LinkFactory.create(rectSpr1, rectSpr2, 'ii');
+    LinkFactory.create(rectSpr1, node2.sprite, '88');
 
 
     const containerSpr2: Sprite2D = new ContainerSprite()
@@ -147,10 +126,10 @@ class topologyApplication {
     containerSpr2.owner.addSprite(rectSpr2_2)
 
 
-    this._inkNodeFactory._linkGroups.forEach(node => {
+    LinkFactory._linkGroups.forEach(node => {
       root.addChild(node);
     });
-    this._cNodes.forEach(node => {
+    PanelPointFactory.getNodes().forEach(node => {
       root.addChild(node);
     });
 
