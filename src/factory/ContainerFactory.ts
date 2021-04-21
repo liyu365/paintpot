@@ -8,7 +8,6 @@ import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 
 import { CNodeTextShap } from '../shaps/CNodeTextShap'
 import { LinkTextShap } from '../shaps/LinkTextShap'
-import { RectSpr } from '../shaps/RectShap'
 
 export class ContainerFactory {
 
