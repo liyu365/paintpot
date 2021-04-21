@@ -1,43 +1,22 @@
-import { ISprite, SpriteFactory, IShape, EOrder } from "./lib/spriteSystem/interface";
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
-import { CanvasMouseEvent, EInputEventType } from "./lib/application";
-import { vec2, Math2D } from "./lib/math2d";
-import { Line, Rect } from "./lib/spriteSystem/shapes";
-import { SpriteNode, SpriteNodeGroup } from './lib/spriteSystem/sprite2dHierarchicalSystem'
+import { vec2 } from "./lib/math2d";
+import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from './lib/spriteSystem/sprite2d'
-
-import { CNodeTextShap } from './shaps/CNodeTextShap'
-import { LinkTextShap } from './shaps/LinkTextShap'
-import { ContainerSprite } from './shaps/ContainerShap'
 import { RectSpr } from './shaps/RectShap'
-
 import { LinkFactory } from './factory/LinkFactory'
 import { PanelPointFactory } from './factory/PanelPointFactory'
+import { ContainerFactory } from './factory/ContainerFactory'
 
 
 class topologyApplication {
   private _app: Sprite2DApplication
-  private _circleShap: IShape
-  private _rectShap: IShape
-  private _arrowShap: IShape
-  private _cNodes: Array<SpriteNode> = []
-  private _linkNodes: Array<SpriteNode> = []
-  private _linkGroups: Array<SpriteNodeGroup> = []
-  private _sameLinkGap = 25
-  private _linkCircleGap = 5
-  private _circleRadius = 30
   private _curZoom = 1
-  //private _inkNodeFactory = new LinkNodeFactory()
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
-    this._circleShap = SpriteFactory.createCircle(this._circleRadius)
-    this._rectShap = SpriteFactory.createRect(20, 10)
-    this._arrowShap = SpriteFactory.createPolygon([new vec2(5, 0), new vec2(0, 5), new vec2(0, -5)])
 
     this.init();
     this._app.start();
-
 
     const zoomInButton: HTMLElement = document.querySelector('#zoomIN') as HTMLElement
     const zoomOutButton: HTMLElement = document.querySelector('#zoomOut') as HTMLElement
@@ -45,7 +24,6 @@ class topologyApplication {
       this._curZoom *= 1.2
       this.handleZoomChange()
     }
-
     zoomOutButton.onclick = () => {
       this._curZoom /= 1.2
       this.handleZoomChange()
@@ -57,7 +35,6 @@ class topologyApplication {
     const rootSpr = root.sprite
     const canvas: HTMLCanvasElement | null = document.getElementById('canvas') as HTMLCanvasElement;
     if (rootSpr) {
-
       rootSpr.scaleX = this._curZoom
       rootSpr.scaleY = this._curZoom
       if (canvas) {
@@ -76,11 +53,10 @@ class topologyApplication {
     }
   }
 
-  private createLink(node1: ISprite | undefined, node2: ISprite | undefined, name: string): void {
-    //this._inkNodeFactory.addLink(node1, node2, name)
-  }
 
   private init(): void {
+    const root = this._app.rootContainer as SpriteNode
+
     const node1: SpriteNode = PanelPointFactory.create(new vec2(120, 120), 'node1');
     const node2: SpriteNode = PanelPointFactory.create(new vec2(320, 120), 'node2');
     const node3: SpriteNode = PanelPointFactory.create(new vec2(320, 400), 'node3');
@@ -93,10 +69,7 @@ class topologyApplication {
     LinkFactory.create(node2.sprite, node3.sprite, '2->3');
 
 
-    const root = this._app.rootContainer as SpriteNode
-
-
-    const containerSpr: Sprite2D = new ContainerSprite()
+    const containerSpr: Sprite2D = ContainerFactory.create()
     containerSpr.x = 500
     containerSpr.y = 300
     root.addSprite(containerSpr)
@@ -114,7 +87,7 @@ class topologyApplication {
     LinkFactory.create(rectSpr1, node2.sprite, '88');
 
 
-    const containerSpr2: Sprite2D = new ContainerSprite()
+    const containerSpr2: Sprite2D = ContainerFactory.create()
     containerSpr2.x = 0
     containerSpr2.y = 0
     containerSpr.owner.addSprite(containerSpr2)

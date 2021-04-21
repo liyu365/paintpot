@@ -11,6 +11,8 @@ import { LinkTextShap } from '../shaps/LinkTextShap'
 import { ContainerSprite } from '../shaps/ContainerShap'
 import { RectSpr } from '../shaps/RectShap'
 
+
+
 export class PanelPointFactory {
 
   private static _circleRadius = 30
