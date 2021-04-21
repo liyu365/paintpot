@@ -2,10 +2,10 @@ import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
 import { vec2 } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from './lib/spriteSystem/sprite2d'
-import { RectSpr } from './shaps/RectShap'
 import { LinkFactory } from './factory/LinkFactory'
 import { PanelPointFactory } from './factory/PanelPointFactory'
 import { ContainerFactory } from './factory/ContainerFactory'
+import { PanelRectFactory } from './factory/PanelRectFactory'
 
 
 class topologyApplication {
@@ -74,9 +74,9 @@ class topologyApplication {
     containerSpr.y = 300
     root.addSprite(containerSpr)
 
-    const rectSpr1: Sprite2D = new RectSpr()
-    const rectSpr2: Sprite2D = new RectSpr()
-    const rectSpr3: Sprite2D = new RectSpr()
+    const rectSpr1: Sprite2D = PanelRectFactory.create()
+    const rectSpr2: Sprite2D = PanelRectFactory.create()
+    const rectSpr3: Sprite2D = PanelRectFactory.create()
     rectSpr2.x = 60
     rectSpr2.y = 60
     containerSpr.owner.addSprite(rectSpr1)
@@ -92,8 +92,8 @@ class topologyApplication {
     containerSpr2.y = 0
     containerSpr.owner.addSprite(containerSpr2)
 
-    const rectSpr2_1: Sprite2D = new RectSpr()
-    const rectSpr2_2: Sprite2D = new RectSpr()
+    const rectSpr2_1: Sprite2D = PanelRectFactory.create()
+    const rectSpr2_2: Sprite2D = PanelRectFactory.create()
     rectSpr2_2.y = 80
     containerSpr2.owner.addSprite(rectSpr2_1)
     containerSpr2.owner.addSprite(rectSpr2_2)
