@@ -94,6 +94,17 @@ class topologyApplication {
     LinkFactory.create(rectNode1.sprite, rectNode2.sprite, 'ii');
     LinkFactory.create(rectNode1.sprite, panelPointNode2.sprite, '88');
 
+
+
+    const rectNode4: SpriteNode = PanelRectFactory.create(new vec2(700, 60));
+    root.addChild(rectNode4);
+    const rectNode5: SpriteNode = PanelRectFactory.create(new vec2(850, 300));
+    root.addChild(rectNode5);
+    LinkFactory.create(rectNode4.sprite, rectNode5.sprite, '4->5');
+
+
+
+
     // ContainerFactory.getNodes().forEach(node => {
     //   root.addChild(node);
     // });
