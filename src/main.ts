@@ -110,6 +110,8 @@ class topologyApplication {
     const rectNode7: SpriteNode = PanelRectFactory.create(new vec2(850, 500));
     root.addChild(rectNode7);
     VerticalFlexLinkFactory.create(rectNode6.sprite, rectNode7.sprite, '3');
+    VerticalFlexLinkFactory.create(rectNode7.sprite, rectNode6.sprite, '4');
+
 
 
 

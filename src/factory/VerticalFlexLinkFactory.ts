@@ -108,37 +108,38 @@ export class VerticalFlexLinkFactory {
       children.forEach((linkN, index) => {
         const linkSpr = (linkN as SpriteNode).sprite
         if (linkSpr) {
-          let xDeviation = 0
+          let yDeviation = index * 20
           if (pt2.x >= pt1.x) {
-            xDeviation = pt2.y <= pt1.y ? index * 20 : - index * 20
+            yDeviation = pt2.y <= pt1.y ? index * 20 : - index * 20
           } else {
-            xDeviation = pt2.y <= pt1.y ? -index * 20 : index * 20
+            yDeviation = pt2.y <= pt1.y ? -index * 20 : index * 20
           }
           const line: FlexLineShap = linkSpr.shape as FlexLineShap
           line.start = vec2.create(0, 0);
-          line.point1 = vec2.create(xd / 2 + xDeviation, 0);
-          line.point2 = vec2.create(xd / 2 + xDeviation, yd);
+          line.point1 = vec2.create(0, yd / 2 + yDeviation);
+          line.point2 = vec2.create(xd, yd / 2 + yDeviation);
           line.end = vec2.create(xd, yd);
-          linkSpr.y = this._sameLinkGap * index + - (this._sameLinkGap * (count - 1)) / 2
+          linkSpr.x = this._sameLinkGap * index + - (this._sameLinkGap * (count - 1)) / 2
 
           const arrowNode = linkN.getChildAt(0) as SpriteNode
           if (arrowNode) {
             const arrow = arrowNode.sprite as Sprite2D
+
             if (linkSpr.data.from === linkGroup.params.from) {
               arrow.x = xd
               arrow.y = yd
-              if (pt2.x >= pt1.x) {
-                arrow.rotation = 0
+              if (pt2.y >= pt1.y) {
+                arrow.rotation = 90
               } else {
-                arrow.rotation = 180
+                arrow.rotation = -90
               }
             } else {
               arrow.x = 0
               arrow.y = 0
-              if (pt2.x >= pt1.x) {
-                arrow.rotation = 180
+              if (pt2.y >= pt1.y) {
+                arrow.rotation = -90
               } else {
-                arrow.rotation = 0
+                arrow.rotation = 90
               }
             }
           }
@@ -146,8 +147,8 @@ export class VerticalFlexLinkFactory {
           const lnikTextNode = linkN.getChildAt(1) as SpriteNode
           if (lnikTextNode) {
             const lnikTextSpr = lnikTextNode.sprite as Sprite2D
-            lnikTextSpr.x = xd / 2 + xDeviation
-            lnikTextSpr.y = yd / 2
+            lnikTextSpr.x = xd / 2
+            lnikTextSpr.y = yd / 2 + yDeviation
           }
         }
       })

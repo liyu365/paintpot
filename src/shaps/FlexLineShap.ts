@@ -22,7 +22,7 @@ export class FlexLineShap extends BaseShape2D {
     return false
   }
 
-  public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D,): void {
+  public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
     context.beginPath();
     context.moveTo(this.start.x, this.start.y);
     context.lineTo(this.point1.x, this.point1.y);
