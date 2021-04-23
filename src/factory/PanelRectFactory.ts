@@ -12,16 +12,21 @@ import { LinkTextShap } from '../shaps/LinkTextShap'
 
 export class PanelRectFactory {
 
-  private static _arrowShap: IShape = SpriteFactory.createPolygon([new vec2(5, 0), new vec2(0, 5), new vec2(0, -5)])
-  private static _linkNodes: Array<SpriteNode> = []
-  public static _linkGroups: Array<SpriteNodeGroup> = []
-  private static _linkCircleGap = 5
-  private static _circleRadius = 30
-  private static _sameLinkGap = 25
+  private static nodes: Array<SpriteNode> = []
 
-  public static create(): Sprite2D {
+  public static create(position: vec2): SpriteNode {
     let spr: Sprite2D = new Sprite2D(SpriteFactory.createRect(20, 20, 0.5, 0.5), 'panelRectFactory');
     spr.fillStyle = 'orange'
-    return spr
+    spr.x = position.x
+    spr.y = position.y
+
+    let node = new SpriteNode(spr)
+    this.nodes.push(node)
+
+    return node
+  }
+
+  public static getNodes(): Array<SpriteNode> {
+    return this.nodes
   }
 }

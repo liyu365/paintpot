@@ -14,7 +14,7 @@ export class LinkFactory {
   private static _circleRadius = 30
   private static _sameLinkGap = 25
 
-  public static create(from: ISprite, to: ISprite, name: string): void {
+  public static create(from: ISprite | undefined, to: ISprite | undefined, name: string): void {
     const linkSpr: ISprite = SpriteFactory.createSprite(SpriteFactory.createXLine());
     linkSpr.strokeStyle = 'green'
     linkSpr.lineWidth = 4
@@ -57,8 +57,11 @@ export class LinkFactory {
     }
   }
 
-  private static getSameLinkGroup(from: ISprite, to: ISprite): SpriteNodeGroup | null {
+  private static getSameLinkGroup(from: ISprite | undefined, to: ISprite | undefined): SpriteNodeGroup | null {
     let o = null
+    if (from === undefined || to === undefined) {
+      return o
+    }
     this._linkGroups.forEach(item => {
       if (
         (item.params.from === from && item.params.to === to) ||
@@ -150,5 +153,9 @@ export class LinkFactory {
         }
       })
     }
+  }
+
+  public static getNodes(): Array<SpriteNode> {
+    return LinkFactory._linkGroups
   }
 }

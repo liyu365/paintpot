@@ -11,12 +11,24 @@ import { LinkTextShap } from '../shaps/LinkTextShap'
 
 export class ContainerFactory {
 
-  public static create(): Sprite2D {
+  private static _sprites: Array<Sprite2D> = []
+  private static _nodes: Array<SpriteNode> = []
+
+  public static create(position: vec2): SpriteNode {
     let containerSpr = new Sprite2D(SpriteFactory.createRect(50, 50), 'containerSprite') // 这里shap不能指向同一个对象，因为在updateEvent中会去修改shap对象
+    containerSpr.x = position.x
+    containerSpr.y = position.y
     containerSpr.fillStyle = 'rgba(0,0,0,.3)'
     containerSpr.updateEvent = this.handleUpdateEvent.bind(this)
-    return containerSpr
+
+
+    const sprNode = new SpriteNode(containerSpr)
+
+
+    this._nodes.push(sprNode)
+    return sprNode
   }
+
 
   private static handleUpdateEvent(spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void {
     let padding: number = 20
@@ -140,5 +152,13 @@ export class ContainerFactory {
     }
 
 
+  }
+
+  public static getSprites(): Array<Sprite2D> {
+    return ContainerFactory._sprites
+  }
+
+  public static getNodes(): Array<SpriteNode> {
+    return this._nodes
   }
 }

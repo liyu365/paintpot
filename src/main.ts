@@ -57,49 +57,47 @@ class topologyApplication {
   private init(): void {
     const root = this._app.rootContainer as SpriteNode
 
-    const node1: SpriteNode = PanelPointFactory.create(new vec2(120, 120), 'node1');
-    const node2: SpriteNode = PanelPointFactory.create(new vec2(320, 120), 'node2');
-    const node3: SpriteNode = PanelPointFactory.create(new vec2(320, 400), 'node3');
-    LinkFactory.create(node1.sprite, node2.sprite, '1->2');
-    LinkFactory.create(node2.sprite, node1.sprite, '2->1');
-    LinkFactory.create(node2.sprite, node1.sprite, '2->1');
-    LinkFactory.create(node2.sprite, node1.sprite, '2->1');
-    LinkFactory.create(node1.sprite, node3.sprite, '1->3');
-    LinkFactory.create(node2.sprite, node3.sprite, '2->3');
-    LinkFactory.create(node2.sprite, node3.sprite, '2->3');
+    const panelPointNode1: SpriteNode = PanelPointFactory.create(new vec2(120, 120), 'panelPointNode1');
+    const panelPointNode2: SpriteNode = PanelPointFactory.create(new vec2(320, 120), 'panelPointNode2');
+    const panelPointNode3: SpriteNode = PanelPointFactory.create(new vec2(320, 400), 'panelPointNode3');
 
 
-    const containerSpr: Sprite2D = ContainerFactory.create()
-    containerSpr.x = 500
-    containerSpr.y = 300
-    root.addSprite(containerSpr)
 
-    const rectSpr1: Sprite2D = PanelRectFactory.create()
-    const rectSpr2: Sprite2D = PanelRectFactory.create()
-    const rectSpr3: Sprite2D = PanelRectFactory.create()
-    rectSpr2.x = 60
-    rectSpr2.y = 60
-    containerSpr.owner.addSprite(rectSpr1)
-    containerSpr.owner.addSprite(rectSpr2)
-    root.addSprite(rectSpr3)
-
-    LinkFactory.create(rectSpr1, rectSpr2, 'ii');
-    LinkFactory.create(rectSpr1, node2.sprite, '88');
+    const containerNode1: SpriteNode = ContainerFactory.create(new vec2(500, 300))
+    root.addChild(containerNode1);
+    const rectNode1: SpriteNode = PanelRectFactory.create(new vec2(0, 0))
+    const rectNode2: SpriteNode = PanelRectFactory.create(new vec2(60, 60))
+    const rectNode3: SpriteNode = PanelRectFactory.create(new vec2(0, 0))
+    containerNode1.addChild(rectNode1)
+    containerNode1.addChild(rectNode2)
+    root.addChild(rectNode3)
 
 
-    const containerSpr2: Sprite2D = ContainerFactory.create()
-    containerSpr2.x = 0
-    containerSpr2.y = 0
-    containerSpr.owner.addSprite(containerSpr2)
-
-    const rectSpr2_1: Sprite2D = PanelRectFactory.create()
-    const rectSpr2_2: Sprite2D = PanelRectFactory.create()
-    rectSpr2_2.y = 80
-    containerSpr2.owner.addSprite(rectSpr2_1)
-    containerSpr2.owner.addSprite(rectSpr2_2)
 
 
-    LinkFactory._linkGroups.forEach(node => {
+    const containerNode2: SpriteNode = ContainerFactory.create(new vec2(0, 0))
+    containerNode1.addChild(containerNode2)
+
+    const rectNode2_1: SpriteNode = PanelRectFactory.create(new vec2(0, 0))
+    const rectNode2_2: SpriteNode = PanelRectFactory.create(new vec2(0, 80))
+    containerNode2.addChild(rectNode2_1)
+    containerNode2.addChild(rectNode2_2)
+
+
+    LinkFactory.create(panelPointNode1.sprite, panelPointNode2.sprite, '1->2');
+    LinkFactory.create(panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
+    LinkFactory.create(panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
+    LinkFactory.create(panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
+    LinkFactory.create(panelPointNode1.sprite, panelPointNode3.sprite, '1->3');
+    LinkFactory.create(panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
+    LinkFactory.create(panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
+    LinkFactory.create(rectNode1.sprite, rectNode2.sprite, 'ii');
+    LinkFactory.create(rectNode1.sprite, panelPointNode2.sprite, '88');
+
+    // ContainerFactory.getNodes().forEach(node => {
+    //   root.addChild(node);
+    // });
+    LinkFactory.getNodes().forEach(node => {
       root.addChild(node);
     });
     PanelPointFactory.getNodes().forEach(node => {

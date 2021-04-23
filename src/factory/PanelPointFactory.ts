@@ -18,12 +18,12 @@ export class PanelPointFactory {
   private static nodes: Array<SpriteNode> = []
 
   public static create(position: vec2, name: string): SpriteNode {
-    const circle: ISprite = SpriteFactory.createSprite(PanelPointFactory._circleShap);
-    circle.fillStyle = 'red'
-    circle.x = position.x
-    circle.y = position.y
+    const circleSpr: ISprite = SpriteFactory.createSprite(PanelPointFactory._circleShap);
+    circleSpr.fillStyle = 'red'
+    circleSpr.x = position.x
+    circleSpr.y = position.y
 
-    const circleN = new SpriteNode(circle)
+    const circleN = new SpriteNode(circleSpr)
 
     const textSpr: ISprite = new Sprite2D(new CNodeTextShap(), 'textSpr')
     textSpr.showCoordSystem = false
