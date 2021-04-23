@@ -156,6 +156,6 @@ export class LinkFactory {
   }
 
   public static getNodes(): Array<SpriteNode> {
-    return LinkFactory._linkGroups
+    return this._linkGroups
   }
 }
