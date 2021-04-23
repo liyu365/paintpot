@@ -8,7 +8,7 @@ import { LinkTextShap } from '../shaps/LinkTextShap'
 
 import { FlexLineShap } from '../shaps/FlexLineShap'
 
-export class FlexLinkFactory {
+export class VerticalFlexLinkFactory {
 
   private static _arrowShap: IShape = SpriteFactory.createPolygon([new vec2(5, 0), new vec2(0, 5), new vec2(0, -5)])
   public static _linkGroups: Array<SpriteNodeGroup> = []

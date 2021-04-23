@@ -3,7 +3,8 @@ import { vec2 } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from './lib/spriteSystem/sprite2d'
 import { LinkFactory } from './factory/LinkFactory'
-import { FlexLinkFactory } from './factory/FlexLinkFactory'
+import { HorizontalFlexLinkFactory } from './factory/HorizontalFlexLinkFactory'
+import { VerticalFlexLinkFactory } from './factory/VerticalFlexLinkFactory'
 import { PanelPointFactory } from './factory/PanelPointFactory'
 import { ContainerFactory } from './factory/ContainerFactory'
 import { PanelRectFactory } from './factory/PanelRectFactory'
@@ -101,8 +102,15 @@ class topologyApplication {
     root.addChild(rectNode4);
     const rectNode5: SpriteNode = PanelRectFactory.create(new vec2(850, 300));
     root.addChild(rectNode5);
-    FlexLinkFactory.create(rectNode4.sprite, rectNode5.sprite, '1');
-    FlexLinkFactory.create(rectNode5.sprite, rectNode4.sprite, '2');
+    HorizontalFlexLinkFactory.create(rectNode4.sprite, rectNode5.sprite, '1');
+    HorizontalFlexLinkFactory.create(rectNode5.sprite, rectNode4.sprite, '2');
+
+    const rectNode6: SpriteNode = PanelRectFactory.create(new vec2(700, 400));
+    root.addChild(rectNode6);
+    const rectNode7: SpriteNode = PanelRectFactory.create(new vec2(850, 500));
+    root.addChild(rectNode7);
+    VerticalFlexLinkFactory.create(rectNode6.sprite, rectNode7.sprite, '3');
+
 
 
 
@@ -113,7 +121,10 @@ class topologyApplication {
     LinkFactory.getNodes().forEach(node => {
       root.addChild(node);
     });
-    FlexLinkFactory.getNodes().forEach(node => {
+    HorizontalFlexLinkFactory.getNodes().forEach(node => {
+      root.addChild(node);
+    });
+    VerticalFlexLinkFactory.getNodes().forEach(node => {
       root.addChild(node);
     });
     PanelPointFactory.getNodes().forEach(node => {
