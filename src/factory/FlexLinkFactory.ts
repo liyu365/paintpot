@@ -6,6 +6,8 @@ import { SpriteNode, SpriteNodeGroup } from '../lib/spriteSystem/sprite2dHierarc
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { LinkTextShap } from '../shaps/LinkTextShap'
 
+import { FlexLineShap } from '../shaps/FlexLineShap'
+
 export class FlexLinkFactory {
 
   private static _arrowShap: IShape = SpriteFactory.createPolygon([new vec2(5, 0), new vec2(0, 5), new vec2(0, -5)])
@@ -15,7 +17,7 @@ export class FlexLinkFactory {
   private static _sameLinkGap = 25
 
   public static create(from: ISprite | undefined, to: ISprite | undefined, name: string): void {
-    const linkSpr: ISprite = SpriteFactory.createSprite(SpriteFactory.createXLine());
+    const linkSpr: ISprite = SpriteFactory.createSprite(new FlexLineShap(new vec2(0, 0), new vec2(0, 0), new vec2(0, 0), new vec2(0, 0)));
     linkSpr.strokeStyle = 'green'
     linkSpr.lineWidth = 4
     linkSpr.data = {}
@@ -94,61 +96,58 @@ export class FlexLinkFactory {
     }
 
     const d = Math.sqrt((pt2.y - pt1.y) * (pt2.y - pt1.y) + (pt2.x - pt1.x) * (pt2.x - pt1.x))
+    const xd = pt2.x - pt1.x
+    const yd = pt2.y - pt1.y
     const linkGroupAngle = vec2.getOrientation(pt1, pt2)
     if (linkGroup.sprite) {
       linkGroup.sprite.x = pt1.x
       linkGroup.sprite.y = pt1.y
-      linkGroup.sprite.rotation = linkGroupAngle
     }
     if (children) {
       const count = children.length
       children.forEach((linkN, index) => {
         const linkSpr = (linkN as SpriteNode).sprite
         if (linkSpr) {
-          const gap = this._circleRadius + this._linkCircleGap
-          const line: Line = linkSpr.shape as Line
-          line.start = vec2.create(gap, 0); // 注意line这个shap的start和end的坐标y值都是0
-          line.end = vec2.create(d - gap, 0);
-          linkSpr.y = this._sameLinkGap * index + - (this._sameLinkGap * (count - 1)) / 2
-
-          // 此linkSpr定义的方向与包含它的linkGroup的方向相反，所以此linkSpr要反向绘制
-          if (linkSpr.data.from !== linkGroup.params.from) {
-            linkSpr.rotation = 180
-            linkSpr.x = d
+          let xDeviation = 0
+          if (pt2.x >= pt1.x) {
+            xDeviation = pt2.y <= pt1.y ? index * 20 : - index * 20
+          } else {
+            xDeviation = pt2.y <= pt1.y ? -index * 20 : index * 20
           }
+          const line: FlexLineShap = linkSpr.shape as FlexLineShap
+          line.start = vec2.create(0, 0);
+          line.point1 = vec2.create(xd / 2 + xDeviation, 0);
+          line.point2 = vec2.create(xd / 2 + xDeviation, yd);
+          line.end = vec2.create(xd, yd);
+          linkSpr.y = this._sameLinkGap * index + - (this._sameLinkGap * (count - 1)) / 2
 
           const arrowNode = linkN.getChildAt(0) as SpriteNode
           if (arrowNode) {
             const arrow = arrowNode.sprite as Sprite2D
-            arrow.x = d - gap - 5
+            if (linkSpr.data.from === linkGroup.params.from) {
+              arrow.x = xd
+              arrow.y = yd
+              if (pt2.x >= pt1.x) {
+                arrow.rotation = 0
+              } else {
+                arrow.rotation = 180
+              }
+            } else {
+              arrow.x = 0
+              arrow.y = 0
+              if (pt2.x >= pt1.x) {
+                arrow.rotation = 180
+              } else {
+                arrow.rotation = 0
+              }
+            }
           }
 
           const lnikTextNode = linkN.getChildAt(1) as SpriteNode
           if (lnikTextNode) {
             const lnikTextSpr = lnikTextNode.sprite as Sprite2D
-            lnikTextSpr.x = d / 2
-            lnikTextSpr.y = 0
-            // 此linkSpr定义的方向与包含它的linkGroup的方向相反，所以此linkSpr中的文字也要反向绘制
-            if (linkSpr.data.from !== linkGroup.params.from) {
-              lnikTextSpr.data.isReverse = true // 为反向显示的linkSpr打标识
-              lnikTextSpr.rotation = 180
-            }
-
-            // 目标节点在第二、第三象限，文字需要反转，否则连线中的文字倒着显示不方便看
-            if ((linkGroupAngle > 90 && linkGroupAngle < 180) || (linkGroupAngle <= -90 && linkGroupAngle >= -180)) {
-              if (lnikTextSpr.data.isReverse === true) {
-                lnikTextSpr.rotation = 0
-              } else {
-                lnikTextSpr.rotation = 180
-              }
-            } else {
-              //不需要反转
-              if (lnikTextSpr.data.isReverse === true) {
-                lnikTextSpr.rotation = 180
-              } else {
-                lnikTextSpr.rotation = 0
-              }
-            }
+            lnikTextSpr.x = xd / 2 + xDeviation
+            lnikTextSpr.y = yd / 2
           }
         }
       })
