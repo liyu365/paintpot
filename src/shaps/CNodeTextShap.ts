@@ -44,13 +44,22 @@ export class CNodeTextShap extends BaseShape2D {
 
   private drawRoundRect(cxt: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
     cxt.beginPath();
-    cxt.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 3 / 2);
-    cxt.lineTo(width - radius + x, y);
-    cxt.arc(width - radius + x, radius + y, radius, Math.PI * 3 / 2, Math.PI * 2);
-    cxt.lineTo(width + x, height + y - radius);
-    cxt.arc(width - radius + x, height - radius + y, radius, 0, Math.PI * 1 / 2);
-    cxt.lineTo(radius + x, height + y);
-    cxt.arc(radius + x, height - radius + y, radius, Math.PI * 1 / 2, Math.PI);
+    cxt.moveTo(x + radius, y)
+    cxt.lineTo(x + width - radius, y)
+    cxt.quadraticCurveTo(x + width, y, x + width, y + radius)
+    cxt.lineTo(x + width, y + height - radius)
+    cxt.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
+    cxt.lineTo(x + radius, y + height)
+    cxt.quadraticCurveTo(x, y + height, x, y + height - radius)
+    cxt.lineTo(x, y + radius)
+    cxt.quadraticCurveTo(x, y, x + radius, y)
+    // cxt.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 3 / 2);
+    // cxt.lineTo(width - radius + x, y);
+    // cxt.arc(width - radius + x, radius + y, radius, Math.PI * 3 / 2, Math.PI * 2);
+    // cxt.lineTo(width + x, height + y - radius);
+    // cxt.arc(width - radius + x, height - radius + y, radius, 0, Math.PI * 1 / 2);
+    // cxt.lineTo(radius + x, height + y);
+    // cxt.arc(radius + x, height - radius + y, radius, Math.PI * 1 / 2, Math.PI);
     cxt.closePath();
   }
 
