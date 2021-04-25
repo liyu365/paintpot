@@ -3,22 +3,18 @@ import { BaseShape2D } from "../lib/spriteSystem/shapes";
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { vec2 } from "../lib/math2d";
 
-export class FlexLineShap extends BaseShape2D {
+export class RaduisLineShap extends BaseShape2D {
 
   public radius: number = 7
-  public start: vec2;
-  public point1: vec2;
-  public point2: vec2;
-  public end: vec2;
-  public pointArr: Array<vec2>
+  public pointArr: Array<vec2> = []
 
-  public constructor(start: vec2, point1: vec2, point2: vec2, end: vec2) {
+  public constructor(pointCount: number = 0, radius: number = 0) {
     super();
-    this.start = start
-    this.point1 = point1
-    this.point2 = point2
-    this.end = end
-    this.pointArr = [this.start, this.point1, this.point2, this.end]
+
+    this.radius = radius
+    for (let i = 0; i < pointCount; i++) {
+      this.pointArr.push(new vec2(0, 0))
+    }
   }
 
   public hitTest(localPt: vec2, transform: ITransformable): boolean {
@@ -41,15 +37,17 @@ export class FlexLineShap extends BaseShape2D {
   }
 
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
-    this.pointArr = [this.start, this.point1, this.point2, this.end]
 
     context.beginPath();
 
     if (this.radius === 0) {
-      context.moveTo(this.start.x, this.start.y);
-      context.lineTo(this.point1.x, this.point1.y);
-      context.lineTo(this.point2.x, this.point2.y);
-      context.lineTo(this.end.x, this.end.y);
+      this.pointArr.forEach((point, index) => {
+        if (index === 0) {
+          context.moveTo(point.x, point.y);
+        } else {
+          context.lineTo(point.x, point.y);
+        }
+      });
     } else {
       this.pointArr.forEach((point, index) => {
         if (index === 0) {
@@ -64,12 +62,10 @@ export class FlexLineShap extends BaseShape2D {
       });
     }
 
-
-
     context.stroke();
   }
 
   public get type(): string {
-    return "FlexLineShap";
+    return "RaduisLineShap";
   }
 }

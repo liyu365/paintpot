@@ -1,23 +1,19 @@
 import { ISprite, SpriteFactory, IShape, EOrder } from "../lib/spriteSystem/interface";
 import { CanvasMouseEvent } from "../lib/application";
 import { vec2, Math2D } from "../lib/math2d";
-import { Line } from "../lib/spriteSystem/shapes";
 import { SpriteNode, SpriteNodeGroup } from '../lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { LinkTextShap } from '../shaps/LinkTextShap'
-
-import { FlexLineShap } from '../shaps/FlexLineShap'
+import { RaduisLineShap } from '../shaps/RaduisLineShap'
 
 export class HorizontalFlexLinkFactory {
 
   private static _arrowShap: IShape = SpriteFactory.createPolygon([new vec2(5, 0), new vec2(0, 5), new vec2(0, -5)])
   public static _linkGroups: Array<SpriteNodeGroup> = []
-  private static _linkCircleGap = 5
-  private static _circleRadius = 30
   private static _sameLinkGap = 25
 
   public static create(from: ISprite | undefined, to: ISprite | undefined, name: string): void {
-    const linkSpr: ISprite = SpriteFactory.createSprite(new FlexLineShap(new vec2(0, 0), new vec2(0, 0), new vec2(0, 0), new vec2(0, 0)));
+    const linkSpr: ISprite = SpriteFactory.createSprite(new RaduisLineShap(4, 20));
     linkSpr.strokeStyle = 'green'
     linkSpr.lineWidth = 4
     linkSpr.data = {}
@@ -114,11 +110,11 @@ export class HorizontalFlexLinkFactory {
           } else {
             xDeviation = pt2.y <= pt1.y ? -index * 20 : index * 20
           }
-          const line: FlexLineShap = linkSpr.shape as FlexLineShap
-          line.start = vec2.create(0, 0);
-          line.point1 = vec2.create(xd / 2 + xDeviation, 0);
-          line.point2 = vec2.create(xd / 2 + xDeviation, yd);
-          line.end = vec2.create(xd, yd);
+          const line: RaduisLineShap = linkSpr.shape as RaduisLineShap
+          line.pointArr[0] = vec2.create(0, 0);
+          line.pointArr[1] = vec2.create(xd / 2 + xDeviation, 0);
+          line.pointArr[2] = vec2.create(xd / 2 + xDeviation, yd);
+          line.pointArr[3] = vec2.create(xd, yd);
           linkSpr.y = this._sameLinkGap * index + - (this._sameLinkGap * (count - 1)) / 2
 
           const arrowNode = linkN.getChildAt(0) as SpriteNode
