@@ -1,4 +1,4 @@
-import { ITransformable, IRenderState } from "../lib/spriteSystem/interface";
+import { ITransformable, IRenderState, Bounding } from "../lib/spriteSystem/interface";
 import { BaseShape2D } from "../lib/spriteSystem/shapes";
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { vec2 } from "../lib/math2d";
@@ -10,6 +10,15 @@ export class CNodeTextShap extends BaseShape2D {
   }
   public hitTest(localPt: vec2, transform: ITransformable): boolean {
     return false
+  }
+
+  public getBounding(): Bounding {
+    return {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0
+    }
   }
 
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D,): void {

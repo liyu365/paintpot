@@ -20,7 +20,7 @@ export abstract class BaseShape2D implements IShape {
     this.data = undefined;
   }
 
-  protected drawLine(ctx: CanvasRenderingContext2D, style: string | CanvasGradient | CanvasPattern, isAxisX: boolean = true) {
+  protected drawLine(ctx: CanvasRenderingContext2D, style: string | CanvasGradient | CanvasPattern, isAxisX: boolean = true): void {
     ctx.save();
     ctx.strokeStyle = style;
     ctx.lineWidth = this.axisLineWidth;

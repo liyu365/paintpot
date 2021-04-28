@@ -1,7 +1,6 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
 import { vec2 } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
-import { Sprite2D } from './lib/spriteSystem/sprite2d'
 import { LinkFactory } from './factory/LinkFactory'
 import { HorizontalFlexLinkFactory } from './factory/HorizontalFlexLinkFactory'
 import { VerticalFlexLinkFactory } from './factory/VerticalFlexLinkFactory'

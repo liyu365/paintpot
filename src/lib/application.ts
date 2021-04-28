@@ -9,7 +9,7 @@ export enum EInputEventType {
     KEYUP,
     KEYDOWN,
     KEYPRESS
-};
+}
 
 export class CanvasInputEvent {
     public altKey: boolean;
@@ -107,7 +107,7 @@ export class Application implements EventListenerObject {
         return this._start;
     }
 
-    public get fps() {
+    public get fps(): number {
         return this._fps;
     }
 
