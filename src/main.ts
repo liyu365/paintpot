@@ -1,6 +1,7 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
 import { vec2 } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
+import { Sprite2D } from './lib/spriteSystem/sprite2d'
 import { LinkFactory } from './factory/LinkFactory'
 import { HorizontalFlexLinkFactory } from './factory/HorizontalFlexLinkFactory'
 import { VerticalFlexLinkFactory } from './factory/VerticalFlexLinkFactory'
@@ -12,6 +13,8 @@ import { PanelRectFactory } from './factory/PanelRectFactory'
 class topologyApplication {
   private _app: Sprite2DApplication
   private _curZoom = 1
+  private lastMouseX = 0
+  private lastMouseY = 0
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
@@ -19,38 +22,53 @@ class topologyApplication {
     this.init();
     this._app.start();
 
-    const zoomInButton: HTMLElement = document.querySelector('#zoomIN') as HTMLElement
-    const zoomOutButton: HTMLElement = document.querySelector('#zoomOut') as HTMLElement
-    zoomInButton.onclick = () => {
+    // const zoomInButton: HTMLElement = document.querySelector('#zoomIN') as HTMLElement
+    // const zoomOutButton: HTMLElement = document.querySelector('#zoomOut') as HTMLElement
+    // zoomInButton.onclick = () => {
+    //   this._curZoom *= 1.2
+    //   this.handleZoomChange()
+    // }
+    // zoomOutButton.onclick = () => {
+    //   this._curZoom /= 1.2
+    //   this.handleZoomChange()
+    // }
+
+    this._app.canvas.addEventListener('mousewheel', this.handleScale.bind(this))
+  }
+
+  private handleScale(evt: Event): void {
+    let event = evt as any
+    let wheelDelta = event.wheelDelta || event.detail;		//detail是firefox的属性
+    let c: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
+    //console.log(wheelDelta)
+    if (wheelDelta === 120) {
       this._curZoom *= 1.2
-      this.handleZoomChange()
-    }
-    zoomOutButton.onclick = () => {
+      this.handleZoomChange(c.x, c.y, 'up')
+    } else if (wheelDelta === -120) {
       this._curZoom /= 1.2
-      this.handleZoomChange()
+      this.handleZoomChange(c.x, c.y, 'down')
     }
   }
 
-  private handleZoomChange(): void {
+  private handleZoomChange(mouseX: number, mouseY: number, action: string): void {
     const root = this._app.rootContainer as SpriteNode
     const rootSpr = root.sprite
     const canvas: HTMLCanvasElement | null = document.getElementById('canvas') as HTMLCanvasElement;
     if (rootSpr) {
       rootSpr.scaleX = this._curZoom
       rootSpr.scaleY = this._curZoom
-      if (canvas) {
-        const mouseX = (canvas.offsetWidth / 2)
-        const mouseY = (canvas.offsetHeight / 2)
-
-        // let mouseX = 320
-        // let mouseY = 120
-        const newW = canvas.offsetWidth * this._curZoom
-        const newH = canvas.offsetHeight * this._curZoom
-        const x = mouseX - mouseX / canvas.offsetWidth * newW // mouseX - mouseX映射到新宽度中的x坐标
-        const y = mouseY - mouseY / canvas.offsetHeight * newH
-        rootSpr.x = x
-        rootSpr.y = y
+      let x = 0
+      let y = 0
+      //感谢 https://www.cnblogs.com/3body/p/9436864.html
+      if (action === 'up') {
+        x = (mouseX - rootSpr.x) * 1.2 - (mouseX - rootSpr.x)
+        y = (mouseY - rootSpr.y) * 1.2 - (mouseY - rootSpr.y)
+      } else {
+        x = (mouseX - rootSpr.x) / 1.2 - (mouseX - rootSpr.x)
+        y = (mouseY - rootSpr.y) / 1.2 - (mouseY - rootSpr.y)
       }
+      rootSpr.x = rootSpr.x - x
+      rootSpr.y = rootSpr.y - y
     }
   }
 

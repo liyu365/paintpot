@@ -209,7 +209,7 @@ export class Application implements EventListenerObject {
     return;
   }
 
-  private _viewportToCanvasCoordinate(evt: MouseEvent): vec2 {
+  public _viewportToCanvasCoordinate(evt: MouseEvent): vec2 {
     if (this.canvas) {
       let rect: ClientRect = this.canvas.getBoundingClientRect();
       if (evt.type === "mousedown") {
