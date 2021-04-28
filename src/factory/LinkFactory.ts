@@ -74,7 +74,7 @@ export class LinkFactory {
   }
 
   private static handleLinkEvent(spr: ISprite, evt: CanvasMouseEvent): void {
-    console.log('handleLinkEvent', spr)
+    console.log('handleLinkEvent', spr, evt)
   }
 
   private static handleLinkGroupUpdate(spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void {
