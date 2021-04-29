@@ -1,7 +1,6 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
 import { vec2 } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
-import { Sprite2D } from './lib/spriteSystem/sprite2d'
 import { LinkFactory } from './factory/LinkFactory'
 import { HorizontalFlexLinkFactory } from './factory/HorizontalFlexLinkFactory'
 import { VerticalFlexLinkFactory } from './factory/VerticalFlexLinkFactory'
@@ -9,12 +8,21 @@ import { PanelPointFactory } from './factory/PanelPointFactory'
 import { ContainerFactory } from './factory/ContainerFactory'
 import { PanelRectFactory } from './factory/PanelRectFactory'
 
+interface WheelEvent extends Event {
+  wheelDelta: number,
+  detail: number
+}
+
+export enum WheelType {
+  UP,
+  DOWN
+}
 
 class topologyApplication {
   private _app: Sprite2DApplication
   private _curZoom = 1
-  private lastMouseX = 0
-  private lastMouseY = 0
+  private lastWheelMouseX = 0
+  private lastWheelMouseY = 0
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
@@ -22,51 +30,54 @@ class topologyApplication {
     this.init();
     this._app.start();
 
-    // const zoomInButton: HTMLElement = document.querySelector('#zoomIN') as HTMLElement
-    // const zoomOutButton: HTMLElement = document.querySelector('#zoomOut') as HTMLElement
-    // zoomInButton.onclick = () => {
-    //   this._curZoom *= 1.2
-    //   this.handleZoomChange()
-    // }
-    // zoomOutButton.onclick = () => {
-    //   this._curZoom /= 1.2
-    //   this.handleZoomChange()
-    // }
+    const zoomInButton: HTMLElement = document.querySelector('#zoomIN') as HTMLElement
+    const zoomOutButton: HTMLElement = document.querySelector('#zoomOut') as HTMLElement
+    zoomInButton.onclick = () => {
+      this._curZoom *= 1.2
+      this.handleScaleChange(this.lastWheelMouseX, this.lastWheelMouseY, WheelType.UP)
+    }
+    zoomOutButton.onclick = () => {
+      this._curZoom /= 1.2
+      this.handleScaleChange(this.lastWheelMouseX, this.lastWheelMouseY, WheelType.DOWN)
+    }
 
-    this._app.canvas.addEventListener('mousewheel', this.handleScale.bind(this))
+    this._app.canvas.addEventListener('mousewheel', this.handleWheel.bind(this))
+    this._app.canvas.addEventListener('DOMMouseScroll', this.handleWheel.bind(this))
   }
 
-  private handleScale(evt: Event): void {
-    let event = evt as any
-    let wheelDelta = event.wheelDelta || event.detail;		//detail是firefox的属性
-    let c: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
-    //console.log(wheelDelta)
-    if (wheelDelta === 120) {
+  private handleWheel(evt: Event): void {
+    let wheelEvt = evt as WheelEvent
+    let wheelDelta = wheelEvt.wheelDelta || wheelEvt.detail;		//detail是firefox的属性
+    let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
+    if (wheelDelta === 120 || wheelDelta === -3 || wheelDelta === -10) {
+      // 向上滚
       this._curZoom *= 1.2
-      this.handleZoomChange(c.x, c.y, 'up')
-    } else if (wheelDelta === -120) {
+      this.handleScaleChange(mouseOffset.x, mouseOffset.y, WheelType.UP)
+    } else if (wheelDelta === -120 || wheelDelta === 3 || wheelDelta === 10) {
+      // 向下滚
       this._curZoom /= 1.2
-      this.handleZoomChange(c.x, c.y, 'down')
+      this.handleScaleChange(mouseOffset.x, mouseOffset.y, WheelType.DOWN)
     }
   }
 
-  private handleZoomChange(mouseX: number, mouseY: number, action: string): void {
+  private handleScaleChange(mouseX: number, mouseY: number, action: WheelType): void {
     const root = this._app.rootContainer as SpriteNode
     const rootSpr = root.sprite
-    const canvas: HTMLCanvasElement | null = document.getElementById('canvas') as HTMLCanvasElement;
     if (rootSpr) {
       rootSpr.scaleX = this._curZoom
       rootSpr.scaleY = this._curZoom
       let x = 0
       let y = 0
-      //感谢 https://www.cnblogs.com/3body/p/9436864.html
-      if (action === 'up') {
+      //感谢 https://www.cnblogs.com/3body/p/9436864.html 这篇文章
+      if (action === WheelType.UP) {
         x = (mouseX - rootSpr.x) * 1.2 - (mouseX - rootSpr.x)
         y = (mouseY - rootSpr.y) * 1.2 - (mouseY - rootSpr.y)
-      } else {
+      } else if (action === WheelType.DOWN) {
         x = (mouseX - rootSpr.x) / 1.2 - (mouseX - rootSpr.x)
         y = (mouseY - rootSpr.y) / 1.2 - (mouseY - rootSpr.y)
       }
+      this.lastWheelMouseX = mouseX // 缓存最后一次滚动滚轮时的鼠标位置，为点击缩放按钮时使用
+      this.lastWheelMouseY = mouseY
       rootSpr.x = rootSpr.x - x
       rootSpr.y = rootSpr.y - y
     }

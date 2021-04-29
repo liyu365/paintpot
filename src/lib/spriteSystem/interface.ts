@@ -95,6 +95,8 @@ export interface ISprite extends ITransformable, IRenderState {
   keyEvent: KeyboardEventHandler | null;
   updateEvent: UpdateEventHandler | null;
   renderEvent: RenderEventHandler | null;
+
+  dragMove: MouseEventHandler;
 }
 
 export interface IDispatcher {

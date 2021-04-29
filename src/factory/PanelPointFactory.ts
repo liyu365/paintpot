@@ -22,6 +22,9 @@ export class PanelPointFactory {
     circleSpr.fillStyle = 'red'
     circleSpr.x = position.x
     circleSpr.y = position.y
+    circleSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
+      circleSpr.dragMove(spr, evt)
+    }
 
     const circleN = new SpriteNode(circleSpr)
 

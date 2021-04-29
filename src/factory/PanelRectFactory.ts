@@ -19,6 +19,9 @@ export class PanelRectFactory {
     spr.fillStyle = 'orange'
     spr.x = position.x
     spr.y = position.y
+    spr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
+      spr.dragMove(spr, evt)
+    }
 
     let node = new SpriteNode(spr)
     this.nodes.push(node)

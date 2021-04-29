@@ -21,23 +21,7 @@ export class Sprite2D implements ISprite {
 
   private diffX: number = 0;
   private diffY: number = 0;
-  public mouseEvent: MouseEventHandler | null = (spr: ISprite, evt: CanvasMouseEvent): void => {
-    let parentSpr = spr.owner.getParentSprite()
-    let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
-    if (parentSpr) {
-      position = Math2D.transform(parentSpr.getLocalMatrix(), position) // 把鼠标的坐标用父sprite的局部矩阵进行转换
-    }
-    if (evt.type === EInputEventType.MOUSEDOWN) {
-      this.diffX = position.x - this.x
-      this.diffY = position.y - this.y
-    }
-    if (evt.type === EInputEventType.MOUSEDRAG) {
-      this.x = position.x - this.diffX
-      this.y = position.y - this.diffY
-      // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
-      // console.log('局部坐标', new vec2(this.x, this.y))
-    }
-  };
+  public mouseEvent: MouseEventHandler | null = null;
   public keyEvent: KeyboardEventHandler | null = null;
   public updateEvent: UpdateEventHandler | null = null;
   public renderEvent: RenderEventHandler | null = null;
@@ -159,6 +143,24 @@ export class Sprite2D implements ISprite {
       return this.shape.hitTest(localPt, this);
     } else {
       return false;
+    }
+  }
+
+  public dragMove(spr: ISprite, evt: CanvasMouseEvent): void {
+    let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
+    let parentSpr = spr.owner.getParentSprite()
+    if (parentSpr) {
+      position = Math2D.transform(parentSpr.getLocalMatrix(), position) // 把鼠标的坐标用父sprite的局部矩阵进行转换
+    }
+    if (evt.type === EInputEventType.MOUSEDOWN) {
+      this.diffX = position.x - this.x
+      this.diffY = position.y - this.y
+    }
+    if (evt.type === EInputEventType.MOUSEDRAG) {
+      this.x = position.x - this.diffX
+      this.y = position.y - this.diffY
+      // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
+      // console.log('局部坐标', new vec2(this.x, this.y))
     }
   }
 
