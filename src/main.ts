@@ -1,5 +1,5 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
-import { vec2 } from "./lib/math2d";
+import { vec2, Math2D } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
 import { LinkFactory } from './factory/LinkFactory'
 import { HorizontalFlexLinkFactory } from './factory/HorizontalFlexLinkFactory'
@@ -23,6 +23,9 @@ class topologyApplication {
   private _curZoom = 1
   private lastWheelMouseX = 0
   private lastWheelMouseY = 0
+  private _isMouseDown = false
+  private _diffX = 0
+  private _diffY = 0
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
@@ -43,6 +46,37 @@ class topologyApplication {
 
     this._app.canvas.addEventListener('mousewheel', this.handleWheel.bind(this))
     this._app.canvas.addEventListener('DOMMouseScroll', this.handleWheel.bind(this))
+    this._app.canvas.addEventListener('mousedown', (evt: Event) => {
+      const root = this._app.rootContainer as SpriteNode
+      const rootSpr = root.sprite
+      if (rootSpr) {
+        let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
+        let position = Math2D.transform(rootSpr.getLocalMatrix(), mouseOffset)
+
+        this._diffX = mouseOffset.x - rootSpr.x
+        this._diffY = mouseOffset.y - rootSpr.y
+        this._isMouseDown = true
+      }
+    })
+    this._app.canvas.addEventListener('mouseup', () => {
+      this._isMouseDown = false
+
+    })
+    this._app.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this))
+  }
+
+  private handleMouseMove(evt: Event): void {
+    const root = this._app.rootContainer as SpriteNode
+    const rootSpr = root.sprite
+    if (rootSpr) {
+      if (this._isMouseDown && !this._app.getDragSprite() || this._app.getDragSprite() === rootSpr) {
+        let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
+        rootSpr.x = mouseOffset.x - this._diffX
+        rootSpr.y = mouseOffset.y - this._diffY
+
+      }
+    }
+
   }
 
   private handleWheel(evt: Event): void {

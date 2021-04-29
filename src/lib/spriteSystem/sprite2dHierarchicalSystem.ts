@@ -196,6 +196,10 @@ export class SpriteNodeManager implements IDispatcher {
     return this._rootNode;
   }
 
+  public get dragSprite(): ISprite | undefined {
+    return this._dragSprite
+  }
+
   public dispatchMouseEvent(evt: CanvasMouseEvent): void {
     if (evt.type === EInputEventType.MOUSEUP) {
       this._dragSprite = undefined;

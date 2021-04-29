@@ -61,6 +61,10 @@ export class Sprite2DManager implements ISpriteContainer, IDispatcher {
     return this;
   }
 
+  public get dragSprite(): ISprite | undefined {
+    return this._dragSprite
+  }
+
   public dispatchUpdate(msec: number, diff: number): void {
     for (let i = 0; i < this._sprites.length; i++) {
       this._sprites[i].update(msec, diff, EOrder.PREORDER);

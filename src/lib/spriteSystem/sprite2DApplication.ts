@@ -1,5 +1,5 @@
 import { Canvas2DApplication, CanvasMouseEvent, CanvasKeyBoardEvent } from "../application";
-import { ISpriteContainer, IDispatcher } from "./interface";
+import { ISpriteContainer, IDispatcher, ISprite } from "./interface";
 import { Sprite2DManager } from "./sprite2dSystem";
 import { SpriteNodeManager } from "./sprite2dHierarchicalSystem"
 
@@ -32,6 +32,11 @@ export class Sprite2DApplication extends Canvas2DApplication {
       this.context2D.clearRect(0, 0, this.context2D.canvas.width, this.context2D.canvas.height);
       this._dispatcher.dispatchDraw(this.context2D);
     }
+  }
+
+  // 返回正在被拖动的sprite
+  public getDragSprite(): ISprite | undefined {
+    return this._dispatcher.dragSprite
   }
 
   protected dispatchMouseDown(evt: CanvasMouseEvent): void {
