@@ -43,6 +43,8 @@ class topologyApplication {
       this._curZoom /= 1.2
       this.handleScaleChange(this.lastWheelMouseX, this.lastWheelMouseY, WheelType.DOWN)
     }
+    this.lastWheelMouseX = this._app.canvas.offsetWidth / 2
+    this.lastWheelMouseY = this._app.canvas.offsetHeight / 2
 
     this._app.canvas.addEventListener('mousewheel', this.handleWheel.bind(this))
     this._app.canvas.addEventListener('DOMMouseScroll', this.handleWheel.bind(this))
@@ -51,8 +53,6 @@ class topologyApplication {
       const rootSpr = root.sprite
       if (rootSpr) {
         let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
-        let position = Math2D.transform(rootSpr.getLocalMatrix(), mouseOffset)
-
         this._diffX = mouseOffset.x - rootSpr.x
         this._diffY = mouseOffset.y - rootSpr.y
         this._isMouseDown = true

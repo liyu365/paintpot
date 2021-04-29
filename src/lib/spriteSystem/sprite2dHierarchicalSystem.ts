@@ -185,7 +185,7 @@ export class SpriteNodeManager implements IDispatcher {
   public constructor(width: number, height: number) {
     let spr: ISprite = SpriteFactory.createISprite(SpriteFactory.createGrid(width, height));
     spr.name = 'root';
-    spr.strokeStyle = "black";
+    spr.strokeStyle = "rgba(0,0,0,0.1)";
     spr.fillStyle = 'white';
     spr.renderType = ERenderType.STROKE_FILL;
     this._rootNode = new SpriteNode(spr, undefined, spr.name);
