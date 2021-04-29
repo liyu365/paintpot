@@ -46,23 +46,27 @@ class topologyApplication {
     this.lastWheelMouseX = this._app.canvas.offsetWidth / 2
     this.lastWheelMouseY = this._app.canvas.offsetHeight / 2
 
+
+    this._app.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this))
+    this._app.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this))
+    this._app.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this))
     this._app.canvas.addEventListener('mousewheel', this.handleWheel.bind(this))
     this._app.canvas.addEventListener('DOMMouseScroll', this.handleWheel.bind(this))
-    this._app.canvas.addEventListener('mousedown', (evt: Event) => {
-      const root = this._app.rootContainer as SpriteNode
-      const rootSpr = root.sprite
-      if (rootSpr) {
-        let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
-        this._diffX = mouseOffset.x - rootSpr.x
-        this._diffY = mouseOffset.y - rootSpr.y
-        this._isMouseDown = true
-      }
-    })
-    this._app.canvas.addEventListener('mouseup', () => {
-      this._isMouseDown = false
+  }
 
-    })
-    this._app.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this))
+  private handleMouseDown(evt: Event): void {
+    const root = this._app.rootContainer as SpriteNode
+    const rootSpr = root.sprite
+    if (rootSpr) {
+      let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
+      this._diffX = mouseOffset.x - rootSpr.x
+      this._diffY = mouseOffset.y - rootSpr.y
+      this._isMouseDown = true
+    }
+  }
+
+  private handleMouseUp(evt: Event): void {
+    this._isMouseDown = false
   }
 
   private handleMouseMove(evt: Event): void {
@@ -76,7 +80,6 @@ class topologyApplication {
 
       }
     }
-
   }
 
   private handleWheel(evt: Event): void {
