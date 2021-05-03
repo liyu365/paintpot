@@ -82,6 +82,7 @@ class topologyApplication {
   }
 
   private handleWheel(evt: Event): void {
+    evt.preventDefault()
     let wheelEvt = evt as WheelEvent
     let wheelDelta = wheelEvt.wheelDelta || wheelEvt.detail;		//detail是firefox的属性
     let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
