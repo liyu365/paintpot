@@ -26,6 +26,10 @@ export class Sprite2D implements ISprite {
   public updateEvent: UpdateEventHandler | null = null;
   public renderEvent: RenderEventHandler | null = null;
 
+  public dragAble: boolean = false
+  public selectAble: boolean = false
+  public resizeAble: boolean = false
+
   public constructor(shape: IShape, name: string) {
     this.name = name;
     this.shape = shape;
@@ -146,24 +150,6 @@ export class Sprite2D implements ISprite {
     }
   }
 
-  public dragMove(spr: ISprite, evt: CanvasMouseEvent): void {
-    let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
-    let parentSpr = spr.owner.getParentSprite()
-    if (parentSpr) {
-      position = Math2D.transform(parentSpr.getLocalMatrix(), position) // 把鼠标的坐标用父sprite的局部矩阵进行转换
-    }
-    if (evt.type === EInputEventType.MOUSEDOWN) {
-      this.diffX = position.x - this.x
-      this.diffY = position.y - this.y
-    }
-    if (evt.type === EInputEventType.MOUSEDRAG) {
-      this.x = position.x - this.diffX
-      this.y = position.y - this.diffY
-      // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
-      // console.log('局部坐标', new vec2(this.x, this.y))
-    }
-  }
-
   public draw(context: CanvasRenderingContext2D): void {
     if (this.isVisible) {
       this.shape.beginDraw(this, this, context);
@@ -176,6 +162,28 @@ export class Sprite2D implements ISprite {
       }
       this.shape.endDraw(this, this, context);
     }
+  }
+
+  public defaultMouseEvent(spr: ISprite, evt: CanvasMouseEvent): void {
+    if (this.dragAble === true) {
+      let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
+      let parentSpr = spr.owner.getParentSprite()
+      if (parentSpr) {
+        position = Math2D.transform(parentSpr.getLocalMatrix(), position) // 把鼠标的坐标用父sprite的局部矩阵进行转换
+      }
+      if (evt.type === EInputEventType.MOUSEDOWN) {
+        this.diffX = position.x - this.x
+        this.diffY = position.y - this.y
+      }
+      if (evt.type === EInputEventType.MOUSEDRAG) {
+        this.x = position.x - this.diffX
+        this.y = position.y - this.diffY
+        // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
+        // console.log('局部坐标', new vec2(this.x, this.y))
+      }
+    }
+
+    // console.log('defaultMouseEvent')
   }
 }
 

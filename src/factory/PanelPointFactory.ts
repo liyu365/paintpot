@@ -23,8 +23,11 @@ export class PanelPointFactory {
     circleSpr.x = position.x
     circleSpr.y = position.y
     circleSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      circleSpr.dragMove(spr, evt)
+      if (evt.type === EInputEventType.MOUSEDOWN) {
+        console.log('点击了', spr)
+      }
     }
+    circleSpr.dragAble = true
 
     const circleN = new SpriteNode(circleSpr)
 

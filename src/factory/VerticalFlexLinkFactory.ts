@@ -72,7 +72,7 @@ export class VerticalFlexLinkFactory {
   }
 
   private static handleLinkEvent(spr: ISprite, evt: CanvasMouseEvent): void {
-    console.log('handleLinkEvent', spr)
+
   }
 
   private static handleLinkGroupUpdate(spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void {

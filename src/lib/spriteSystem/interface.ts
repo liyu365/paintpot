@@ -87,6 +87,10 @@ export interface ISprite extends ITransformable, IRenderState {
   owner: ISpriteContainer;
   data: any;
 
+  dragAble: boolean
+  selectAble: boolean
+  resizeAble: boolean
+
   hitTest(localPt: vec2): boolean;
   update(mesc: number, diff: number, order: EOrder): void;
   draw(context: CanvasRenderingContext2D): void;
@@ -96,7 +100,7 @@ export interface ISprite extends ITransformable, IRenderState {
   updateEvent: UpdateEventHandler | null;
   renderEvent: RenderEventHandler | null;
 
-  dragMove: MouseEventHandler;
+  defaultMouseEvent: MouseEventHandler;
 }
 
 export interface IDispatcher {

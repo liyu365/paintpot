@@ -77,7 +77,6 @@ class topologyApplication {
         let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
         rootSpr.x = mouseOffset.x - this._diffX
         rootSpr.y = mouseOffset.y - this._diffY
-
       }
     }
   }
@@ -203,4 +202,6 @@ class topologyApplication {
 }
 
 const canvas: HTMLCanvasElement | null = document.getElementById('canvas') as HTMLCanvasElement;
-new topologyApplication(new Sprite2DApplication(canvas, true));
+const app = new Sprite2DApplication(canvas, true)
+app.isSupportMouseMove = true
+new topologyApplication(app);

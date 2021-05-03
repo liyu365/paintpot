@@ -205,6 +205,7 @@ export class SpriteNodeManager implements IDispatcher {
       this._dragSprite = undefined;
     } else if (evt.type === EInputEventType.MOUSEDRAG) {
       if (this._dragSprite !== undefined) {
+        this._dragSprite.defaultMouseEvent(this._dragSprite, evt)
         if (this._dragSprite.mouseEvent !== null) {
           this._dragSprite.mouseEvent(this._dragSprite, evt);
           return;
@@ -222,6 +223,7 @@ export class SpriteNodeManager implements IDispatcher {
       if (evt.type === EInputEventType.MOUSEDRAG)
         return;
 
+      spr.defaultMouseEvent(spr, evt);
       if (spr.mouseEvent) {
         spr.mouseEvent(spr, evt);
         return;

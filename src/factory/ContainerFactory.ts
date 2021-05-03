@@ -21,8 +21,9 @@ export class ContainerFactory {
     containerSpr.fillStyle = 'rgba(0,0,0,.3)'
     containerSpr.updateEvent = this.handleUpdateEvent.bind(this)
     containerSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      containerSpr.dragMove(spr, evt)
+
     }
+    containerSpr.dragAble = true
 
 
     const sprNode = new SpriteNode(containerSpr)
