@@ -1,13 +1,9 @@
-import { ISprite, SpriteFactory, IShape, EOrder } from "../lib/spriteSystem/interface";
-import { Sprite2DApplication } from "../lib/spriteSystem/sprite2DApplication";
+import { ISprite, SpriteFactory, EOrder } from "../lib/spriteSystem/interface";
 import { CanvasMouseEvent, EInputEventType } from "../lib/application";
-import { vec2, Math2D } from "../lib/math2d";
-import { Line, Rect } from "../lib/spriteSystem/shapes";
+import { vec2, } from "../lib/math2d";
 import { SpriteNode, SpriteNodeGroup } from '../lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
-
-import { CNodeTextShap } from '../shaps/CNodeTextShap'
-import { LinkTextShap } from '../shaps/LinkTextShap'
+import { Canvas2DUtil } from '../lib/canvas2d/canvas2DUtil'
 
 
 export class PanelRectFactory {
@@ -20,9 +16,12 @@ export class PanelRectFactory {
     spr.x = position.x
     spr.y = position.y
     spr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-
+      Canvas2DUtil.dragSprite(spr, evt)
     }
-    spr.dragAble = true
+
+    spr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {
+      Canvas2DUtil.drawSelected(spr, context, renderOreder)
+    }
 
     let node = new SpriteNode(spr)
     this.nodes.push(node)

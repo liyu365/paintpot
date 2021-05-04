@@ -9,6 +9,8 @@ import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { CNodeTextShap } from '../shaps/CNodeTextShap'
 import { LinkTextShap } from '../shaps/LinkTextShap'
 
+import { Canvas2DUtil } from '../lib/canvas2d/canvas2DUtil'
+
 
 
 export class PanelPointFactory {
@@ -23,11 +25,15 @@ export class PanelPointFactory {
     circleSpr.x = position.x
     circleSpr.y = position.y
     circleSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
+      Canvas2DUtil.dragSprite(spr, evt)
       if (evt.type === EInputEventType.MOUSEDOWN) {
         console.log('点击了', spr)
       }
     }
-    circleSpr.dragAble = true
+
+    circleSpr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {
+      Canvas2DUtil.drawSelected(spr, context, renderOreder)
+    }
 
     const circleN = new SpriteNode(circleSpr)
 

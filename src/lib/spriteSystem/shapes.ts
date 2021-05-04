@@ -44,7 +44,7 @@ export abstract class BaseShape2D implements IShape {
     context.setTransform(mat.values[0], mat.values[1], mat.values[2], mat.values[3], mat.values[4], mat.values[5]);
   }
 
-  public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D,): void {
+  public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
     if (state.renderType === ERenderType.STROKE) {
       context.stroke();
     } else if (state.renderType === ERenderType.FILL) {

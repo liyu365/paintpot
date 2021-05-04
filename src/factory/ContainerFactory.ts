@@ -9,6 +9,8 @@ import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { CNodeTextShap } from '../shaps/CNodeTextShap'
 import { LinkTextShap } from '../shaps/LinkTextShap'
 
+import { Canvas2DUtil } from '../lib/canvas2d/canvas2DUtil'
+
 export class ContainerFactory {
 
   private static _sprites: Array<Sprite2D> = []
@@ -21,9 +23,9 @@ export class ContainerFactory {
     containerSpr.fillStyle = 'rgba(0,0,0,.3)'
     containerSpr.updateEvent = this.handleUpdateEvent.bind(this)
     containerSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-
+      Canvas2DUtil.dragSprite(spr, evt)
     }
-    containerSpr.dragAble = true
+
 
 
     const sprNode = new SpriteNode(containerSpr)
