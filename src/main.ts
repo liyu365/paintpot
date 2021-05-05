@@ -1,4 +1,6 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
+import { ISprite, EOrder, IShape, Bounding } from "./lib/spriteSystem/interface";
+import { CanvasMouseEvent, EInputEventType } from "./lib/application";
 import { vec2, Math2D } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
 import { LinkFactory } from './factory/LinkFactory'
@@ -7,6 +9,7 @@ import { VerticalFlexLinkFactory } from './factory/VerticalFlexLinkFactory'
 import { PanelPointFactory } from './factory/PanelPointFactory'
 import { ContainerFactory } from './factory/ContainerFactory'
 import { PanelRectFactory } from './factory/PanelRectFactory'
+
 
 interface WheelEvent extends Event {
   wheelDelta: number,
@@ -18,7 +21,7 @@ export enum WheelType {
   DOWN
 }
 
-class topologyApplication {
+export class TopologyApplication {
   private _app: Sprite2DApplication
   private _curZoom = 1
   private lastWheelMouseX = 0
@@ -120,21 +123,64 @@ class topologyApplication {
     }
   }
 
+  public spriteMouseAction(spr: ISprite, evt: CanvasMouseEvent): void {
+    let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
+    let parentSpr = spr.owner.getParentSprite()
+    if (parentSpr) {
+      position = Math2D.transform(parentSpr.getLocalMatrix(), position) // 把鼠标的坐标用父sprite的局部矩阵进行转换
+    }
+    if (evt.type === EInputEventType.MOUSEDOWN) {
+      spr.diffX = position.x - spr.x
+      spr.diffY = position.y - spr.y
+    }
+    if (evt.type === EInputEventType.MOUSEDRAG) {
+      spr.isDragging = true
+      spr.x = position.x - spr.diffX
+      spr.y = position.y - spr.diffY
+      // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
+      // console.log('局部坐标', new vec2(this.x, this.y))
+    }
+    if (evt.type === EInputEventType.MOUSEUP) {
+      if (spr.isSelected === false && spr.isDragging === false) {
+        spr.isSelected = true
+      }
+      if (spr.isDragging === true) {
+        spr.isDragging = false
+      }
+    }
+  }
+
+  public spriteDrawSelected(spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder): void {
+    if (renderOreder === EOrder.PREORDER && spr.isSelected === true) {
+      let shap: IShape = spr.shape
+      let bounding: Bounding = shap.getBounding()
+      context.save()
+      context.beginPath()
+      context.fillStyle = 'rgba(0,0,0,1)'
+      context.strokeStyle = 'rgba(0,0,0,1)'
+      context.lineWidth = 7
+      context.rect(bounding.left, bounding.top, bounding.right - bounding.left, bounding.bottom - bounding.top)
+      context.fill()
+      context.stroke()
+      context.restore()
+    }
+  }
+
 
   private init(): void {
     const root = this._app.rootContainer as SpriteNode
 
-    const panelPointNode1: SpriteNode = PanelPointFactory.create(new vec2(120, 120), 'panelPointNode1');
-    const panelPointNode2: SpriteNode = PanelPointFactory.create(new vec2(320, 120), 'panelPointNode2');
-    const panelPointNode3: SpriteNode = PanelPointFactory.create(new vec2(320, 400), 'panelPointNode3');
+    const panelPointNode1: SpriteNode = PanelPointFactory.create(new vec2(120, 120), 'panelPointNode1', this);
+    const panelPointNode2: SpriteNode = PanelPointFactory.create(new vec2(320, 120), 'panelPointNode2', this);
+    const panelPointNode3: SpriteNode = PanelPointFactory.create(new vec2(320, 400), 'panelPointNode3', this);
 
 
 
-    const containerNode1: SpriteNode = ContainerFactory.create(new vec2(500, 300))
+    const containerNode1: SpriteNode = ContainerFactory.create(new vec2(500, 300), this)
     root.addChild(containerNode1);
-    const rectNode1: SpriteNode = PanelRectFactory.create(new vec2(0, 0))
-    const rectNode2: SpriteNode = PanelRectFactory.create(new vec2(60, 60))
-    const rectNode3: SpriteNode = PanelRectFactory.create(new vec2(0, 0))
+    const rectNode1: SpriteNode = PanelRectFactory.create(new vec2(0, 0), this)
+    const rectNode2: SpriteNode = PanelRectFactory.create(new vec2(60, 60), this)
+    const rectNode3: SpriteNode = PanelRectFactory.create(new vec2(0, 0), this)
     containerNode1.addChild(rectNode1)
     containerNode1.addChild(rectNode2)
     root.addChild(rectNode3)
@@ -142,11 +188,11 @@ class topologyApplication {
 
 
 
-    const containerNode2: SpriteNode = ContainerFactory.create(new vec2(0, 0))
+    const containerNode2: SpriteNode = ContainerFactory.create(new vec2(0, 0), this)
     containerNode1.addChild(containerNode2)
 
-    const rectNode2_1: SpriteNode = PanelRectFactory.create(new vec2(0, 0))
-    const rectNode2_2: SpriteNode = PanelRectFactory.create(new vec2(0, 80))
+    const rectNode2_1: SpriteNode = PanelRectFactory.create(new vec2(0, 0), this)
+    const rectNode2_2: SpriteNode = PanelRectFactory.create(new vec2(0, 80), this)
     containerNode2.addChild(rectNode2_1)
     containerNode2.addChild(rectNode2_2)
 
@@ -163,16 +209,16 @@ class topologyApplication {
 
 
 
-    const rectNode4: SpriteNode = PanelRectFactory.create(new vec2(700, 60));
+    const rectNode4: SpriteNode = PanelRectFactory.create(new vec2(700, 60), this);
     root.addChild(rectNode4);
-    const rectNode5: SpriteNode = PanelRectFactory.create(new vec2(850, 300));
+    const rectNode5: SpriteNode = PanelRectFactory.create(new vec2(850, 300), this);
     root.addChild(rectNode5);
     HorizontalFlexLinkFactory.create(rectNode4.sprite, rectNode5.sprite, '1');
     HorizontalFlexLinkFactory.create(rectNode5.sprite, rectNode4.sprite, '2');
 
-    const rectNode6: SpriteNode = PanelRectFactory.create(new vec2(700, 400));
+    const rectNode6: SpriteNode = PanelRectFactory.create(new vec2(700, 400), this);
     root.addChild(rectNode6);
-    const rectNode7: SpriteNode = PanelRectFactory.create(new vec2(850, 500));
+    const rectNode7: SpriteNode = PanelRectFactory.create(new vec2(850, 500), this);
     root.addChild(rectNode7);
     VerticalFlexLinkFactory.create(rectNode6.sprite, rectNode7.sprite, '3');
     VerticalFlexLinkFactory.create(rectNode7.sprite, rectNode6.sprite, '4');
@@ -205,4 +251,4 @@ class topologyApplication {
 const canvas: HTMLCanvasElement | null = document.getElementById('canvas') as HTMLCanvasElement;
 const app = new Sprite2DApplication(canvas, true)
 app.isSupportMouseMove = true
-new topologyApplication(app);
+new TopologyApplication(app);

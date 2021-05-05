@@ -10,6 +10,7 @@ import { CNodeTextShap } from '../shaps/CNodeTextShap'
 import { LinkTextShap } from '../shaps/LinkTextShap'
 
 import { Canvas2DUtil } from '../lib/canvas2d/canvas2DUtil'
+import { TopologyApplication } from '../main'
 
 
 
@@ -19,20 +20,20 @@ export class PanelPointFactory {
   private static _circleShap: IShape = SpriteFactory.createCircle(PanelPointFactory._circleRadius)
   private static nodes: Array<SpriteNode> = []
 
-  public static create(position: vec2, name: string): SpriteNode {
+  public static create(position: vec2, name: string, app: TopologyApplication): SpriteNode {
     const circleSpr: ISprite = SpriteFactory.createSprite(PanelPointFactory._circleShap);
     circleSpr.fillStyle = 'red'
     circleSpr.x = position.x
     circleSpr.y = position.y
     circleSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      Canvas2DUtil.dragSprite(spr, evt)
+      app.spriteMouseAction(spr, evt)
       if (evt.type === EInputEventType.MOUSEDOWN) {
         console.log('点击了', spr)
       }
     }
 
     circleSpr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {
-      Canvas2DUtil.drawSelected(spr, context, renderOreder)
+      app.spriteDrawSelected(spr, context, renderOreder)
     }
 
     const circleN = new SpriteNode(circleSpr)

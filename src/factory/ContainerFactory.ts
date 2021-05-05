@@ -10,20 +10,21 @@ import { CNodeTextShap } from '../shaps/CNodeTextShap'
 import { LinkTextShap } from '../shaps/LinkTextShap'
 
 import { Canvas2DUtil } from '../lib/canvas2d/canvas2DUtil'
+import { TopologyApplication } from '../main'
 
 export class ContainerFactory {
 
   private static _sprites: Array<Sprite2D> = []
   private static _nodes: Array<SpriteNode> = []
 
-  public static create(position: vec2): SpriteNode {
+  public static create(position: vec2, app: TopologyApplication): SpriteNode {
     let containerSpr = new Sprite2D(SpriteFactory.createRect(50, 50), 'containerSprite') // 这里shap不能指向同一个对象，因为在updateEvent中会去修改shap对象
     containerSpr.x = position.x
     containerSpr.y = position.y
     containerSpr.fillStyle = 'rgba(0,0,0,.3)'
     containerSpr.updateEvent = this.handleUpdateEvent.bind(this)
     containerSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      Canvas2DUtil.dragSprite(spr, evt)
+      app.spriteMouseAction(spr, evt)
     }
 
 

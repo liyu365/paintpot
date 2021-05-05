@@ -4,23 +4,24 @@ import { vec2, } from "../lib/math2d";
 import { SpriteNode, SpriteNodeGroup } from '../lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { Canvas2DUtil } from '../lib/canvas2d/canvas2DUtil'
+import { TopologyApplication } from '../main'
 
 
 export class PanelRectFactory {
 
   private static nodes: Array<SpriteNode> = []
 
-  public static create(position: vec2): SpriteNode {
+  public static create(position: vec2, app: TopologyApplication): SpriteNode {
     let spr: Sprite2D = new Sprite2D(SpriteFactory.createRect(20, 20, 0.5, 0.5), 'panelRectFactory');
     spr.fillStyle = 'orange'
     spr.x = position.x
     spr.y = position.y
     spr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      Canvas2DUtil.dragSprite(spr, evt)
+      app.spriteMouseAction(spr, evt)
     }
 
     spr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {
-      Canvas2DUtil.drawSelected(spr, context, renderOreder)
+      app.spriteDrawSelected(spr, context, renderOreder)
     }
 
     let node = new SpriteNode(spr)
