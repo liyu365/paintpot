@@ -101,11 +101,19 @@ export class TopologyApplication {
     const root = this._app.rootContainer as SpriteNode
     const rootSpr = root.sprite
     if (rootSpr) {
+      // 拖动stage
       if (this._isMouseDown && !this._app.getDragSprite() || this._app.getDragSprite() === rootSpr) {
         let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
         rootSpr.x = mouseOffset.x - this._diffX
         rootSpr.y = mouseOffset.y - this._diffY
         this._isSatgeHasDrag = true
+      }
+      // 如果鼠标移动到了空白区域，则取消所有sprite的hover状态
+      let hitSprite = this._app.getHitSprite()
+      if (hitSprite === undefined || hitSprite.owner.name === 'root') {
+        if (this._hoveringSprite) {
+          this._hoveringSprite.isHovering = false
+        }
       }
     }
   }
@@ -186,9 +194,11 @@ export class TopologyApplication {
 
         if (this._selectedSprites.length === 1 && this._selectedSprites[0] === spr) {
           spr.isSelected = false
+          spr.isHovering = true
           this._selectedSprites = []
         } else {
           spr.isSelected = true
+          spr.isHovering = false
           this._selectedSprites.forEach(sprite => {
             sprite.isSelected = false
           })
@@ -205,7 +215,9 @@ export class TopologyApplication {
 
   public spriteHoverAction(spr: ISprite, evt: CanvasMouseEvent): void {
     if (evt.type === EInputEventType.MOUSEMOVE) {
-      spr.isHovering = true
+      if (spr.isSelected !== true) {
+        spr.isHovering = true
+      }
       if (this._hoveringSprite && this._hoveringSprite !== spr) {
         this._hoveringSprite.isHovering = false
       }
@@ -220,7 +232,7 @@ export class TopologyApplication {
       let margin = 5
       context.save()
       context.beginPath()
-      context.fillStyle = 'rgba(0, 150, 255, 1)'
+      context.fillStyle = 'rgba(0, 0, 0, 1)'
       context.lineWidth = 7
       context.rect(bounding.left - margin, bounding.top - margin, bounding.right - bounding.left + margin * 2, bounding.bottom - bounding.top + margin * 2)
       context.fill()
