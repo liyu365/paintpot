@@ -26,7 +26,8 @@ export class PanelPointFactory {
     circleSpr.x = position.x
     circleSpr.y = position.y
     circleSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      app.spriteMouseAction(spr, evt)
+      app.spriteDragAction(spr, evt)
+      app.spriteSelectAction(spr, evt)
       if (evt.type === EInputEventType.MOUSEDOWN) {
         console.log('点击了', spr)
       }

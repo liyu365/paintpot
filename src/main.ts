@@ -3,6 +3,9 @@ import { ISprite, EOrder, IShape, Bounding } from "./lib/spriteSystem/interface"
 import { CanvasMouseEvent, EInputEventType } from "./lib/application";
 import { vec2, Math2D } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
+import { TreeNode, NodeEnumeratorFactory } from "./lib/treeNode";
+import { IEnumerator } from "./lib/IEnumerator"
+
 import { LinkFactory } from './factory/LinkFactory'
 import { HorizontalFlexLinkFactory } from './factory/HorizontalFlexLinkFactory'
 import { VerticalFlexLinkFactory } from './factory/VerticalFlexLinkFactory'
@@ -123,7 +126,7 @@ export class TopologyApplication {
     }
   }
 
-  public spriteMouseAction(spr: ISprite, evt: CanvasMouseEvent): void {
+  public spriteDragAction(spr: ISprite, evt: CanvasMouseEvent): void {
     let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
     let parentSpr = spr.owner.getParentSprite()
     if (parentSpr) {
@@ -140,10 +143,25 @@ export class TopologyApplication {
       // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
       // console.log('局部坐标', new vec2(this.x, this.y))
     }
+  }
+
+  public spriteSelectAction(spr: ISprite, evt: CanvasMouseEvent): void {
+
     if (evt.type === EInputEventType.MOUSEUP) {
+
       if (spr.isSelected === false && spr.isDragging === false) {
+        const root = this._app.rootContainer as SpriteNode
+        let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(root);
+        let current: TreeNode<ISprite> | undefined = undefined;
+        while (iter.moveNext()) {
+          current = iter.current;
+          if (current && current.data) {
+            current.data.isSelected = false
+          }
+        }
         spr.isSelected = true
       }
+
       if (spr.isDragging === true) {
         spr.isDragging = false
       }

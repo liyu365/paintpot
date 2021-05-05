@@ -17,7 +17,8 @@ export class PanelRectFactory {
     spr.x = position.x
     spr.y = position.y
     spr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      app.spriteMouseAction(spr, evt)
+      app.spriteDragAction(spr, evt)
+      app.spriteSelectAction(spr, evt)
     }
 
     spr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {

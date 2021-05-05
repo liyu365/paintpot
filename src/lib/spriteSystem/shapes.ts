@@ -81,10 +81,10 @@ export class Circle extends BaseShape2D {
 
   public getBounding(): Bounding {
     return {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0
+      top: -this.radius,
+      bottom: this.radius,
+      left: -this.radius,
+      right: this.radius
     }
   }
 
