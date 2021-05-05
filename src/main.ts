@@ -30,6 +30,7 @@ export class TopologyApplication {
   private lastWheelMouseX = 0
   private lastWheelMouseY = 0
   private _isMouseDown = false
+  private _isSatgeHasDrag = false
   private _diffX = 0
   private _diffY = 0
   private _selectedSprites: Array<ISprite> = []
@@ -77,12 +78,13 @@ export class TopologyApplication {
 
     let hitSprite = this._app.getHitSprite()
     // 如果点击了空白区域（并且没有拖动任何元素），则取消所有sprite的选中状态
-    if ((hitSprite === undefined || hitSprite.owner.name === 'root') && !this._app.getDragSprite()) {
+    if ((hitSprite === undefined || hitSprite.owner.name === 'root') && this._isSatgeHasDrag === false) {
       this._selectedSprites.forEach(sprite => {
         sprite.isSelected = false
       })
       this._selectedSprites = []
     }
+    this._isSatgeHasDrag = false
   }
 
   private handleMouseMove(evt: Event): void {
@@ -93,6 +95,7 @@ export class TopologyApplication {
         let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
         rootSpr.x = mouseOffset.x - this._diffX
         rootSpr.y = mouseOffset.y - this._diffY
+        this._isSatgeHasDrag = true
       }
     }
   }
