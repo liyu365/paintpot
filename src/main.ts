@@ -74,6 +74,14 @@ export class TopologyApplication {
 
   private handleMouseUp(evt: Event): void {
     this._isMouseDown = false
+    // 如果点击了空白区域，则取消所有sprite的选中状态
+    let hitSprite = this._app.getHitSprite()
+    if (hitSprite === undefined || hitSprite.owner.name === 'root') {
+      this._selectedSprites.forEach(sprite => {
+        sprite.isSelected = false
+      })
+      this._selectedSprites = []
+    }
   }
 
   private handleMouseMove(evt: Event): void {

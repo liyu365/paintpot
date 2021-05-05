@@ -182,6 +182,7 @@ export class SpriteNodeGroup extends SpriteNode {
 export class SpriteNodeManager implements IDispatcher {
   private _rootNode: SpriteNode;
   private _dragSprite: ISprite | undefined = undefined;
+  private _hitSprite: ISprite | undefined = undefined;
   public constructor(width: number, height: number) {
     let spr: ISprite = SpriteFactory.createISprite(SpriteFactory.createGrid(width, height));
     spr.name = 'root';
@@ -200,6 +201,10 @@ export class SpriteNodeManager implements IDispatcher {
     return this._dragSprite
   }
 
+  public get hitSprite(): ISprite | undefined {
+    return this._hitSprite
+  }
+
   public dispatchMouseEvent(evt: CanvasMouseEvent): void {
     if (evt.type === EInputEventType.MOUSEUP) {
       this._dragSprite = undefined;
@@ -213,6 +218,7 @@ export class SpriteNodeManager implements IDispatcher {
     }
 
     let spr: ISprite | undefined = this._rootNode.findSprite(evt.canvasPosition, evt.localPosition);
+    this._hitSprite = spr
     if (spr !== undefined) {
       evt.hasLocalPosition = true;
       if (evt.button === 0 && evt.type === EInputEventType.MOUSEDOWN) {

@@ -39,6 +39,11 @@ export class Sprite2DApplication extends Canvas2DApplication {
     return this._dispatcher.dragSprite
   }
 
+  // 返回鼠标命中的sprite
+  public getHitSprite(): ISprite | undefined {
+    return this._dispatcher.hitSprite
+  }
+
   protected dispatchMouseDown(evt: CanvasMouseEvent): void {
     super.dispatchMouseDown(evt);
     this._dispatcher.dispatchMouseEvent(evt);

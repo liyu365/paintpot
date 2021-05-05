@@ -57,12 +57,18 @@ export class Sprite2DManager implements ISpriteContainer, IDispatcher {
 
   private _dragSprite: ISprite | undefined = undefined;
 
+  private _hitSprite: ISprite | undefined = undefined;
+
   public get container(): ISpriteContainer {
     return this;
   }
 
   public get dragSprite(): ISprite | undefined {
     return this._dragSprite
+  }
+
+  public get hitSprite(): ISprite | undefined {
+    return this._hitSprite
   }
 
   public dispatchUpdate(msec: number, diff: number): void {
@@ -109,6 +115,7 @@ export class Sprite2DManager implements ISpriteContainer, IDispatcher {
       let mat: mat2d | null = spr.getLocalMatrix();
       Math2D.transform(mat, evt.canvasPosition, evt.localPosition);
       if (spr.hitTest(evt.localPosition)) {
+        this._hitSprite = spr
         evt.hasLocalPosition = true;
         if (evt.button === 0 && evt.type === EInputEventType.MOUSEDOWN) {
 
@@ -123,6 +130,8 @@ export class Sprite2DManager implements ISpriteContainer, IDispatcher {
           spr.mouseEvent(spr, evt);
           return;
         }
+      } else {
+        this._hitSprite = undefined
       }
     }
   }
