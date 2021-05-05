@@ -34,6 +34,7 @@ export class TopologyApplication {
   private _diffX = 0
   private _diffY = 0
   private _selectedSprites: Array<ISprite> = []
+  private _hoveringSprite: ISprite | null = null
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
@@ -60,6 +61,15 @@ export class TopologyApplication {
     this._app.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this))
     this._app.canvas.addEventListener('mousewheel', this.handleWheel.bind(this))
     this._app.canvas.addEventListener('DOMMouseScroll', this.handleWheel.bind(this))
+
+
+    const addBtn: HTMLElement = document.querySelector('#addBtn') as HTMLElement
+    console.log('addBtn', addBtn)
+    addBtn.onclick = () => {
+      const rectNode4: SpriteNode = PanelRectFactory.create(new vec2(20, 20), this);
+      const root = this._app.rootContainer as SpriteNode
+      root.addChild(rectNode4)
+    }
   }
 
   private handleMouseDown(evt: Event): void {
@@ -193,18 +203,42 @@ export class TopologyApplication {
     }
   }
 
+  public spriteHoverAction(spr: ISprite, evt: CanvasMouseEvent): void {
+    if (evt.type === EInputEventType.MOUSEMOVE) {
+      spr.isHovering = true
+      if (this._hoveringSprite && this._hoveringSprite !== spr) {
+        this._hoveringSprite.isHovering = false
+      }
+      this._hoveringSprite = spr
+    }
+  }
+
   public spriteDrawSelected(spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder): void {
     if (renderOreder === EOrder.PREORDER && spr.isSelected === true) {
       let shap: IShape = spr.shape
       let bounding: Bounding = shap.getBounding()
+      let margin = 5
       context.save()
       context.beginPath()
-      context.fillStyle = 'rgba(0,0,0,1)'
-      context.strokeStyle = 'rgba(0,0,0,1)'
+      context.fillStyle = 'rgba(0, 150, 255, 1)'
       context.lineWidth = 7
-      context.rect(bounding.left, bounding.top, bounding.right - bounding.left, bounding.bottom - bounding.top)
+      context.rect(bounding.left - margin, bounding.top - margin, bounding.right - bounding.left + margin * 2, bounding.bottom - bounding.top + margin * 2)
       context.fill()
-      context.stroke()
+      context.restore()
+    }
+  }
+
+  public spriteDrawHover(spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder): void {
+    if (renderOreder === EOrder.PREORDER && spr.isHovering === true) {
+      let shap: IShape = spr.shape
+      let bounding: Bounding = shap.getBounding()
+      let margin = 5
+      context.save()
+      context.beginPath()
+      context.fillStyle = 'rgba(0, 255, 255, 0.5)'
+      context.lineWidth = 7
+      context.rect(bounding.left - margin, bounding.top - margin, bounding.right - bounding.left + margin * 2, bounding.bottom - bounding.top + margin * 2)
+      context.fill()
       context.restore()
     }
   }

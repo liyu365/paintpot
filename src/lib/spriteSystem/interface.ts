@@ -98,6 +98,7 @@ export interface ISprite extends ITransformable, IRenderState {
 
   isSelected: boolean;
   isDragging: boolean;
+  isHovering: boolean;
   diffX: number;
   diffY: number;
 }

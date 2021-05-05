@@ -26,6 +26,7 @@ export class Sprite2D implements ISprite {
 
   public isSelected: boolean = false
   public isDragging: boolean = false
+  public isHovering: boolean = false
   public diffX: number = 0;
   public diffY: number = 0;
 

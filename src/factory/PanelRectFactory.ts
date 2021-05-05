@@ -19,10 +19,12 @@ export class PanelRectFactory {
     spr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
       app.spriteDragAction(spr, evt)
       app.spriteSelectAction(spr, evt)
+      app.spriteHoverAction(spr, evt)
     }
 
     spr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {
       app.spriteDrawSelected(spr, context, renderOreder)
+      app.spriteDrawHover(spr, context, renderOreder)
     }
 
     let node = new SpriteNode(spr)

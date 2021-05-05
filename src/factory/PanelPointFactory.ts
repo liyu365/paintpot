@@ -28,6 +28,7 @@ export class PanelPointFactory {
     circleSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
       app.spriteDragAction(spr, evt)
       app.spriteSelectAction(spr, evt)
+      app.spriteHoverAction(spr, evt)
       if (evt.type === EInputEventType.MOUSEDOWN) {
         console.log('点击了', spr)
       }
@@ -35,6 +36,7 @@ export class PanelPointFactory {
 
     circleSpr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {
       app.spriteDrawSelected(spr, context, renderOreder)
+      app.spriteDrawHover(spr, context, renderOreder)
     }
 
     const circleN = new SpriteNode(circleSpr)
