@@ -32,6 +32,7 @@ export class TopologyApplication {
   private _isMouseDown = false
   private _diffX = 0
   private _diffY = 0
+  private _selectedSprites: Array<ISprite> = []
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
@@ -126,6 +127,7 @@ export class TopologyApplication {
     }
   }
 
+
   public spriteDragAction(spr: ISprite, evt: CanvasMouseEvent): void {
     let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
     let parentSpr = spr.owner.getParentSprite()
@@ -149,17 +151,28 @@ export class TopologyApplication {
 
     if (evt.type === EInputEventType.MOUSEUP) {
 
-      if (spr.isSelected === false && spr.isDragging === false) {
-        const root = this._app.rootContainer as SpriteNode
-        let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(root);
-        let current: TreeNode<ISprite> | undefined = undefined;
-        while (iter.moveNext()) {
-          current = iter.current;
-          if (current && current.data) {
-            current.data.isSelected = false
-          }
+      if (spr.isDragging === false) {
+        // const root = this._app.rootContainer as SpriteNode
+        // let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(root);
+        // let current: TreeNode<ISprite> | undefined = undefined;
+        // while (iter.moveNext()) {
+        //   current = iter.current;
+        //   if (current && current.data) {
+        //     current.data.isSelected = false
+        //   }
+        // }
+
+        if (this._selectedSprites.length === 1 && this._selectedSprites[0] === spr) {
+          spr.isSelected = false
+          this._selectedSprites = []
+        } else {
+          spr.isSelected = true
+          this._selectedSprites.forEach(sprite => {
+            sprite.isSelected = false
+          })
+          this._selectedSprites = []
+          this._selectedSprites.push(spr)
         }
-        spr.isSelected = true
       }
 
       if (spr.isDragging === true) {
