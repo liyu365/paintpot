@@ -29,6 +29,7 @@ export class PanelPointFactory {
       app.spriteDragAction(spr, evt)
       app.spriteSelectAction(spr, evt)
       app.spriteHoverAction(spr, evt)
+      app.spriteMenuAction(spr, evt)
       if (evt.type === EInputEventType.MOUSEDOWN) {
         console.log('点击了', spr)
       }

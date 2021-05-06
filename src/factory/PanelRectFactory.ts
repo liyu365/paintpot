@@ -20,6 +20,7 @@ export class PanelRectFactory {
       app.spriteDragAction(spr, evt)
       app.spriteSelectAction(spr, evt)
       app.spriteHoverAction(spr, evt)
+      app.spriteMenuAction(spr, evt)
     }
 
     spr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {

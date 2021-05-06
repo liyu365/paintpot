@@ -35,12 +35,14 @@ export class TopologyApplication {
   private _diffY = 0
   private _selectedSprites: Array<ISprite> = []
   private _hoveringSprite: ISprite | null = null
+  private _sprMenu: HTMLElement | null
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
 
     this.init();
     this._app.start();
+    this._sprMenu = document.querySelector("#sprMenu");
 
     const zoomInButton: HTMLElement = document.querySelector('#zoomIN') as HTMLElement
     const zoomOutButton: HTMLElement = document.querySelector('#zoomOut') as HTMLElement
@@ -73,13 +75,20 @@ export class TopologyApplication {
   }
 
   private handleMouseDown(evt: Event): void {
-    const root = this._app.rootContainer as SpriteNode
-    const rootSpr = root.sprite
-    if (rootSpr) {
-      let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
-      this._diffX = mouseOffset.x - rootSpr.x
-      this._diffY = mouseOffset.y - rootSpr.y
-      this._isMouseDown = true
+    let event = evt as MouseEvent
+    if (event.button === 0) {
+      const root = this._app.rootContainer as SpriteNode
+      const rootSpr = root.sprite
+      if (rootSpr) {
+        let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(event)
+        this._diffX = mouseOffset.x - rootSpr.x
+        this._diffY = mouseOffset.y - rootSpr.y
+        this._isMouseDown = true
+      }
+    }
+
+    if (this._sprMenu) {
+      this._sprMenu.style.display = 'none'
     }
   }
 
@@ -107,6 +116,9 @@ export class TopologyApplication {
         rootSpr.x = mouseOffset.x - this._diffX
         rootSpr.y = mouseOffset.y - this._diffY
         this._isSatgeHasDrag = true
+        if (this._sprMenu) {
+          this._sprMenu.style.display = 'none'
+        }
       }
       // 如果鼠标移动到了空白区域，则取消所有sprite的hover状态
       let hitSprite = this._app.getHitSprite()
@@ -131,6 +143,10 @@ export class TopologyApplication {
       // 向下滚
       this._curZoom /= 1.2
       this.handleScaleChange(mouseOffset.x, mouseOffset.y, WheelType.DOWN)
+    }
+
+    if (this._sprMenu) {
+      this._sprMenu.style.display = 'none'
     }
   }
 
@@ -189,7 +205,7 @@ export class TopologyApplication {
 
   public spriteSelectAction(spr: ISprite, evt: CanvasMouseEvent): void {
 
-    if (evt.type === EInputEventType.MOUSEUP) {
+    if (evt.type === EInputEventType.MOUSEUP && evt.button === 0) {
 
       if (spr.isDragging === false) {
         // const root = this._app.rootContainer as SpriteNode
@@ -219,6 +235,22 @@ export class TopologyApplication {
 
       if (spr.isDragging === true) {
         spr.isDragging = false
+      }
+    }
+  }
+
+  public spriteMenuAction(spr: ISprite, evt: CanvasMouseEvent): void {
+    if (evt.type === EInputEventType.MOUSEUP && evt.button === 2) {
+      let bounding: Bounding = spr.shape.getBounding()
+      let position = new vec2(spr.x + (bounding.right - bounding.left) / 2, spr.y)
+      let parentSpr = spr.owner.getParentSprite()
+      if (parentSpr) {
+        position = Math2D.transform(parentSpr.getWorldMatrix(), position)
+      }
+      if (this._sprMenu) {
+        this._sprMenu.style.display = 'block'
+        this._sprMenu.style.left = position.x + 'px'
+        this._sprMenu.style.top = position.y + 'px'
       }
     }
   }

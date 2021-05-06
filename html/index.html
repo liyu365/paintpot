@@ -12,12 +12,31 @@
       background: #ffffff;
       box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
     }
+
+    #canvas_wrapper {
+      position: relative;
+    }
+
+    #sprMenu {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 200;
+      width: 150px;
+      height: 200px;
+      background: rgba(0, 0, 0, 0.7);
+    }
   </style>
 
 </head>
 
 <body id="body">
-  <canvas id="canvas" width="1000" height="600"></canvas>
+  <div id="canvas_wrapper">
+    <div id="sprMenu"></div>
+    <canvas id="canvas" width="1000" height="600"></canvas>
+  </div>
+
   <button id="zoomIN">+</button>
   <button id="zoomOut">-</button>
   <button id="addBtn">增加</button>
