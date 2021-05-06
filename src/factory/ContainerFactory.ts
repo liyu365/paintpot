@@ -25,6 +25,8 @@ export class ContainerFactory {
     containerSpr.updateEvent = this.handleUpdateEvent.bind(this)
     containerSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
       app.spriteDragAction(spr, evt)
+      app.spriteSelectAction(spr, evt)
+      app.spriteHoverAction(spr, evt)
     }
 
 
