@@ -170,6 +170,16 @@ export class TopologyApplication {
     }
     if (evt.type === EInputEventType.MOUSEDRAG) {
       spr.isDragging = true
+
+      // 设置当前被拖拽的元素为isHovering状态
+      if (spr.isSelected !== true) {
+        spr.isHovering = true
+      }
+      if (this._hoveringSprite && this._hoveringSprite !== spr) {
+        this._hoveringSprite.isHovering = false
+      }
+      this._hoveringSprite = spr
+
       spr.x = position.x - spr.diffX
       spr.y = position.y - spr.diffY
       // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
