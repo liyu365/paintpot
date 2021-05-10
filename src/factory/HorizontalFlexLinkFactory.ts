@@ -12,7 +12,7 @@ export class HorizontalFlexLinkFactory {
   public static _linkGroups: Array<SpriteNodeGroup> = []
   private static _sameLinkGap = 25
 
-  public static create(from: ISprite | undefined, to: ISprite | undefined, name: string): void {
+  public static create(parent: SpriteNode, from: ISprite | undefined, to: ISprite | undefined, name: string): void {
     const linkSpr: ISprite = SpriteFactory.createSprite(new RaduisLineShap(4, 20));
     linkSpr.strokeStyle = 'green'
     linkSpr.lineWidth = 4
@@ -46,6 +46,19 @@ export class HorizontalFlexLinkFactory {
       newGroup.params.from = from
       newGroup.params.to = to
       newGroup.addChild(linkNode)
+      if (Array.isArray(parent.children)) {
+        // 插入到所有containerNode的前面，其他元素的后面
+        let index = 0
+        for (let i = 0; i < parent.children.length; i++) {
+          if (parent.children[i].name !== 'containerNode') {
+            index = i;
+            break
+          }
+        }
+        parent.addChildAt(newGroup, index)
+      } else {
+        parent.addChildAt(newGroup, 0)
+      }
       this._linkGroups.push(newGroup)
       if (newGroup.sprite) {
         newGroup.sprite.updateEvent = this.handleLinkGroupUpdate.bind(this)

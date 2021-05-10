@@ -11,7 +11,7 @@ export class PanelRectFactory {
 
   private static nodes: Array<SpriteNode> = []
 
-  public static create(position: vec2, app: TopologyApplication): SpriteNode {
+  public static create(parent: SpriteNode, position: vec2, app: TopologyApplication): SpriteNode {
     let spr: Sprite2D = new Sprite2D(SpriteFactory.createRect(20, 20, 0.5, 0.5), 'panelRectFactory');
     spr.fillStyle = 'orange'
     spr.x = position.x
@@ -29,7 +29,8 @@ export class PanelRectFactory {
     }
 
     let node = new SpriteNode(spr)
-    this.nodes.push(node)
+    parent.addChild(node)
+    //this.nodes.push(node)
 
     return node
   }

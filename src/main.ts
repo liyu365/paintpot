@@ -68,9 +68,8 @@ export class TopologyApplication {
     const addBtn: HTMLElement = document.querySelector('#addBtn') as HTMLElement
     console.log('addBtn', addBtn)
     addBtn.onclick = () => {
-      const rectNode4: SpriteNode = PanelRectFactory.create(new vec2(20, 20), this);
       const root = this._app.rootContainer as SpriteNode
-      root.addChild(rectNode4)
+      const rectNode4: SpriteNode = PanelRectFactory.create(root, new vec2(20, 20), this);
     }
   }
 
@@ -301,80 +300,60 @@ export class TopologyApplication {
   private init(): void {
     const root = this._app.rootContainer as SpriteNode
 
-    const panelPointNode1: SpriteNode = PanelPointFactory.create(new vec2(120, 120), 'panelPointNode1', this);
-    const panelPointNode2: SpriteNode = PanelPointFactory.create(new vec2(320, 120), 'panelPointNode2', this);
-    const panelPointNode3: SpriteNode = PanelPointFactory.create(new vec2(320, 400), 'panelPointNode3', this);
+    const panelPointNode1: SpriteNode = PanelPointFactory.create(root, new vec2(120, 120), 'panelPointNode1', this);
+    const panelPointNode2: SpriteNode = PanelPointFactory.create(root, new vec2(320, 120), 'panelPointNode2', this);
+    const panelPointNode3: SpriteNode = PanelPointFactory.create(root, new vec2(320, 400), 'panelPointNode3', this);
 
 
 
-    const containerNode1: SpriteNode = ContainerFactory.create(new vec2(500, 300), this)
-    root.addChild(containerNode1);
-    const rectNode1: SpriteNode = PanelRectFactory.create(new vec2(0, 0), this)
-    const rectNode2: SpriteNode = PanelRectFactory.create(new vec2(60, 60), this)
-    const rectNode3: SpriteNode = PanelRectFactory.create(new vec2(0, 0), this)
-    containerNode1.addChild(rectNode1)
-    containerNode1.addChild(rectNode2)
-    root.addChild(rectNode3)
+    const containerNode1: SpriteNode = ContainerFactory.create(root, new vec2(500, 300), this)
 
-
-
-
-    const containerNode2: SpriteNode = ContainerFactory.create(new vec2(0, 0), this)
-    containerNode1.addChild(containerNode2)
-
-    const rectNode2_1: SpriteNode = PanelRectFactory.create(new vec2(0, 0), this)
-    const rectNode2_2: SpriteNode = PanelRectFactory.create(new vec2(0, 80), this)
-    containerNode2.addChild(rectNode2_1)
-    containerNode2.addChild(rectNode2_2)
-
-
-    LinkFactory.create(panelPointNode1.sprite, panelPointNode2.sprite, '1->2');
-    LinkFactory.create(panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
-    LinkFactory.create(panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
-    LinkFactory.create(panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
-    LinkFactory.create(panelPointNode1.sprite, panelPointNode3.sprite, '1->3');
-    LinkFactory.create(panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
-    LinkFactory.create(panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
-    LinkFactory.create(rectNode1.sprite, rectNode2.sprite, 'ii');
-    LinkFactory.create(rectNode1.sprite, panelPointNode2.sprite, '88');
-
-
-
-    const rectNode4: SpriteNode = PanelRectFactory.create(new vec2(700, 60), this);
-    root.addChild(rectNode4);
-    const rectNode5: SpriteNode = PanelRectFactory.create(new vec2(850, 300), this);
-    root.addChild(rectNode5);
-    HorizontalFlexLinkFactory.create(rectNode4.sprite, rectNode5.sprite, '1');
-    HorizontalFlexLinkFactory.create(rectNode5.sprite, rectNode4.sprite, '2');
-
-    const rectNode6: SpriteNode = PanelRectFactory.create(new vec2(700, 400), this);
-    root.addChild(rectNode6);
-    const rectNode7: SpriteNode = PanelRectFactory.create(new vec2(850, 500), this);
-    root.addChild(rectNode7);
-    VerticalFlexLinkFactory.create(rectNode6.sprite, rectNode7.sprite, '3');
-    VerticalFlexLinkFactory.create(rectNode7.sprite, rectNode6.sprite, '4');
+    const rectNode1: SpriteNode = PanelRectFactory.create(containerNode1, new vec2(0, 0), this)
+    const rectNode2: SpriteNode = PanelRectFactory.create(containerNode1, new vec2(60, 60), this)
+    const rectNode3: SpriteNode = PanelRectFactory.create(root, new vec2(0, 0), this)
 
 
 
 
 
+    const containerNode2: SpriteNode = ContainerFactory.create(containerNode1, new vec2(0, 0), this)
 
-    // ContainerFactory.getNodes().forEach(node => {
-    //   root.addChild(node);
-    // });
-    LinkFactory.getNodes().forEach(node => {
-      root.addChild(node);
-    });
-    HorizontalFlexLinkFactory.getNodes().forEach(node => {
-      root.addChild(node);
-    });
-    VerticalFlexLinkFactory.getNodes().forEach(node => {
-      root.addChild(node);
-    });
-    PanelPointFactory.getNodes().forEach(node => {
-      root.addChild(node);
-    });
 
+    const rectNode2_1: SpriteNode = PanelRectFactory.create(containerNode2, new vec2(0, 0), this)
+    const rectNode2_2: SpriteNode = PanelRectFactory.create(containerNode2, new vec2(0, 80), this)
+
+    LinkFactory.create(root, rectNode2_1.sprite, rectNode2_2.sprite, '99');
+
+
+
+    LinkFactory.create(root, panelPointNode1.sprite, panelPointNode2.sprite, '1->2');
+    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
+    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
+    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
+    LinkFactory.create(root, panelPointNode1.sprite, panelPointNode3.sprite, '1->3');
+    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
+    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
+    LinkFactory.create(root, rectNode1.sprite, rectNode2.sprite, 'ii');
+    LinkFactory.create(root, rectNode1.sprite, panelPointNode2.sprite, '88');
+
+
+
+    const rectNode4: SpriteNode = PanelRectFactory.create(root, new vec2(700, 60), this);
+
+    const rectNode5: SpriteNode = PanelRectFactory.create(root, new vec2(850, 300), this);
+
+    HorizontalFlexLinkFactory.create(root, rectNode4.sprite, rectNode5.sprite, '1');
+    HorizontalFlexLinkFactory.create(root, rectNode5.sprite, rectNode4.sprite, '2');
+
+    const rectNode6: SpriteNode = PanelRectFactory.create(root, new vec2(700, 400), this);
+
+    const rectNode7: SpriteNode = PanelRectFactory.create(root, new vec2(850, 500), this);
+
+    VerticalFlexLinkFactory.create(root, rectNode6.sprite, rectNode7.sprite, '3');
+    VerticalFlexLinkFactory.create(root, rectNode7.sprite, rectNode6.sprite, '4');
+
+
+    console.log(root)
   }
 
 }
