@@ -100,49 +100,4 @@ export class Canvas2DUtil {
     ctx.globalCompositeOperation = compositeOperation;
   }
 
-  public static drawSelected(spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder): void {
-    if (renderOreder === EOrder.PREORDER && spr.isSelected === true) {
-      let shap: IShape = spr.shape
-      let bounding: Bounding = shap.getBounding()
-      context.save()
-      context.beginPath()
-      context.fillStyle = 'rgba(0,0,0,1)'
-      context.strokeStyle = 'rgba(0,0,0,1)'
-      context.lineWidth = 7
-      context.rect(bounding.left, bounding.top, bounding.right - bounding.left, bounding.bottom - bounding.top)
-      context.fill()
-      context.stroke()
-      context.restore()
-    }
-
-  }
-
-  public static dragSprite(spr: ISprite, evt: CanvasMouseEvent): void {
-    let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
-    let parentSpr = spr.owner.getParentSprite()
-    if (parentSpr) {
-      position = Math2D.transform(parentSpr.getLocalMatrix(), position) // 把鼠标的坐标用父sprite的局部矩阵进行转换
-    }
-    if (evt.type === EInputEventType.MOUSEDOWN) {
-      spr.diffX = position.x - spr.x
-      spr.diffY = position.y - spr.y
-    }
-    if (evt.type === EInputEventType.MOUSEDRAG) {
-      spr.isDragging = true
-      spr.x = position.x - spr.diffX
-      spr.y = position.y - spr.diffY
-      // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
-      // console.log('局部坐标', new vec2(this.x, this.y))
-    }
-    if (evt.type === EInputEventType.MOUSEUP) {
-      if (spr.isSelected === false && spr.isDragging === false) {
-        spr.isSelected = true
-      }
-      if (spr.isDragging === true) {
-        spr.isDragging = false
-      }
-    }
-  }
-
-
 }

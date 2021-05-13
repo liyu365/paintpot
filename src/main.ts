@@ -5,6 +5,7 @@ import { vec2, Math2D } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
 import { TreeNode, NodeEnumeratorFactory } from "./lib/treeNode";
 import { IEnumerator } from "./lib/IEnumerator"
+import { NodeData } from "./lib/NodeData"
 
 import { LinkFactory } from './factory/LinkFactory'
 import { HorizontalFlexLinkFactory } from './factory/HorizontalFlexLinkFactory'
@@ -12,6 +13,7 @@ import { VerticalFlexLinkFactory } from './factory/VerticalFlexLinkFactory'
 import { PanelPointFactory } from './factory/PanelPointFactory'
 import { ContainerFactory } from './factory/ContainerFactory'
 import { PanelRectFactory } from './factory/PanelRectFactory'
+
 
 
 interface WheelEvent extends Event {
@@ -354,6 +356,34 @@ export class TopologyApplication {
 
 
     console.log(root)
+    console.log(this.convertTreeToJsonString(root))
+  }
+
+  public convertTreeToJsonString<T>(node: TreeNode<T>): string {
+    let nodes: Array<TreeNode<T>> = [];
+    let datas: Array<NodeData> = [];
+    for (let n: TreeNode<T> | undefined = node; n !== undefined; n = n.moveNext()) {
+      datas.push(new NodeData(n.name, -1, 'class'));
+      nodes.push(n);
+    }
+    for (let i: number = 0; i < datas.length; i++) {
+      // 获取当前节点的parent
+      let parent: TreeNode<T> | undefined = nodes[i].parent;
+      // 如果当前节点的父亲节点为undefined，则肯定是根节点，根节点的父亲为-1
+      if (parent === undefined) {
+        datas[i].parentIdx = -1;
+      } else {
+        // 查找当前节点的parent在深度优先的数组中的索引号
+        for (let j: number = 0; j < datas.length; j++) {
+          // 名称比较，更好的方式用地址比较
+          // if ( parent . name === nodes [ j ] . name )
+          if (parent === nodes[j]) {
+            datas[i].parentIdx = j;
+          }
+        }
+      }
+    }
+    return JSON.stringify(datas);
   }
 
 }
