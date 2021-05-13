@@ -1,4 +1,4 @@
-import { ISprite, SpriteFactory, IShape, EOrder } from "../lib/spriteSystem/interface";
+import { ISprite, SpriteFactory, IShape, EOrder, NodeType } from "../lib/spriteSystem/interface";
 import { CanvasMouseEvent, EInputEventType } from "../lib/application";
 import { vec2 } from "../lib/math2d";
 import { SpriteNode } from '../lib/spriteSystem/sprite2dHierarchicalSystem'
@@ -34,6 +34,8 @@ export class PanelPointFactory {
     }
 
     const circleN = new SpriteNode(circleSpr)
+    circleN.nodeType = NodeType.PANELPOINT
+    circleN.needSerialize = true
 
     parent.addChild(circleN)
 

@@ -1,4 +1,4 @@
-import { ISprite, SpriteFactory, IShape, EOrder, Bounding } from "../lib/spriteSystem/interface";
+import { ISprite, SpriteFactory, IShape, EOrder, Bounding, NodeType } from "../lib/spriteSystem/interface";
 import { Sprite2DApplication } from "../lib/spriteSystem/sprite2DApplication";
 import { CanvasMouseEvent, EInputEventType } from "../lib/application";
 import { vec2, Math2D } from "../lib/math2d";
@@ -32,6 +32,8 @@ export class ContainerFactory {
 
 
     const sprNode = new SpriteNode(containerSpr, undefined, 'containerNode')
+    sprNode.nodeType = NodeType.CONTAINER
+    sprNode.needSerialize = true
 
     parent.addChildAt(sprNode, 0)
 

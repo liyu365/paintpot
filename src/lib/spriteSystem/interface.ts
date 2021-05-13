@@ -3,6 +3,17 @@ import { CanvasMouseEvent, CanvasKeyBoardEvent } from "../application";
 import { Rect, Circle, Grid, Ellipse, Line, ConvexPolygon, Scale9Grid, BezierPath, EndClipShape, EmptyShape } from "./shapes";
 import { Sprite2D } from "./sprite2d";
 
+export enum NodeType {
+  TREENODE,
+  SPRITE2D,
+  CONTAINER,
+  PANELPOINT,
+  PANELRECT,
+  LINK,
+  HORIZONTALFLEXLINK,
+  VERTICALFLEXLINK
+}
+
 export interface Bounding {
   top: number,
   bottom: number,

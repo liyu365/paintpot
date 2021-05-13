@@ -1,4 +1,5 @@
 import { IEnumerator } from "./IEnumerator"
+import { NodeType } from './spriteSystem/interface'
 
 export type Indexer = (len: number, idx: number) => number;
 
@@ -482,6 +483,8 @@ node10                        node11  node12
 
   public name: string;
   public data: T | undefined;
+  public nodeType: NodeType = NodeType.TREENODE
+  public needSerialize: boolean = false
 }
 
 export class LinkTreeNode<T> {

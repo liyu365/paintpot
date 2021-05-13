@@ -1,4 +1,4 @@
-import { ISprite, SpriteFactory, IShape, EOrder } from "../lib/spriteSystem/interface";
+import { ISprite, SpriteFactory, IShape, EOrder, NodeType } from "../lib/spriteSystem/interface";
 import { CanvasMouseEvent } from "../lib/application";
 import { vec2, Math2D } from "../lib/math2d";
 import { SpriteNode, SpriteNodeGroup } from '../lib/spriteSystem/sprite2dHierarchicalSystem'
@@ -24,6 +24,8 @@ export class HorizontalFlexLinkFactory {
     linkSpr.mouseEvent = this.handleLinkEvent.bind(this)
 
     const linkNode = new SpriteNode(linkSpr)
+    linkNode.nodeType = NodeType.HORIZONTALFLEXLINK
+    linkNode.needSerialize = true
 
     const arrowSpr: ISprite = SpriteFactory.createSprite(this._arrowShap)
     arrowSpr.fillStyle = 'blue'

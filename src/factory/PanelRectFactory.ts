@@ -1,4 +1,4 @@
-import { ISprite, SpriteFactory, EOrder } from "../lib/spriteSystem/interface";
+import { ISprite, SpriteFactory, EOrder, NodeType } from "../lib/spriteSystem/interface";
 import { CanvasMouseEvent, EInputEventType } from "../lib/application";
 import { vec2, } from "../lib/math2d";
 import { SpriteNode, SpriteNodeGroup } from '../lib/spriteSystem/sprite2dHierarchicalSystem'
@@ -29,6 +29,8 @@ export class PanelRectFactory {
     }
 
     let node = new SpriteNode(spr)
+    node.nodeType = NodeType.PANELRECT
+    node.needSerialize = true
     parent.addChild(node)
     //this.nodes.push(node)
 

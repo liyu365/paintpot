@@ -42,7 +42,8 @@ export class TopologyApplication {
   public constructor(app: Sprite2DApplication) {
     this._app = app
 
-    this.init();
+    // this.init();
+    this.init2();
     this._app.start();
     this._sprMenu = document.querySelector("#sprMenu");
 
@@ -68,10 +69,25 @@ export class TopologyApplication {
 
 
     const addBtn: HTMLElement = document.querySelector('#addBtn') as HTMLElement
-    console.log('addBtn', addBtn)
     addBtn.onclick = () => {
       const root = this._app.rootContainer as SpriteNode
       const rectNode4: SpriteNode = PanelRectFactory.create(root, new vec2(20, 20), this);
+    }
+
+    const saveBtn: HTMLElement = document.querySelector('#saveBtn') as HTMLElement
+    saveBtn.onclick = () => {
+      const root = this._app.rootContainer as SpriteNode
+      let json = this.convertTreeToJsonString(root)
+      console.log(json)
+      window.localStorage.setItem('chartJSON', json)
+    }
+
+    const restoreBtn: HTMLElement = document.querySelector('#restoreBtn') as HTMLElement
+    restoreBtn.onclick = () => {
+      let json = window.localStorage.getItem('chartJSON')
+      if (json) {
+        console.log(this.convertJsonStringToTree(json))
+      }
     }
   }
 
@@ -302,6 +318,28 @@ export class TopologyApplication {
   private init(): void {
     const root = this._app.rootContainer as SpriteNode
 
+    const containerNode1: SpriteNode = ContainerFactory.create(root, new vec2(0, 0), this)
+
+    const panelPointNode1: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(10, 10), 'panelPointNode1', this);
+    const panelPointNode2: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(320, 120), 'panelPointNode2', this);
+    const panelPointNode3: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(320, 400), 'panelPointNode3', this);
+
+
+
+
+
+    LinkFactory.create(root, panelPointNode1.sprite, panelPointNode2.sprite, '1->2');
+
+
+
+
+    console.log(root)
+
+  }
+
+  private init2(): void {
+    const root = this._app.rootContainer as SpriteNode
+
     const panelPointNode1: SpriteNode = PanelPointFactory.create(root, new vec2(120, 120), 'panelPointNode1', this);
     const panelPointNode2: SpriteNode = PanelPointFactory.create(root, new vec2(320, 120), 'panelPointNode2', this);
     const panelPointNode3: SpriteNode = PanelPointFactory.create(root, new vec2(320, 400), 'panelPointNode3', this);
@@ -356,15 +394,16 @@ export class TopologyApplication {
 
 
     console.log(root)
-    console.log(this.convertTreeToJsonString(root))
   }
 
   public convertTreeToJsonString<T>(node: TreeNode<T>): string {
     let nodes: Array<TreeNode<T>> = [];
     let datas: Array<NodeData> = [];
     for (let n: TreeNode<T> | undefined = node; n !== undefined; n = n.moveNext()) {
-      datas.push(new NodeData(n.name, -1, 'class'));
-      nodes.push(n);
+      if (n.needSerialize === true) {
+        datas.push(new NodeData(n.name, -1, n.nodeType));
+        nodes.push(n);
+      }
     }
     for (let i: number = 0; i < datas.length; i++) {
       // 获取当前节点的parent
@@ -384,6 +423,32 @@ export class TopologyApplication {
       }
     }
     return JSON.stringify(datas);
+  }
+
+  public convertJsonStringToTree<T>(json: string): TreeNode<T> | undefined {
+    // 首先我们使用JSON . parse方法，将json字符串反序列化成Array对象（datas）
+    let datas: [] = JSON.parse(json);
+    let data !: NodeData;
+    let nodes: TreeNode<T>[] = [];
+    // 根据NodeData列表生成节点数组
+    for (let i: number = 0; i < datas.length; i++) {
+      // 将datas中每个元素都转型为NodeData对象
+      data = datas[i] as NodeData;
+      // 如果当前的NodeData的parentidx为-1，表示根节点
+      // 实际上，我们的datas是深度优先，从上到下（先根前序）顺序存储的
+      // 因此datas [ 0 ]肯定是根节点
+      if (data.parentIdx === - 1) {
+        nodes.push(new TreeNode<T>(undefined, undefined, data.name));
+      }
+      else {  // 不是-1，说明有父亲节点
+        // 我们利用了深度优先，从上到下（先根前序）顺序存储的nodes数组的特点
+        // 上述顺序存储的数组，当前节点的父亲节点总是已经存在nodes中了
+        nodes.push(new TreeNode<T>(undefined, nodes[data.parentIdx], data.name))
+      }
+    }
+
+    // 返回反序列化中的根节点
+    return nodes[0];
   }
 
 }
