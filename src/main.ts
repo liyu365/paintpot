@@ -44,8 +44,8 @@ export class TopologyApplication {
   public constructor(app: Sprite2DApplication) {
     this._app = app
 
-    // this.init();
-    this.init2();
+    this.init();
+    // this.init2();
     this._app.start();
     this._sprMenu = document.querySelector("#sprMenu");
 
@@ -319,23 +319,7 @@ export class TopologyApplication {
     }
   }
 
-
   private init(): void {
-    const root = this._app.rootContainer as SpriteNode
-
-    const containerNode1: SpriteNode = ContainerFactory.create(root, new vec2(0, 0), this)
-
-    const panelPointNode1: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(50, 50), 'panelPointNode1', this);
-    const panelPointNode2: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(320, 120), 'panelPointNode2', this);
-    const panelPointNode3: SpriteNode = PanelPointFactory.create(root, new vec2(320, 400), 'panelPointNode3', this);
-
-    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
-    LinkFactory.create(root, panelPointNode1.sprite, panelPointNode2.sprite, '1->2');
-
-    console.log(root)
-  }
-
-  private init2(): void {
     const root = this._app.rootContainer as SpriteNode
 
     const panelPointNode1: SpriteNode = PanelPointFactory.create(root, new vec2(120, 120), 'panelPointNode1', this);
@@ -360,19 +344,19 @@ export class TopologyApplication {
     const rectNode2_1: SpriteNode = PanelRectFactory.create(containerNode2, new vec2(0, 0), this)
     const rectNode2_2: SpriteNode = PanelRectFactory.create(containerNode2, new vec2(0, 120), this)
 
-    LinkFactory.create(root, rectNode2_1.sprite, rectNode2_2.sprite, '99');
+    LinkFactory.create(root, rectNode2_1, rectNode2_2, '99');
 
 
 
-    LinkFactory.create(root, panelPointNode1.sprite, panelPointNode2.sprite, '1->2');
-    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
-    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
-    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode1.sprite, '2->1');
-    LinkFactory.create(root, panelPointNode1.sprite, panelPointNode3.sprite, '1->3');
-    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
-    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
-    LinkFactory.create(root, rectNode1.sprite, rectNode2.sprite, 'ii');
-    LinkFactory.create(root, rectNode1.sprite, panelPointNode2.sprite, '88');
+    LinkFactory.create(root, panelPointNode1, panelPointNode2, '1->2');
+    LinkFactory.create(root, panelPointNode2, panelPointNode1, '2->1');
+    LinkFactory.create(root, panelPointNode2, panelPointNode1, '2->1');
+    LinkFactory.create(root, panelPointNode2, panelPointNode1, '2->1');
+    LinkFactory.create(root, panelPointNode1, panelPointNode3, '1->3');
+    LinkFactory.create(root, panelPointNode2, panelPointNode3, '2->3');
+    LinkFactory.create(root, panelPointNode2, panelPointNode3, '2->3');
+    LinkFactory.create(root, rectNode1, rectNode2, 'ii');
+    LinkFactory.create(root, rectNode1, panelPointNode2, '88');
 
 
 
@@ -380,16 +364,31 @@ export class TopologyApplication {
 
     const rectNode5: SpriteNode = PanelRectFactory.create(root, new vec2(850, 300), this);
 
-    HorizontalFlexLinkFactory.create(root, rectNode4.sprite, rectNode5.sprite, '1');
-    HorizontalFlexLinkFactory.create(root, rectNode5.sprite, rectNode4.sprite, '2');
+    HorizontalFlexLinkFactory.create(root, rectNode4, rectNode5, '1');
+    HorizontalFlexLinkFactory.create(root, rectNode5, rectNode4, '2');
 
     const rectNode6: SpriteNode = PanelRectFactory.create(root, new vec2(700, 400), this);
 
     const rectNode7: SpriteNode = PanelRectFactory.create(root, new vec2(850, 500), this);
 
-    VerticalFlexLinkFactory.create(root, rectNode6.sprite, rectNode7.sprite, '3');
-    VerticalFlexLinkFactory.create(root, rectNode7.sprite, rectNode6.sprite, '4');
+    VerticalFlexLinkFactory.create(root, rectNode6, rectNode7, '3');
+    VerticalFlexLinkFactory.create(root, rectNode7, rectNode6, '4');
 
+
+    console.log(root)
+  }
+
+  private init2(): void {
+    const root = this._app.rootContainer as SpriteNode
+
+    const containerNode1: SpriteNode = ContainerFactory.create(root, new vec2(0, 0), this)
+
+    const panelPointNode1: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(50, 50), 'panelPointNode1', this);
+    const panelPointNode2: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(320, 120), 'panelPointNode2', this);
+    const panelPointNode3: SpriteNode = PanelPointFactory.create(root, new vec2(320, 400), 'panelPointNode3', this);
+
+    LinkFactory.create(root, panelPointNode2, panelPointNode3, '2->3');
+    LinkFactory.create(root, panelPointNode1, panelPointNode2, '1->2');
 
     console.log(root)
   }
@@ -440,10 +439,10 @@ export class TopologyApplication {
         let fromIdx = undefined
         let toIdx = undefined
         for (let j: number = 0; j < datas.length; j++) {
-          if (sprite.data.from === nodes[j].data) {
+          if (sprite.data.from === nodes[j]) {
             fromIdx = j;
           }
-          if (sprite.data.to === nodes[j].data) {
+          if (sprite.data.to === nodes[j]) {
             toIdx = j;
           }
         }

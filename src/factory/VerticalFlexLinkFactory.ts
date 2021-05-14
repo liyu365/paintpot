@@ -12,7 +12,7 @@ export class VerticalFlexLinkFactory {
   public static _linkGroups: Array<SpriteNodeGroup> = []
   private static _sameLinkGap = 25
 
-  public static create(parent: SpriteNode, from: ISprite | undefined, to: ISprite | undefined, name: string): void {
+  public static create(parent: SpriteNode, from: SpriteNode | undefined, to: SpriteNode | undefined, name: string): void {
     const linkSpr: ISprite = SpriteFactory.createSprite(new RaduisLineShap(4, 16));
     linkSpr.strokeStyle = 'green'
     linkSpr.lineWidth = 4
@@ -74,7 +74,7 @@ export class VerticalFlexLinkFactory {
     }
   }
 
-  private static getSameLinkGroup(from: ISprite | undefined, to: ISprite | undefined): SpriteNodeGroup | null {
+  private static getSameLinkGroup(from: SpriteNode | undefined, to: SpriteNode | undefined): SpriteNodeGroup | null {
     let o = null
     if (from === undefined || to === undefined) {
       return o
@@ -97,8 +97,8 @@ export class VerticalFlexLinkFactory {
   private static handleLinkGroupUpdate(spr: ISprite, mesc: number, diffSec: number, travelOrder: EOrder): void {
     const linkGroup = spr.owner as SpriteNodeGroup
     const children = linkGroup.children
-    let from: Sprite2D = linkGroup.params.from
-    let to: Sprite2D = linkGroup.params.to
+    let from: Sprite2D = linkGroup.params.from.data
+    let to: Sprite2D = linkGroup.params.to.data
     let pt1: vec2 = new vec2(from.x, from.y)
     let pt2: vec2 = new vec2(to.x, to.y)
 
