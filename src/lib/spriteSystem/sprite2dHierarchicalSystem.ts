@@ -199,6 +199,10 @@ export class SpriteNodeManager implements IDispatcher {
     return this._rootNode;
   }
 
+  public set container(spr: ISpriteContainer) {
+    this._rootNode = spr as SpriteNode
+  }
+
   public get dragSprite(): ISprite | undefined {
     return this._dragSprite
   }

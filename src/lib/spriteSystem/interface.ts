@@ -115,7 +115,7 @@ export interface ISprite extends ITransformable, IRenderState {
 }
 
 export interface IDispatcher {
-  readonly container: ISpriteContainer;
+  container: ISpriteContainer;
   readonly dragSprite: ISprite | undefined
   readonly hitSprite: ISprite | undefined
   dispatchUpdate(msec: number, diffSec: number): void;

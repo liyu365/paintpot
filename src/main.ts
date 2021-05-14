@@ -1,8 +1,8 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
-import { ISprite, EOrder, IShape, Bounding, NodeType } from "./lib/spriteSystem/interface";
+import { ISprite, EOrder, IShape, Bounding, NodeType, SpriteFactory, ERenderType } from "./lib/spriteSystem/interface";
 import { CanvasMouseEvent, EInputEventType } from "./lib/application";
 import { vec2, Math2D } from "./lib/math2d";
-import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
+import { SpriteNode, SpriteNodeGroup } from './lib/spriteSystem/sprite2dHierarchicalSystem'
 import { TreeNode, NodeEnumeratorFactory } from "./lib/treeNode";
 import { IEnumerator } from "./lib/IEnumerator"
 import { NodeData } from "./lib/NodeData"
@@ -45,7 +45,7 @@ export class TopologyApplication {
     this._app = app
 
     this.init();
-    // this.init2();
+    //this.init2();
     this._app.start();
     this._sprMenu = document.querySelector("#sprMenu");
 
@@ -86,12 +86,15 @@ export class TopologyApplication {
 
     const restoreBtn: HTMLElement = document.querySelector('#restoreBtn') as HTMLElement
     restoreBtn.onclick = () => {
-      const root = this._app.rootContainer as SpriteNode
-      root.clearChildren()
-
+      // const root = this._app.rootContainer as SpriteNode
+      // root.clearChildren()
       let json = window.localStorage.getItem('chartJSON')
       if (json) {
-        console.log(this.convertJsonStringToTree(json))
+        let root = this.convertJsonStringToTree(json)
+        console.log('root', root)
+        if (root) {
+          this._app.rootContainer = root
+        }
       }
     }
   }
@@ -413,7 +416,6 @@ export class TopologyApplication {
     for (let i: number = 0; i < datas.length; i++) {
       // 这些node只会挂载到root上
       if (
-        nodes[i].nodeType === NodeType.CONTAINER ||
         nodes[i].nodeType === NodeType.LINK ||
         nodes[i].nodeType === NodeType.HORIZONTALFLEXLINK ||
         nodes[i].nodeType === NodeType.VERTICALFLEXLINK
@@ -454,25 +456,58 @@ export class TopologyApplication {
     return JSON.stringify(datas);
   }
 
-  public convertJsonStringToTree<T>(json: string): TreeNode<T> | undefined {
-    // 首先我们使用JSON . parse方法，将json字符串反序列化成Array对象（datas）
+  public convertJsonStringToTree<T>(json: string): SpriteNode | undefined {
     let datas: [] = JSON.parse(json);
     let data !: NodeData;
-    let nodes: TreeNode<T>[] = [];
+    let nodes: SpriteNode[] = [];
+
+    const root = this._app.rootContainer as SpriteNode
     // 根据NodeData列表生成节点数组
     for (let i: number = 0; i < datas.length; i++) {
-      // 将datas中每个元素都转型为NodeData对象
       data = datas[i] as NodeData;
-      // 如果当前的NodeData的parentidx为-1，表示根节点
-      // 实际上，我们的datas是深度优先，从上到下（先根前序）顺序存储的
-      // 因此datas [ 0 ]肯定是根节点
-      if (data.parentIdx === - 1) {
-        nodes.push(new TreeNode<T>(undefined, undefined, data.name));
+      if (data.parentIdx === -1) {
+        let spr: ISprite = SpriteFactory.createISprite(SpriteFactory.createGrid(1000, 600));
+        spr.name = 'root';
+        spr.strokeStyle = "rgba(0,0,0,0.1)";
+        spr.fillStyle = 'white';
+        spr.renderType = ERenderType.STROKE_FILL;
+        let root = new SpriteNode(spr, undefined, spr.name);
+        root.nodeType = NodeType.SPRITE
+        root.needSerialize = true
+        spr.owner = root
+        nodes.push(root)
+      } else {
+        let blankNode = new SpriteNodeGroup(undefined, undefined, 'blank')
+        if (data.nodeType === NodeType.CONTAINER) {
+          let node = ContainerFactory.create(nodes[data.parentIdx], data.name || '', new vec2(data.x, data.y), this)
+          nodes.push(node)
+        } else if (data.nodeType === NodeType.PANELPOINT) {
+          let node = PanelPointFactory.create(nodes[data.parentIdx], data.name || '', new vec2(data.x, data.y), this);
+          nodes.push(node)
+        } else if (data.nodeType === NodeType.PANELRECT) {
+          let node = PanelRectFactory.create(nodes[data.parentIdx], data.name || '', new vec2(data.x, data.y), this);
+          nodes.push(node)
+        } else if (data.nodeType === NodeType.LINK || data.nodeType === NodeType.VERTICALFLEXLINK || data.nodeType === NodeType.HORIZONTALFLEXLINK) {
+          nodes.push(blankNode) // 占位用，nodes和datas必须一一对应
+        }
+
       }
-      else {  // 不是-1，说明有父亲节点
-        // 我们利用了深度优先，从上到下（先根前序）顺序存储的nodes数组的特点
-        // 上述顺序存储的数组，当前节点的父亲节点总是已经存在nodes中了
-        nodes.push(new TreeNode<T>(undefined, nodes[data.parentIdx], data.name))
+    }
+
+    // 把所有连线node都实例化并设置它们的from和to指向，因为此时的nodes中所有node都已经按顺序实例化（连线node已经进行了占位）
+    // 不用担心fromIdx索引或toIdx索引在nods中没有对应的成员
+    for (let i: number = 0; i < datas.length; i++) {
+      data = datas[i] as NodeData;
+      if (data.fromIdx !== undefined && data.toIdx !== undefined) {
+        if (data.nodeType === NodeType.LINK) {
+          LinkFactory.create(nodes[data.parentIdx], nodes[data.fromIdx], nodes[data.toIdx], data.name || '');
+        }
+        if (data.nodeType === NodeType.VERTICALFLEXLINK) {
+          VerticalFlexLinkFactory.create(nodes[data.parentIdx], nodes[data.fromIdx], nodes[data.toIdx], data.name || '');
+        }
+        if (data.nodeType === NodeType.HORIZONTALFLEXLINK) {
+          HorizontalFlexLinkFactory.create(nodes[data.parentIdx], nodes[data.fromIdx], nodes[data.toIdx], data.name || '');
+        }
       }
     }
 

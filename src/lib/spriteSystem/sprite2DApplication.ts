@@ -23,6 +23,10 @@ export class Sprite2DApplication extends Canvas2DApplication {
     return this._dispatcher.container;
   }
 
+  public set rootContainer(spr: ISpriteContainer) {
+    this._dispatcher.container = spr;
+  }
+
   public update(msec: number, diff: number): void {
     this._dispatcher.dispatchUpdate(msec, diff);
   }

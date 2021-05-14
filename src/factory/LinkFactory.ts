@@ -106,6 +106,9 @@ export class LinkFactory {
     let pt1: vec2 = new vec2(from.x, from.y)
     let pt2: vec2 = new vec2(to.x, to.y)
 
+    if (!from.owner && !to.owner) {
+      return
+    }
     let fromParentSpr = from.owner.getParentSprite()
     let toParentSpr = to.owner.getParentSprite()
     // 把from和to的局部坐标转换为相对于根sprite的局部坐标
