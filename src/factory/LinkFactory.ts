@@ -55,7 +55,7 @@ export class LinkFactory {
         // 插入到所有containerNode的后面，其他元素的后面
         let hasAdd = false
         for (let i = 0; i < parent.children.length; i++) {
-          if (parent.children[i].name !== 'containerNode') {
+          if (parent.children[i].nodeType !== NodeType.CONTAINER) {
             parent.addChildAt(newGroup, i)
             hasAdd = true
             break

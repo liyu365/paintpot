@@ -49,15 +49,19 @@ export class HorizontalFlexLinkFactory {
       newGroup.params.to = to
       newGroup.addChild(linkNode)
       if (Array.isArray(parent.children)) {
-        // 插入到所有containerNode的前面，其他元素的后面
-        let index = 0
+        // 插入到所有containerNode的后面，其他元素的后面
+        let hasAdd = false
         for (let i = 0; i < parent.children.length; i++) {
-          if (parent.children[i].name !== 'containerNode') {
-            index = i;
+          if (parent.children[i].nodeType !== NodeType.CONTAINER) {
+            parent.addChildAt(newGroup, i)
+            hasAdd = true
             break
           }
         }
-        parent.addChildAt(newGroup, index)
+        //证明当前root下的子元素都为containerNode
+        if (hasAdd === false) {
+          parent.addChildAt(newGroup, parent.children.length)
+        }
       } else {
         parent.addChildAt(newGroup, 0)
       }

@@ -4,14 +4,14 @@ import { Rect, Circle, Grid, Ellipse, Line, ConvexPolygon, Scale9Grid, BezierPat
 import { Sprite2D } from "./sprite2d";
 
 export enum NodeType {
-  TREENODE,
-  SPRITE2D,
-  CONTAINER,
-  PANELPOINT,
-  PANELRECT,
-  LINK,
-  HORIZONTALFLEXLINK,
-  VERTICALFLEXLINK
+  TREENODE, // 0
+  SPRITE, // 1
+  CONTAINER, // 2
+  PANELPOINT, // 3
+  PANELRECT, // 4
+  LINK, // 5
+  HORIZONTALFLEXLINK, // 6
+  VERTICALFLEXLINK // 7
 }
 
 export interface Bounding {

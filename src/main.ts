@@ -320,21 +320,13 @@ export class TopologyApplication {
 
     const containerNode1: SpriteNode = ContainerFactory.create(root, new vec2(0, 0), this)
 
-    const panelPointNode1: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(10, 10), 'panelPointNode1', this);
+    const panelPointNode1: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(50, 50), 'panelPointNode1', this);
     const panelPointNode2: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(320, 120), 'panelPointNode2', this);
     const panelPointNode3: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(320, 400), 'panelPointNode3', this);
 
-
-
-
-
     LinkFactory.create(root, panelPointNode1.sprite, panelPointNode2.sprite, '1->2');
 
-
-
-
     console.log(root)
-
   }
 
   private init2(): void {
@@ -346,21 +338,21 @@ export class TopologyApplication {
 
 
 
-    const containerNode1: SpriteNode = ContainerFactory.create(root, new vec2(500, 300), this)
+    const containerNode1: SpriteNode = ContainerFactory.create(root, new vec2(520, 220), this)
 
     const rectNode1: SpriteNode = PanelRectFactory.create(containerNode1, new vec2(0, 0), this)
-    const rectNode2: SpriteNode = PanelRectFactory.create(containerNode1, new vec2(60, 60), this)
+    const rectNode2: SpriteNode = PanelRectFactory.create(containerNode1, new vec2(60, 170), this)
     const rectNode3: SpriteNode = PanelRectFactory.create(root, new vec2(0, 0), this)
 
 
 
 
 
-    const containerNode2: SpriteNode = ContainerFactory.create(containerNode1, new vec2(0, 0), this)
+    const containerNode2: SpriteNode = ContainerFactory.create(containerNode1, new vec2(0, 170), this)
 
 
     const rectNode2_1: SpriteNode = PanelRectFactory.create(containerNode2, new vec2(0, 0), this)
-    const rectNode2_2: SpriteNode = PanelRectFactory.create(containerNode2, new vec2(0, 80), this)
+    const rectNode2_2: SpriteNode = PanelRectFactory.create(containerNode2, new vec2(0, 120), this)
 
     LinkFactory.create(root, rectNode2_1.sprite, rectNode2_2.sprite, '99');
 
