@@ -17,7 +17,7 @@ export class ContainerFactory {
   private static _sprites: Array<Sprite2D> = []
   private static _nodes: Array<SpriteNode> = []
 
-  public static create(parent: SpriteNode, position: vec2, app: TopologyApplication): SpriteNode {
+  public static create(parent: SpriteNode, name: string, position: vec2, app: TopologyApplication): SpriteNode {
     let containerSpr = new Sprite2D(SpriteFactory.createRect(50, 50), 'containerSprite') // 这里shap不能指向同一个对象，因为在updateEvent中会去修改shap对象
     containerSpr.x = position.x
     containerSpr.y = position.y
@@ -34,6 +34,7 @@ export class ContainerFactory {
     const sprNode = new SpriteNode(containerSpr, undefined, 'containerNode')
     sprNode.nodeType = NodeType.CONTAINER
     sprNode.needSerialize = true
+    sprNode.name = name
 
     parent.addChildAt(sprNode, 0)
 

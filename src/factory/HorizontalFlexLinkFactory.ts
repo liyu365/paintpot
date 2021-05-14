@@ -26,6 +26,7 @@ export class HorizontalFlexLinkFactory {
     const linkNode = new SpriteNode(linkSpr)
     linkNode.nodeType = NodeType.HORIZONTALFLEXLINK
     linkNode.needSerialize = true
+    linkNode.name = name
 
     const arrowSpr: ISprite = SpriteFactory.createSprite(this._arrowShap)
     arrowSpr.fillStyle = 'blue'

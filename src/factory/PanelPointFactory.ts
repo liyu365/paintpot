@@ -12,7 +12,7 @@ export class PanelPointFactory {
   private static _circleRadius = 30
   private static _circleShap: IShape = SpriteFactory.createCircle(PanelPointFactory._circleRadius)
 
-  public static create(parent: SpriteNode, position: vec2, name: string, app: TopologyApplication): SpriteNode {
+  public static create(parent: SpriteNode, name: string, position: vec2, app: TopologyApplication): SpriteNode {
     const circleSpr: ISprite = SpriteFactory.createSprite(PanelPointFactory._circleShap);
     circleSpr.fillStyle = 'red'
     circleSpr.x = position.x
@@ -36,6 +36,7 @@ export class PanelPointFactory {
     const circleN = new SpriteNode(circleSpr)
     circleN.nodeType = NodeType.PANELPOINT
     circleN.needSerialize = true
+    circleN.name = name
 
     parent.addChild(circleN)
 

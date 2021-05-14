@@ -28,6 +28,7 @@ export class LinkFactory {
     const linkNode = new SpriteNode(linkSpr)
     linkNode.nodeType = NodeType.LINK
     linkNode.needSerialize = true
+    linkNode.name = name
 
 
     const arrowSpr: ISprite = SpriteFactory.createSprite(this._arrowShap)

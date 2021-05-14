@@ -26,6 +26,7 @@ export class VerticalFlexLinkFactory {
     const linkNode = new SpriteNode(linkSpr)
     linkNode.nodeType = NodeType.VERTICALFLEXLINK
     linkNode.needSerialize = true
+    linkNode.name = name
 
     const arrowSpr: ISprite = SpriteFactory.createSprite(this._arrowShap)
     arrowSpr.fillStyle = 'blue'
