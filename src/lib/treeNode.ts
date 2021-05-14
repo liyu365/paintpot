@@ -167,6 +167,15 @@ node10                        node11  node12
     return this.removeChildAt(index);
   }
 
+  public clearChildren(): void {
+    if (this._children) {
+      for (let i = 0; i < this._children.length; i++) {
+        this._children[i]._parent = undefined
+      }
+    }
+    this._children = undefined
+  }
+
   public remove(): TreeNode<T> | undefined {
     if (this._parent !== undefined) {
       return this._parent.removeChild(this);

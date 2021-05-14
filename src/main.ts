@@ -1,5 +1,5 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
-import { ISprite, EOrder, IShape, Bounding } from "./lib/spriteSystem/interface";
+import { ISprite, EOrder, IShape, Bounding, NodeType } from "./lib/spriteSystem/interface";
 import { CanvasMouseEvent, EInputEventType } from "./lib/application";
 import { vec2, Math2D } from "./lib/math2d";
 import { SpriteNode } from './lib/spriteSystem/sprite2dHierarchicalSystem'
@@ -13,6 +13,8 @@ import { VerticalFlexLinkFactory } from './factory/VerticalFlexLinkFactory'
 import { PanelPointFactory } from './factory/PanelPointFactory'
 import { ContainerFactory } from './factory/ContainerFactory'
 import { PanelRectFactory } from './factory/PanelRectFactory'
+
+import { Sprite2D } from './lib/spriteSystem/sprite2d'
 
 
 
@@ -77,13 +79,16 @@ export class TopologyApplication {
     const saveBtn: HTMLElement = document.querySelector('#saveBtn') as HTMLElement
     saveBtn.onclick = () => {
       const root = this._app.rootContainer as SpriteNode
-      let json = this.convertTreeToJsonString(root)
+      let json = this.convertTreeToJsonString<ISprite>(root)
       console.log(json)
       window.localStorage.setItem('chartJSON', json)
     }
 
     const restoreBtn: HTMLElement = document.querySelector('#restoreBtn') as HTMLElement
     restoreBtn.onclick = () => {
+      const root = this._app.rootContainer as SpriteNode
+      root.clearChildren()
+
       let json = window.localStorage.getItem('chartJSON')
       if (json) {
         console.log(this.convertJsonStringToTree(json))
@@ -322,8 +327,9 @@ export class TopologyApplication {
 
     const panelPointNode1: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(50, 50), 'panelPointNode1', this);
     const panelPointNode2: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(320, 120), 'panelPointNode2', this);
-    const panelPointNode3: SpriteNode = PanelPointFactory.create(containerNode1, new vec2(320, 400), 'panelPointNode3', this);
+    const panelPointNode3: SpriteNode = PanelPointFactory.create(root, new vec2(320, 400), 'panelPointNode3', this);
 
+    LinkFactory.create(root, panelPointNode2.sprite, panelPointNode3.sprite, '2->3');
     LinkFactory.create(root, panelPointNode1.sprite, panelPointNode2.sprite, '1->2');
 
     console.log(root)
@@ -388,30 +394,62 @@ export class TopologyApplication {
     console.log(root)
   }
 
-  public convertTreeToJsonString<T>(node: TreeNode<T>): string {
+  public convertTreeToJsonString<T extends ISprite>(node: TreeNode<T>): string {
     let nodes: Array<TreeNode<T>> = [];
     let datas: Array<NodeData> = [];
     for (let n: TreeNode<T> | undefined = node; n !== undefined; n = n.moveNext()) {
       if (n.needSerialize === true) {
-        datas.push(new NodeData(n.name, -1, n.nodeType));
-        nodes.push(n);
+        let sprite = n.data
+        if (sprite) {
+          let nodeData = new NodeData(-1, n.nodeType)
+          nodeData.x = sprite.x
+          nodeData.y = sprite.y
+          nodeData.name = sprite.name
+          datas.push(nodeData);
+          nodes.push(n);
+        }
       }
     }
+    // 为parentIdx赋值
     for (let i: number = 0; i < datas.length; i++) {
-      // 获取当前节点的parent
-      let parent: TreeNode<T> | undefined = nodes[i].parent;
-      // 如果当前节点的父亲节点为undefined，则肯定是根节点，根节点的父亲为-1
-      if (parent === undefined) {
-        datas[i].parentIdx = -1;
+      // 这些node只会挂载到root上
+      if (
+        nodes[i].nodeType === NodeType.CONTAINER ||
+        nodes[i].nodeType === NodeType.LINK ||
+        nodes[i].nodeType === NodeType.HORIZONTALFLEXLINK ||
+        nodes[i].nodeType === NodeType.VERTICALFLEXLINK
+      ) {
+        datas[i].parentIdx = 0;
       } else {
-        // 查找当前节点的parent在深度优先的数组中的索引号
-        for (let j: number = 0; j < datas.length; j++) {
-          // 名称比较，更好的方式用地址比较
-          // if ( parent . name === nodes [ j ] . name )
-          if (parent === nodes[j]) {
-            datas[i].parentIdx = j;
+        let parent: TreeNode<T> | undefined = nodes[i].parent;
+        if (parent === undefined) {
+          datas[i].parentIdx = -1;  // 根节点
+        } else {
+          for (let j: number = 0; j < datas.length; j++) {
+            if (parent === nodes[j]) {
+              datas[i].parentIdx = j;
+            }
           }
         }
+      }
+    }
+    // 为toIdx和fromIdx赋值
+    for (let i: number = 0; i < datas.length; i++) {
+      if (nodes[i].nodeType === NodeType.LINK || nodes[i].nodeType === NodeType.HORIZONTALFLEXLINK || nodes[i].nodeType === NodeType.VERTICALFLEXLINK) {
+        let sprite: ISprite = nodes[i].data as ISprite
+        let fromIdx = undefined
+        let toIdx = undefined
+        for (let j: number = 0; j < datas.length; j++) {
+          if (sprite.data.from === nodes[j].data) {
+            fromIdx = j;
+          }
+          if (sprite.data.to === nodes[j].data) {
+            toIdx = j;
+          }
+        }
+        console.log(fromIdx, toIdx)
+        datas[i].fromIdx = fromIdx
+        datas[i].toIdx = toIdx
       }
     }
     return JSON.stringify(datas);

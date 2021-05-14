@@ -1,7 +1,7 @@
 import { TreeNode, NodeEnumeratorFactory } from "../treeNode";
 import { IEnumerator } from "../IEnumerator";
 import { CanvasKeyBoardEvent, CanvasMouseEvent, Canvas2DApplication, EInputEventType } from "../application";
-import { ISprite, EOrder, IDispatcher, SpriteFactory, ERenderType, ISpriteContainer } from "./interface";
+import { ISprite, EOrder, IDispatcher, SpriteFactory, ERenderType, ISpriteContainer, NodeType } from "./interface";
 import { mat2d, vec2, Math2D } from "../math2d";
 
 export class SpriteNode extends TreeNode<ISprite> implements ISpriteContainer {
@@ -190,6 +190,8 @@ export class SpriteNodeManager implements IDispatcher {
     spr.fillStyle = 'white';
     spr.renderType = ERenderType.STROKE_FILL;
     this._rootNode = new SpriteNode(spr, undefined, spr.name);
+    this._rootNode.nodeType = NodeType.SPRITE
+    this._rootNode.needSerialize = true
     spr.owner = this._rootNode;
   }
 
