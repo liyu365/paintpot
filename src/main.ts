@@ -79,7 +79,7 @@ export class TopologyApplication {
     const saveBtn: HTMLElement = document.querySelector('#saveBtn') as HTMLElement
     saveBtn.onclick = () => {
       const root = this._app.rootContainer as SpriteNode
-      let json = this.convertTreeToJsonString<ISprite>(root)
+      let json = this.convertTreeToJsonString(root)
       console.log(json)
       window.localStorage.setItem('chartJSON', json)
     }
@@ -396,10 +396,11 @@ export class TopologyApplication {
     console.log(root)
   }
 
-  public convertTreeToJsonString<T extends ISprite>(node: TreeNode<T>): string {
-    let nodes: Array<TreeNode<T>> = [];
+  public convertTreeToJsonString(node: TreeNode<ISprite>): string {
+    let nodes: Array<TreeNode<ISprite>> = [];
     let datas: Array<NodeData> = [];
-    for (let n: TreeNode<T> | undefined = node; n !== undefined; n = n.moveNext()) {
+    let n: TreeNode<ISprite> | undefined = node
+    do {
       if (n.needSerialize === true) {
         let sprite = n.data
         if (sprite) {
@@ -411,7 +412,7 @@ export class TopologyApplication {
           nodes.push(n);
         }
       }
-    }
+    } while (n = n.moveNext());
     // 为parentIdx赋值
     for (let i: number = 0; i < datas.length; i++) {
       // 这些node只会挂载到root上
@@ -422,7 +423,7 @@ export class TopologyApplication {
       ) {
         datas[i].parentIdx = 0;
       } else {
-        let parent: TreeNode<T> | undefined = nodes[i].parent;
+        let parent: TreeNode<ISprite> | undefined = nodes[i].parent;
         if (parent === undefined) {
           datas[i].parentIdx = -1;  // 根节点
         } else {
@@ -437,20 +438,21 @@ export class TopologyApplication {
     // 为toIdx和fromIdx赋值
     for (let i: number = 0; i < datas.length; i++) {
       if (nodes[i].nodeType === NodeType.LINK || nodes[i].nodeType === NodeType.HORIZONTALFLEXLINK || nodes[i].nodeType === NodeType.VERTICALFLEXLINK) {
-        let sprite: ISprite = nodes[i].data as ISprite
-        let fromIdx = undefined
-        let toIdx = undefined
-        for (let j: number = 0; j < datas.length; j++) {
-          if (sprite.data.from === nodes[j]) {
-            fromIdx = j;
+        let sprite = nodes[i].data
+        if (sprite) {
+          let fromIdx = undefined
+          let toIdx = undefined
+          for (let j: number = 0; j < datas.length; j++) {
+            if (sprite.data.from === nodes[j]) {
+              fromIdx = j;
+            }
+            if (sprite.data.to === nodes[j]) {
+              toIdx = j;
+            }
           }
-          if (sprite.data.to === nodes[j]) {
-            toIdx = j;
-          }
+          datas[i].fromIdx = fromIdx
+          datas[i].toIdx = toIdx
         }
-        console.log(fromIdx, toIdx)
-        datas[i].fromIdx = fromIdx
-        datas[i].toIdx = toIdx
       }
     }
     return JSON.stringify(datas);
