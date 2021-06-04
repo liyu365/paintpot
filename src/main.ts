@@ -165,8 +165,9 @@ export class TopologyApplication {
             return (context: CanvasRenderingContext2D | null) => {
               if (context) {
                 context.save()
+                context.beginPath()
                 context.strokeStyle = "rgba(0,0,236,0.5)"
-                context.fillStyle = "rgba(0,0,236,0.1)"
+                context.fillStyle = "rgba(0,0,236,0.2)"
                 context.rect(x, y, w, h)
                 context.fill()
                 context.stroke()
