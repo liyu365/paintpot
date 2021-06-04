@@ -1,5 +1,5 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
-import { ISprite, EOrder, IShape, Bounding, NodeType, SpriteFactory, ERenderType } from "./lib/spriteSystem/interface";
+import { ISprite, EOrder, IShape, Bounding, NodeType, ScenceMode, SpriteFactory, ERenderType } from "./lib/spriteSystem/interface";
 import { CanvasMouseEvent, EInputEventType } from "./lib/application";
 import { vec2, Math2D } from "./lib/math2d";
 import { SpriteNode, SpriteNodeGroup } from './lib/spriteSystem/sprite2dHierarchicalSystem'
@@ -37,6 +37,8 @@ export class TopologyApplication {
   private _isSatgeHasDrag = false
   private _diffX = 0
   private _diffY = 0
+  private _downX = 0
+  private _downY = 0
   private _selectedSprites: Array<ISprite> = []
   private _hoveringSprite: ISprite | null = null
   private _sprMenu: HTMLElement | null
@@ -104,12 +106,14 @@ export class TopologyApplication {
     if (event.button === 0) {
       const root = this._app.rootContainer as SpriteNode
       const rootSpr = root.sprite
+      const mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(event)
       if (rootSpr) {
-        let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(event)
         this._diffX = mouseOffset.x - rootSpr.x
         this._diffY = mouseOffset.y - rootSpr.y
         this._isMouseDown = true
       }
+      this._downX = mouseOffset.x
+      this._downY = mouseOffset.y
     }
 
     if (this._sprMenu) {
@@ -129,20 +133,50 @@ export class TopologyApplication {
       this._selectedSprites = []
     }
     this._isSatgeHasDrag = false
+    this._app.operations = []
   }
 
   private handleMouseMove(evt: Event): void {
     const root = this._app.rootContainer as SpriteNode
     const rootSpr = root.sprite
     if (rootSpr) {
-      // 拖动stage
       if (this._isMouseDown && !this._app.getDragSprite() || this._app.getDragSprite() === rootSpr) {
-        let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
-        rootSpr.x = mouseOffset.x - this._diffX
-        rootSpr.y = mouseOffset.y - this._diffY
-        this._isSatgeHasDrag = true
-        if (this._sprMenu) {
-          this._sprMenu.style.display = 'none'
+        // 拖动stage
+        if (this._app.scenceMode === ScenceMode.DRAG) {
+          let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
+          rootSpr.x = mouseOffset.x - this._diffX
+          rootSpr.y = mouseOffset.y - this._diffY
+          this._isSatgeHasDrag = true
+          if (this._sprMenu) {
+            this._sprMenu.style.display = 'none'
+          }
+        }
+
+        // 绘制选框
+        if (this._app.scenceMode === ScenceMode.SELECT) {
+          let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
+          let p1 = new vec2(this._downX, this._downY)
+          let p2 = new vec2(mouseOffset.x, mouseOffset.y)
+          let x = p1.x >= p2.x ? p2.x : p1.x
+          let y = p1.y >= p2.y ? p2.y : p1.y
+          let w = Math.abs(p1.x - p2.x)
+          let h = Math.abs(p1.y - p2.y)
+          let getOperationFun = (x: number, y: number, w: number, h: number) => {
+            return (context: CanvasRenderingContext2D | null) => {
+              if (context) {
+                context.save()
+                context.strokeStyle = "rgba(0,0,236,0.5)"
+                context.fillStyle = "rgba(0,0,236,0.1)"
+                context.rect(x, y, w, h)
+                context.fill()
+                context.stroke()
+                context.closePath()
+                context.restore()
+              }
+            }
+          }
+          this._app.operations = []
+          this._app.operations[0] = getOperationFun(x, y, w, h)
         }
       }
       // 如果鼠标移动到了空白区域，则取消所有sprite的hover状态

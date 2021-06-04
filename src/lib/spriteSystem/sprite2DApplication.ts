@@ -1,17 +1,19 @@
 import { Canvas2DApplication, CanvasMouseEvent, CanvasKeyBoardEvent } from "../application";
-import { ISpriteContainer, IDispatcher, ISprite } from "./interface";
+import { ISpriteContainer, IDispatcher, ISprite, ScenceMode } from "./interface";
 import { Sprite2DManager } from "./sprite2dSystem";
 import { SpriteNodeManager } from "./sprite2dHierarchicalSystem"
 
 export class Sprite2DApplication extends Canvas2DApplication {
   protected _dispatcher: IDispatcher;
+  public operations: Array<(context: CanvasRenderingContext2D | null) => void> = [];
+  public scenceMode: ScenceMode = ScenceMode.DRAG
 
   public constructor(canvas: HTMLCanvasElement, isHierarchical: boolean = true) {
+    super(canvas);
+
     document.oncontextmenu = function () {
       return false;
     }
-
-    super(canvas);
     if (isHierarchical === true) {
       this._dispatcher = new SpriteNodeManager(canvas.width, canvas.height);
     } else {
@@ -35,7 +37,16 @@ export class Sprite2DApplication extends Canvas2DApplication {
     if (this.context2D) {
       this.context2D.clearRect(0, 0, this.context2D.canvas.width, this.context2D.canvas.height);
       this._dispatcher.dispatchDraw(this.context2D);
+      this.drawOperations()
       this.renderCopyRight()
+    }
+  }
+
+  private drawOperations() {
+    if (this.context2D) {
+      this.operations.forEach(operation => {
+        operation(this.context2D)
+      })
     }
   }
 

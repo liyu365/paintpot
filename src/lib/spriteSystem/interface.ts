@@ -3,6 +3,11 @@ import { CanvasMouseEvent, CanvasKeyBoardEvent } from "../application";
 import { Rect, Circle, Grid, Ellipse, Line, ConvexPolygon, Scale9Grid, BezierPath, EndClipShape, EmptyShape } from "./shapes";
 import { Sprite2D } from "./sprite2d";
 
+export enum ScenceMode {
+  SELECT = 'select',
+  DRAG = 'drag'
+}
+
 export enum NodeType {
   TREENODE, // 0
   SPRITE, // 1
