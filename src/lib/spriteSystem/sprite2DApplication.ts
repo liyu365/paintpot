@@ -35,6 +35,24 @@ export class Sprite2DApplication extends Canvas2DApplication {
     if (this.context2D) {
       this.context2D.clearRect(0, 0, this.context2D.canvas.width, this.context2D.canvas.height);
       this._dispatcher.dispatchDraw(this.context2D);
+      this.renderCopyRight()
+    }
+  }
+
+  private renderCopyRight(): void {
+    if (this.context2D) {
+      const text = 'liyu365'
+      const margin = 5
+      this.context2D.save()
+      this.context2D.beginPath();
+      this.context2D.fillStyle = "rgba(0, 0, 0, 0.5)"
+      this.context2D.font = "12px san_serif";
+      const w = this.context2D.measureText(text).width
+      const h = this.context2D.measureText('田').width
+      this.context2D.textAlign = 'left'
+      this.context2D.textBaseline = 'top'
+      this.context2D.fillText(text, this.context2D.canvas.width - w - margin, this.context2D.canvas.height - h - margin)
+      this.context2D.restore()
     }
   }
 
