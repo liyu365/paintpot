@@ -223,13 +223,13 @@ export class TopologyApplication {
           let spriteLeftTop: vec2 = new vec2(sprite.x + bounding.left, sprite.y + bounding.top)
           spriteLeftTop = Math2D.transform(parentSpr.getWorldMatrix(), spriteLeftTop)
 
-          let spriteRightTop: vec2 = new vec2(sprite.x + bounding.left + bounding.right, sprite.y + bounding.top)
+          let spriteRightTop: vec2 = new vec2(sprite.x + bounding.right, sprite.y + bounding.top)
           spriteRightTop = Math2D.transform(parentSpr.getWorldMatrix(), spriteRightTop)
 
-          let spriteRightBottom = new vec2(sprite.x + bounding.left + bounding.right, sprite.y + bounding.top + bounding.bottom)
+          let spriteRightBottom = new vec2(sprite.x + bounding.right, sprite.y + bounding.bottom)
           spriteRightBottom = Math2D.transform(parentSpr.getWorldMatrix(), spriteRightBottom)
 
-          let spriteleftBottom = new vec2(sprite.x + bounding.left, sprite.y + bounding.top + bounding.bottom)
+          let spriteleftBottom = new vec2(sprite.x + bounding.left, sprite.y + bounding.bottom)
           spriteleftBottom = Math2D.transform(parentSpr.getWorldMatrix(), spriteleftBottom)
 
 
