@@ -35,10 +35,11 @@ export class TopologyApplication {
   private lastWheelMouseY = 0
   private _isMouseDown = false
   private _isSatgeHasDrag = false
-  private _diffX = 0
+  private _diffX = 0 // 鼠标按下的世界坐标与rootSpr左上角世界坐标的差
   private _diffY = 0
-  private _downX = 0
+  private _downX = 0 // 鼠标按下时的世界坐标
   private _downY = 0
+  private _selectAreaVertexs: Array<number> = [] // 选框的x,y,w,h
   private _selectedSprites: Array<ISprite> = []
   private _hoveringSprite: ISprite | null = null
   private _sprMenu: HTMLElement | null
@@ -47,7 +48,8 @@ export class TopologyApplication {
     this._app = app
 
     this.init();
-    //this.init2();
+    // this.init2();
+    // this.init3()
     this._app.start();
     this._sprMenu = document.querySelector("#sprMenu");
 
@@ -98,6 +100,16 @@ export class TopologyApplication {
           this._app.rootContainer = root
         }
       }
+    }
+
+    const dragModeBtn: HTMLElement = document.querySelector('#dragModeBtn') as HTMLElement
+    dragModeBtn.onclick = () => {
+      this._app.scenceMode = ScenceMode.DRAG
+    }
+
+    const selectModeBtn: HTMLElement = document.querySelector('#selectModeBtn') as HTMLElement
+    selectModeBtn.onclick = () => {
+      this._app.scenceMode = ScenceMode.SELECT
     }
   }
 
@@ -161,6 +173,10 @@ export class TopologyApplication {
           let y = p1.y >= p2.y ? p2.y : p1.y
           let w = Math.abs(p1.x - p2.x)
           let h = Math.abs(p1.y - p2.y)
+          this._selectAreaVertexs[0] = x
+          this._selectAreaVertexs[1] = y
+          this._selectAreaVertexs[2] = w
+          this._selectAreaVertexs[3] = h
           let getOperationFun = (x: number, y: number, w: number, h: number) => {
             return (context: CanvasRenderingContext2D | null) => {
               if (context) {
@@ -178,6 +194,7 @@ export class TopologyApplication {
           }
           this._app.operations = []
           this._app.operations[0] = getOperationFun(x, y, w, h)
+          this.calcInSelectArae()
         }
       }
       // 如果鼠标移动到了空白区域，则取消所有sprite的hover状态
@@ -185,6 +202,65 @@ export class TopologyApplication {
       if (hitSprite === undefined || hitSprite.owner.name === 'root') {
         if (this._hoveringSprite) {
           this._hoveringSprite.isHovering = false
+        }
+      }
+    }
+  }
+
+  // 计算所有sprite是否在选区内
+  private calcInSelectArae() {
+    const root = this._app.rootContainer as SpriteNode
+    let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(root);
+    let current: TreeNode<ISprite> | undefined = undefined;
+    while (iter.moveNext()) {
+      current = iter.current;
+      if (current && current.data) {
+        let sprite: ISprite = current.data
+        let shape: IShape = sprite.shape
+        let bounding: Bounding = shape.getBounding()
+        let parentSpr = sprite.owner.getParentSprite()
+        if (parentSpr) {
+          let spriteLeftTop: vec2 = new vec2(sprite.x + bounding.left, sprite.y + bounding.top)
+          spriteLeftTop = Math2D.transform(parentSpr.getWorldMatrix(), spriteLeftTop)
+
+          let spriteRightTop: vec2 = new vec2(sprite.x + bounding.left + bounding.right, sprite.y + bounding.top)
+          spriteRightTop = Math2D.transform(parentSpr.getWorldMatrix(), spriteRightTop)
+
+          let spriteRightBottom = new vec2(sprite.x + bounding.left + bounding.right, sprite.y + bounding.top + bounding.bottom)
+          spriteRightBottom = Math2D.transform(parentSpr.getWorldMatrix(), spriteRightBottom)
+
+          let spriteleftBottom = new vec2(sprite.x + bounding.left, sprite.y + bounding.top + bounding.bottom)
+          spriteleftBottom = Math2D.transform(parentSpr.getWorldMatrix(), spriteleftBottom)
+
+
+
+          // console.log(spriteLeftTop, spriteRightBottom, this._selectAreaVertexs[3])
+          // for (let i = 0; i < this._selectAreaVertexs.length; i++) {
+          //   if (Math2D.isPointInRect(this._selectAreaVertexs[i].x, this._selectAreaVertexs[i].y,))
+          // }
+
+          if (Math2D.isPointInRect(spriteLeftTop.x, spriteLeftTop.y, this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3])) {
+            sprite.isSelected = true
+          }
+          if (Math2D.isPointInRect(spriteRightTop.x, spriteRightTop.y, this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3])) {
+            sprite.isSelected = true
+          }
+          if (Math2D.isPointInRect(spriteRightBottom.x, spriteRightBottom.y, this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3])) {
+            sprite.isSelected = true
+          }
+          if (Math2D.isPointInRect(spriteleftBottom.x, spriteleftBottom.y, this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3])) {
+            sprite.isSelected = true
+          }
+
+          // let isContain = false
+          // let localMat = sprite.getLocalMatrix();
+          // for (let i = 0; i < this._selectAreaVertexs.length; i++) {
+          //   let localVertex = Math2D.transform(localMat, this._selectAreaVertexs[i]);
+          //   //console.log(localVertex.x, localVertex.y)
+          //   if (sprite.hitTest(localVertex)) {
+          //     console.log(i)
+          //   }
+          // }
         }
       }
     }
@@ -427,6 +503,17 @@ export class TopologyApplication {
 
     LinkFactory.create(root, panelPointNode2, panelPointNode3, '2->3');
     LinkFactory.create(root, panelPointNode1, panelPointNode2, '1->2');
+
+    console.log(root)
+  }
+
+  private init3(): void {
+    const root = this._app.rootContainer as SpriteNode
+
+
+
+    const rectNode3: SpriteNode = PanelRectFactory.create(root, 'rectNode3', new vec2(200, 200), this)
+    //const panelPointNode2: SpriteNode = PanelPointFactory.create(root, 'panelPointNode2', new vec2(320, 120), this);
 
     console.log(root)
   }
