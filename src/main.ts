@@ -113,6 +113,35 @@ export class TopologyApplication {
     }
   }
 
+  private clearAllSprite(): void {
+    this._selectedSprites.forEach(spr => {
+      spr.isSelected = false
+    })
+    this._selectedSprites = []
+  }
+
+  private removeSelectedSprite(spr: ISprite): ISprite {
+    spr.isSelected = false
+    let index = this._selectedSprites.findIndex(item => {
+      return item === spr
+    })
+    if (index !== -1) {
+      this._selectedSprites.splice(index, 1)
+    }
+    return spr
+  }
+
+  private addSelectedSprite(spr: ISprite): ISprite {
+    spr.isSelected = true
+    let index = this._selectedSprites.findIndex(item => {
+      return item === spr
+    })
+    if (index === -1) {
+      this._selectedSprites.push(spr)
+    }
+    return spr
+  }
+
   private handleMouseDown(evt: Event): void {
     let event = evt as MouseEvent
     if (event.button === 0) {
@@ -139,10 +168,7 @@ export class TopologyApplication {
     let hitSprite = this._app.getHitSprite()
     // 如果点击了空白区域（并且没有拖动任何元素），则取消所有sprite的选中状态
     if ((hitSprite === undefined || hitSprite.owner.name === 'root') && this._isSatgeHasDrag === false) {
-      this._selectedSprites.forEach(sprite => {
-        sprite.isSelected = false
-      })
-      this._selectedSprites = []
+      this.clearAllSprite()
     }
     this._isSatgeHasDrag = false
     this._app.operations = []
@@ -213,7 +239,7 @@ export class TopologyApplication {
     const root = this._app.rootContainer as SpriteNode
     let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(root);
     let current: TreeNode<ISprite> | undefined = undefined;
-    this._selectedSprites = []
+    this.clearAllSprite()
     while (iter.moveNext()) {
       current = iter.current;
       if (current && current.data) {
@@ -231,10 +257,9 @@ export class TopologyApplication {
             spriteLeftTop.x, spriteLeftTop.y, spriteRightBottom.x - spriteLeftTop.x, spriteRightBottom.y - spriteLeftTop.y,
             this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3]
           )) {
-            sprite.isSelected = true
-            this._selectedSprites.push(sprite)
+            this.addSelectedSprite(sprite)
           } else {
-            sprite.isSelected = false
+            this.removeSelectedSprite(sprite)
           }
         }
       }
@@ -315,32 +340,15 @@ export class TopologyApplication {
   }
 
   public spriteSelectAction(spr: ISprite, evt: CanvasMouseEvent): void {
-
     if (evt.type === EInputEventType.MOUSEUP && evt.button === 0) {
-
       if (spr.isDragging === false) {
-        // const root = this._app.rootContainer as SpriteNode
-        // let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(root);
-        // let current: TreeNode<ISprite> | undefined = undefined;
-        // while (iter.moveNext()) {
-        //   current = iter.current;
-        //   if (current && current.data) {
-        //     current.data.isSelected = false
-        //   }
-        // }
-
-        if (this._selectedSprites.length === 1 && this._selectedSprites[0] === spr) {
-          spr.isSelected = false
+        if (spr.isSelected === true) {
+          this.removeSelectedSprite(spr)
           spr.isHovering = true
-          this._selectedSprites = []
         } else {
-          spr.isSelected = true
+          this.clearAllSprite()
+          this.addSelectedSprite(spr)
           spr.isHovering = false
-          this._selectedSprites.forEach(sprite => {
-            sprite.isSelected = false
-          })
-          this._selectedSprites = []
-          this._selectedSprites.push(spr)
         }
       }
 
