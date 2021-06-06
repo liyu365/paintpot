@@ -153,12 +153,13 @@ export class TopologyApplication {
     const rootSpr = root.sprite
     if (rootSpr) {
       if (this._isMouseDown && !this._app.getDragSprite() || this._app.getDragSprite() === rootSpr) {
+        this._isSatgeHasDrag = true
+
         // 拖动stage
         if (this._app.scenceMode === ScenceMode.DRAG) {
           let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
           rootSpr.x = mouseOffset.x - this._diffX
           rootSpr.y = mouseOffset.y - this._diffY
-          this._isSatgeHasDrag = true
           if (this._sprMenu) {
             this._sprMenu.style.display = 'none'
           }
@@ -212,6 +213,7 @@ export class TopologyApplication {
     const root = this._app.rootContainer as SpriteNode
     let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(root);
     let current: TreeNode<ISprite> | undefined = undefined;
+    this._selectedSprites = []
     while (iter.moveNext()) {
       current = iter.current;
       if (current && current.data) {
@@ -230,6 +232,7 @@ export class TopologyApplication {
             this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3]
           )) {
             sprite.isSelected = true
+            this._selectedSprites.push(sprite)
           } else {
             sprite.isSelected = false
           }
