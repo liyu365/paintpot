@@ -216,51 +216,23 @@ export class TopologyApplication {
       current = iter.current;
       if (current && current.data) {
         let sprite: ISprite = current.data
-        let shape: IShape = sprite.shape
-        let bounding: Bounding = shape.getBounding()
+        let bounding: Bounding = sprite.shape.getBounding()
         let parentSpr = sprite.owner.getParentSprite()
         if (parentSpr) {
           let spriteLeftTop: vec2 = new vec2(sprite.x + bounding.left, sprite.y + bounding.top)
           spriteLeftTop = Math2D.transform(parentSpr.getWorldMatrix(), spriteLeftTop)
 
-          let spriteRightTop: vec2 = new vec2(sprite.x + bounding.right, sprite.y + bounding.top)
-          spriteRightTop = Math2D.transform(parentSpr.getWorldMatrix(), spriteRightTop)
-
           let spriteRightBottom = new vec2(sprite.x + bounding.right, sprite.y + bounding.bottom)
           spriteRightBottom = Math2D.transform(parentSpr.getWorldMatrix(), spriteRightBottom)
 
-          let spriteleftBottom = new vec2(sprite.x + bounding.left, sprite.y + bounding.bottom)
-          spriteleftBottom = Math2D.transform(parentSpr.getWorldMatrix(), spriteleftBottom)
-
-
-
-          // console.log(spriteLeftTop, spriteRightBottom, this._selectAreaVertexs[3])
-          // for (let i = 0; i < this._selectAreaVertexs.length; i++) {
-          //   if (Math2D.isPointInRect(this._selectAreaVertexs[i].x, this._selectAreaVertexs[i].y,))
-          // }
-
-          if (Math2D.isPointInRect(spriteLeftTop.x, spriteLeftTop.y, this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3])) {
+          if (Math2D.isCollisionWithRect(
+            spriteLeftTop.x, spriteLeftTop.y, spriteRightBottom.x - spriteLeftTop.x, spriteRightBottom.y - spriteLeftTop.y,
+            this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3]
+          )) {
             sprite.isSelected = true
+          } else {
+            sprite.isSelected = false
           }
-          if (Math2D.isPointInRect(spriteRightTop.x, spriteRightTop.y, this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3])) {
-            sprite.isSelected = true
-          }
-          if (Math2D.isPointInRect(spriteRightBottom.x, spriteRightBottom.y, this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3])) {
-            sprite.isSelected = true
-          }
-          if (Math2D.isPointInRect(spriteleftBottom.x, spriteleftBottom.y, this._selectAreaVertexs[0], this._selectAreaVertexs[1], this._selectAreaVertexs[2], this._selectAreaVertexs[3])) {
-            sprite.isSelected = true
-          }
-
-          // let isContain = false
-          // let localMat = sprite.getLocalMatrix();
-          // for (let i = 0; i < this._selectAreaVertexs.length; i++) {
-          //   let localVertex = Math2D.transform(localMat, this._selectAreaVertexs[i]);
-          //   //console.log(localVertex.x, localVertex.y)
-          //   if (sprite.hitTest(localVertex)) {
-          //     console.log(i)
-          //   }
-          // }
         }
       }
     }

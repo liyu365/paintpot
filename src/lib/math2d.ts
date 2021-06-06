@@ -607,6 +607,23 @@ export class Math2D {
     return false;
   }
 
+  // 判断两个矩形是否碰撞
+  public static isCollisionWithRect(
+    x1: number, y1: number, w1: number, h1: number,
+    x2: number, y2: number, w2: number, h2: number
+  ): boolean {
+    if (x1 >= x2 && x1 >= x2 + w2) {
+      return false;
+    } else if (x1 <= x2 && x1 + w1 <= x2) {
+      return false;
+    } else if (y1 >= y2 && y1 >= y2 + h2) {
+      return false;
+    } else if (y1 <= y2 && y1 + h1 <= y2) {
+      return false;
+    }
+    return true;
+  }
+
   public static isPointInEllipse(ptX: number, ptY: number, centerX: number, centerY: number, radiusX: number, radiusY: number): boolean {
     let diffX = ptX - centerX;
     let diffY = ptY - centerY;
