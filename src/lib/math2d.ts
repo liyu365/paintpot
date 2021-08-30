@@ -18,7 +18,7 @@ export class vec2 {
   public get y(): number { return this.values[1]; }
   public set y(y: number) { this.values[1] = y; }
 
-  public reset(x: number = 0, y: number): vec2 {
+  public reset(x: number = 0, y: number = 0): vec2 {
     this.values[0] = x;
     this.values[1] = y;
     return this;
@@ -111,6 +111,7 @@ export class vec2 {
     return result;
   }
 
+  // 沿direction方向移动scalar的距离
   public static scaleAdd(start: vec2, direction: vec2, scalar: number, result: vec2 | null = null): vec2 {
     if (result === null) result = new vec2();
     vec2.scale(direction, scalar, result);
@@ -127,14 +128,17 @@ export class vec2 {
     return vec2.dotProduct(this, right);
   }
 
+  // 点乘
   public static dotProduct(left: vec2, right: vec2): number {
     return left.values[0] * right.values[0] + left.values[1] * right.values[1];
   }
 
+  // 叉乘
   public static crossProduct(left: vec2, right: vec2): number {
     return left.x * right.y - left.y * right.x;
   }
 
+  // 以点from作为原点，获得点to的方向（相对于x轴正方向）
   public static getOrientation(from: vec2, to: vec2, isRadian: boolean = false): number {
     let diff: vec2 = vec2.difference(to, from);
     let radian = Math.atan2(diff.y, diff.x);
@@ -144,6 +148,7 @@ export class vec2 {
     return radian;
   }
 
+  // 获得方向a到方向b的夹角的弧度或角度
   public static getAngle(a: vec2, b: vec2, isRadian: boolean = false): number {
     let dot: number = vec2.dotProduct(a, b);
     let radian: number = Math.acos(dot / (a.length * b.length));
@@ -153,6 +158,7 @@ export class vec2 {
     return radian;
   }
 
+  // 获取方向a到方向b的夹角的余弦值
   public static cosAngle(a: vec2, b: vec2, norm: boolean = false): number {
     if (norm === true) {
       a.normalize();
@@ -161,6 +167,7 @@ export class vec2 {
     return vec2.dotProduct(a, b);
   }
 
+  // 获取方向a到方向b的夹角的正弦值
   public static sinAngle(a: vec2, b: vec2, norm: boolean = false): number {
     if (norm === true) {
       a.normalize();
@@ -320,6 +327,7 @@ export class mat2d {
     return result;
   }
 
+  // 旋转矩阵取逆（当前矩阵只能包含旋转信息）
   public onlyRotationMatrixInvert(): mat2d {
     let s: number = this.values[1];
     this.values[1] = this.values[2];
@@ -327,6 +335,7 @@ export class mat2d {
     return this;
   }
 
+  // 构建从方向v1到方向v2的旋转矩阵（例如获取x轴正方的向量到某个向量的旋转矩阵，这样可以代替Math.atan2的一些应用）
   public static makeRotationFromVectors(v1: vec2, v2: vec2, norm: boolean = false, result: mat2d | null = null): mat2d {
     if (result === null) result = new mat2d();
     result.values[0] = vec2.cosAngle(v1, v2, norm);
@@ -583,6 +592,7 @@ export class Math2D {
     }
   }
 
+  // 判断点是否在线段上。先判断点在线段上是否存在投影，再判断点和投影点的距离是否小于半径
   public static isPointOnLineSegment(pt: vec2, start: vec2, end: vec2, radius: number = 2): boolean {
     let closePt: vec2 = vec2.create();
     if (Math2D.projectPointOnLineSegment(pt, start, end, closePt) === false) {
@@ -669,6 +679,7 @@ export class Math2D {
     return true;
   }
 
+  // 把向量通过变换矩阵进行变换
   public static transform(mat: mat2d, pt: vec2, result: vec2 | null = null): vec2 {
     if (result === null) result = vec2.create();
     result.values[0] = mat.values[0] * pt.values[0] + mat.values[2] * pt.values[1] + mat.values[4];
@@ -774,8 +785,9 @@ export class Transform2D {
     this.scale = new vec2(scaleX, scaleY);
   }
 
+  // 根据position、rotation、scale设置栈顶的矩阵并返回栈顶矩阵
   public toMatrix(): mat2d {
-    Math2D.matStack.loadIdentity();
+    Math2D.matStack.loadIdentity(); // 先把栈顶的矩阵归一化
     Math2D.matStack.translate(this.position.x, this.position.y);
     Math2D.matStack.rotate(this.rotation, false);
     Math2D.matStack.scale(this.scale.x, this.scale.y);
@@ -790,17 +802,17 @@ export class Transform2D {
 
 
 export interface IBezierEnumerator extends IEnumerator<vec2> {
-  steps: number;
+  steps: number; // public 总步数
 }
 
 export class BezierEnumerator implements IBezierEnumerator {
-  private _steps: number;
-  private _i: number;
+  private _steps: number; // 总步数
+  private _i: number; // 步长
   private _startAnchorPoint: vec2;
   private _endAnchorPoint: vec2;
   private _controlPoint0: vec2;
   private _controlPoint1: vec2 | null;
-  private _currentIdx: number;
+  private _currentIdx: number; // 当前步索引
 
   public constructor(start: vec2, end: vec2, control0: vec2, control1: vec2 | null = null, steps: number = 30) {
     this._startAnchorPoint = start;
