@@ -10,7 +10,7 @@ export abstract class BaseShape2D implements IShape {
 
   public abstract get type(): string;
   public abstract hitTest(localPt: vec2, transform: ITransformable): boolean;
-  public abstract getBounding(): Bounding;
+  public abstract getBounding(): Bounding; // 返回当前shape的边界，相对于局部坐标原点
 
   public constructor() {
     this.axisXStyle = "rgba( 255 , 0 , 0 , 128 ) ";
@@ -321,6 +321,8 @@ export class Line implements IShape {
   public end: vec2;
   public data: any;
 
+  // len为线的长度。线只会位于x轴上，起点默认为坐标原点，终点默认在x轴正方向
+  // t为线的起点终点相对于y轴的偏移量
   public constructor(len: number = 10, t: number = 0) {
     if (t < 0.0 || t > 1.0) {
       alert("参数t必须处于 [ 0 , 1 ]之间!!");
@@ -581,7 +583,7 @@ export class EndClipShape implements IShape {
   public draw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void { }
 
   public endDraw(transformable: ITransformable, state: IRenderState, context: CanvasRenderingContext2D): void {
-    context.restore();
+    context.restore(); // 只有这一句有用
   }
 
   public get type(): string {
