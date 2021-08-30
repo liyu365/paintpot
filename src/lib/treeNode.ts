@@ -207,7 +207,6 @@ node10                        node11  node12
   public isDescendantOf(ancestor: TreeNode<T> | undefined): boolean {
     if (ancestor === undefined)
       return false;
-    let node: TreeNode<T> | undefined = this._parent;
     for (let node: TreeNode<T> | undefined = this._parent; node !== undefined; node = node._parent) {
       if (node === ancestor)
         return true;

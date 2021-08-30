@@ -91,8 +91,8 @@ export class SpriteNode extends TreeNode<ISprite> implements ISpriteContainer {
 
   public addChildAt(child: TreeNode<ISprite>, index: number): TreeNode<ISprite> | undefined {
     let ret: TreeNode<ISprite> | undefined = super.addChildAt(child, index);
-    if (ret !== undefined) {
-      if (ret.data) {
+    if (ret !== undefined) { // ret不为undefind，证明形参child成为了当前SpriteNode对象的子级
+      if (ret.data) { // ret.data就是形参child内部包裹的ISprite对象
         ret.data.owner = ret as SpriteNode;
       }
     }
@@ -109,6 +109,7 @@ export class SpriteNode extends TreeNode<ISprite> implements ISpriteContainer {
     return ret;
   }
 
+  // 从根节点开始遍历：把鼠标的世界坐标转化为相对于当前迭代到的SpriteNode包裹的Sprite2D对象的局部坐标，然后进行碰撞检测，一点碰撞检测成功就返回此Speite2D对象
   public findSprite(src: vec2, localPoint: vec2 | null = null): ISprite | undefined {
     let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(this.root);
     let current: TreeNode<ISprite> | undefined = undefined;
@@ -135,6 +136,7 @@ export class SpriteNode extends TreeNode<ISprite> implements ISpriteContainer {
     return undefined;
   }
 
+  // 递归绘制自身和自身的所有子级别
   public draw(context: CanvasRenderingContext2D): void {
     if (this.sprite !== undefined) {
       this.sprite.draw(context);
@@ -214,7 +216,7 @@ export class SpriteNodeManager implements IDispatcher {
   public dispatchMouseEvent(evt: CanvasMouseEvent): void {
     if (evt.type === EInputEventType.MOUSEUP) {
       this._dragSprite = undefined;
-    } else if (evt.type === EInputEventType.MOUSEDRAG) {
+    } else if (evt.type === EInputEventType.MOUSEDRAG) { // 如果为鼠标拖动事件，并且当前已经缓存了拖动的对象，则不进行下面的递归命中检测了，只执行当前拖动对象的mouseEvent()方法
       if (this._dragSprite !== undefined) {
         if (this._dragSprite.mouseEvent !== null) {
           this._dragSprite.mouseEvent(this._dragSprite, evt);
@@ -223,6 +225,9 @@ export class SpriteNodeManager implements IDispatcher {
       }
     }
 
+    // 从根节点递归寻找鼠标命中的对象，如果找到则返回命中的Sprite对象
+    // 并把evt对象的localPosition属性赋值为：鼠标的世界坐标转换为命中对象的局部坐标
+    // 并把evt对象的hasLocalPosition设置为true
     let spr: ISprite | undefined = this._rootNode.findSprite(evt.canvasPosition, evt.localPosition);
     this._hitSprite = spr
     if (spr !== undefined) {

@@ -27,7 +27,10 @@ export class Sprite2D implements ISprite {
   public name: string;
   public shape: IShape;
   public data: any; // 挂在到此绘制对象的数据
-  public owner !: ISpriteContainer; // 非空断言，因为owner不通过构造函数或内联赋值进行初始化
+  // 非空断言，因为owner不通过构造函数或内联赋值进行初始化。它指向一个SpriteNode对象（实现了ISpriteContainer接口）
+  // 1：owner的初始化赋值是在调用SpriteNode对象的addChildAt()时，被传入的child如果被成功插入为其子级，则child包裹的Sprite2D对象的owner就会指向该child
+  // 2：如果该Sprite2D实例是被根SpriteNode包裹，则它的owner的初始化赋值是在SpriteNodeManager的构造函数中（因为在此构造函数中实例化的根SpriteNode）
+  public owner !: ISpriteContainer; 
 
   public mouseEvent: MouseEventHandler | null = null;
   public keyEvent: KeyboardEventHandler | null = null;
