@@ -35,7 +35,7 @@ class Timer {
   public callbackData: any = undefined;
 
   public countdown: number = 0;
-  public timeout: number = 0;
+  public timeout: number = 0; // 单位是秒
   public onlyOnce: boolean = false;
 
   constructor(callback: TimerCallback) {
@@ -54,6 +54,7 @@ export class CanvasMouseEvent extends CanvasInputEvent {
     super(type, altKey, ctrlKey, shiftKey);
     this.canvasPosition = canvasPos;
     this.button = button;
+    // 这两个属性在Application的子类sprite2DApplication中的_dispatcher: IDispatcher（SpriteNodeManager或Sprite2DManager实例）的dispatchMouseEvent()方法中被赋值
     this.hasLocalPosition = false;
     this.localPosition = vec2.create();
   }
@@ -123,19 +124,21 @@ export class Application implements EventListenerObject {
   }
 
   protected step(timeStamp: number): void {
-    if (this._startTime === -1) this._startTime = timeStamp;
+    if (this._startTime === -1) this._startTime = timeStamp; // 肯定为0
     if (this._lastTime === -1) this._lastTime = timeStamp;
-    let elapsedMsec = timeStamp - this._startTime;
-    let intervalSec = (timeStamp - this._lastTime);
+    let elapsedMsec = timeStamp - this._startTime; // 从第一次执行step方法到此次执行step方法经历的毫秒数
+    let intervalSec = (timeStamp - this._lastTime);  // 上一次执行step到此次执行step经历的秒数
     if (intervalSec !== 0) {
-      this._fps = 1000.0 / intervalSec;
+      this._fps = 1000.0 / intervalSec; // 间隔越小fps越高
     }
-    intervalSec /= 1000.0;
-    this._lastTime = timeStamp;
-    this._handleTimers(intervalSec);
+    intervalSec /= 1000.0; // intervalSec转为秒单位
+    this._lastTime = timeStamp; // 更新_lastTime为本次执行时的时间，用于下个周期计算周期间隔时间
+    this._handleTimers(intervalSec); // 检查注册的timer是否需要执行
     this.update(elapsedMsec, intervalSec);
     this.render();
     requestAnimationFrame((elapsedMsec: number): void => {
+      // 这里传入的是elapsedMsec是从0开始计算的（第一次requestAnimationFrame被执行就会传入0），而不是从1970 年 1 月 1 日 00:00:00 (UTC) 到当前时间的毫秒数作为基数
+      // 所以上面的this._startTime肯对会为0
       this.step(elapsedMsec);
     });
   }
@@ -151,6 +154,10 @@ export class Application implements EventListenerObject {
 
   public update(elapsedMsec: number, intervalSec: number): void { }
   public render(): void { }
+
+  // 这是addEventListener的一种写法，第二个参数为一个对象，对象的handleEvent方法会作为事件的回调
+  // 这里的dispatchMouseDown、dispatchMouseUp、dispatchMouseMove、dispatchMouseMove会被子类sprite2DApplication实现，调用其内部_dispatcher对象的dispatchMouseEvent方法
+  // 这里的dispatchKeyPress、dispatchKeyDown、dispatchKeyUp会被子类sprite2DApplication实现，调用其内部_dispatcher对象的dispatchKeyEvent方法
   public handleEvent(evt: Event): void {
     switch (evt.type) {
       case "mousedown":
@@ -222,12 +229,13 @@ export class Application implements EventListenerObject {
         let paddingLeft: number = 0;
         let paddingTop: number = 0;
         let decl: CSSStyleDeclaration = window.getComputedStyle(evt.target as HTMLElement);
-        let strNumber: string | null = decl.borderLeftWidth;
 
+        let strNumber: string | null = decl.borderLeftWidth;
         if (strNumber !== null) {
           borderLeftWidth = parseInt(strNumber, 10);
         }
 
+        strNumber = decl.borderTopWidth;
         if (strNumber !== null) {
           borderTopWidth = parseInt(strNumber, 10);
         }
@@ -279,25 +287,11 @@ export class Application implements EventListenerObject {
 
   public addTimer(callback: TimerCallback, timeout: number = 1.0, onlyOnce: boolean = false, data: any = undefined): number {
     let timer: Timer
-    let found: boolean = false;
-    for (let i = 0; i < this.timers.length; i++) {
-      let timer: Timer = this.timers[i];
-      if (timer.enabled === false) {
-        timer.callback = callback;
-        timer.callbackData = data;
-        timer.timeout = timeout;
-        timer.countdown = timeout;
-        timer.enabled = true;
-        timer.onlyOnce = onlyOnce;
-        return timer.id;
-      }
-    }
-
     timer = new Timer(callback);
     timer.callbackData = data;
     timer.timeout = timeout;
     timer.countdown = timeout;
-    timer.enabled = true;
+    timer.enabled = true; // 通过addTimer()方法添加的timer的enabled都为true
     timer.id = ++this._timeId;
     timer.onlyOnce = onlyOnce;
 
@@ -328,7 +322,7 @@ export class Application implements EventListenerObject {
       if (timer.countdown < 0.0) {
         timer.callback(timer.id, timer.callbackData);
         if (timer.onlyOnce === false) {
-          timer.countdown = timer.timeout;
+          timer.countdown = timer.timeout; // 重置倒计时（循环执行）
         } else {
           this.removeTimer(timer.id);
         }
