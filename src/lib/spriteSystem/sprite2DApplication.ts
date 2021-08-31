@@ -6,7 +6,7 @@ import { SpriteNodeManager } from "./sprite2dHierarchicalSystem"
 export class Sprite2DApplication extends Canvas2DApplication {
   protected _dispatcher: IDispatcher;
   public operations: Array<(context: CanvasRenderingContext2D | null) => void> = [];
-  public scenceMode: ScenceMode = ScenceMode.DRAG
+  public scenceMode: ScenceMode = ScenceMode.DRAG // 应用模式，现在有拖动和选择两种
 
   public constructor(canvas: HTMLCanvasElement, isHierarchical: boolean = true) {
     super(canvas);
@@ -29,10 +29,12 @@ export class Sprite2DApplication extends Canvas2DApplication {
     this._dispatcher.container = spr;
   }
 
+  // 每一帧都会被执行
   public update(msec: number, diff: number): void {
     this._dispatcher.dispatchUpdate(msec, diff);
   }
 
+  // 每一帧都会被执行
   public render(): void {
     if (this.context2D) {
       this.context2D.clearRect(0, 0, this.context2D.canvas.width, this.context2D.canvas.height);
@@ -77,6 +79,7 @@ export class Sprite2DApplication extends Canvas2DApplication {
     return this._dispatcher.hitSprite
   }
 
+  // 父类Application监听到的所有鼠标事件，都会调用_dispatcher的dispatchMouseEvent()方法
   protected dispatchMouseDown(evt: CanvasMouseEvent): void {
     super.dispatchMouseDown(evt);
     this._dispatcher.dispatchMouseEvent(evt);
@@ -97,6 +100,7 @@ export class Sprite2DApplication extends Canvas2DApplication {
     this._dispatcher.dispatchMouseEvent(evt);
   }
 
+  // 父类Application监听到所有键盘事件，都调用_dispatcher的dispatchKeyEvent()方法
   protected dispatchKeyDown(evt: CanvasKeyBoardEvent): void {
     super.dispatchKeyDown(evt);
     this._dispatcher.dispatchKeyEvent(evt);

@@ -134,8 +134,8 @@ export class Application implements EventListenerObject {
     intervalSec /= 1000.0; // intervalSec转为秒单位
     this._lastTime = timeStamp; // 更新_lastTime为本次执行时的时间，用于下个周期计算周期间隔时间
     this._handleTimers(intervalSec); // 检查注册的timer是否需要执行
-    this.update(elapsedMsec, intervalSec);
-    this.render();
+    this.update(elapsedMsec, intervalSec); // 此方法在子类Sprite2DApplication中实现
+    this.render(); // 调用子类Sprite2DApplication中的_dispatcher的dispatchDraw()方法
     requestAnimationFrame((elapsedMsec: number): void => {
       // 这里传入的是elapsedMsec是从0开始计算的（第一次requestAnimationFrame被执行就会传入0），而不是从1970 年 1 月 1 日 00:00:00 (UTC) 到当前时间的毫秒数作为基数
       // 所以上面的this._startTime肯对会为0
