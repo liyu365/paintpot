@@ -52,8 +52,8 @@ export abstract class AdapterBase<T> implements IAdapter<T> {
   }
 }
 
+// 栈结构
 export class Stack<T> extends AdapterBase<T> {
-
   public remove(): T | undefined {
     if (this._arr.length > 0)
       return this._arr.pop();
@@ -62,8 +62,8 @@ export class Stack<T> extends AdapterBase<T> {
   }
 }
 
+// 队列结构
 export class Queue<T> extends AdapterBase<T> {
-
   public remove(): T | undefined {
     if (this._arr.length > 0)
       return this._arr.shift();
@@ -87,7 +87,6 @@ node10                        node11  node12
                                        node13
   */
   public constructor(data: T | undefined = undefined, parent: TreeNode<T> | undefined = undefined, name: string = "") {
-
     this._parent = parent;
     this._children = undefined;
     this.name = name;
@@ -98,24 +97,24 @@ node10                        node11  node12
   }
 
   public addChildAt(child: TreeNode<T>, index: number): TreeNode<T> | undefined {
+    // 先要保证传入的形参child对象不是此对象的父节点
     if (this.isDescendantOf(child)) {
       return undefined;
     }
 
     if (this._children === undefined) {
-      this._children = [];
-      //this._children = new Array<TreeNode<T>>();
+      // this._children = [];
+      this._children = new Array<TreeNode<T>>();
     }
 
     if (index >= 0 && index <= this._children.length) {
-      if (child._parent) {
+      if (child._parent) { // 如果传入的形参child已经有_parent，则先把此对象从_parent._children中移除
         child._parent.removeChild(child);
       }
       child._parent = this;
       this._children.splice(index, 0, child);
       return child;
-    }
-    else {
+    } else {
       return undefined;
     }
   }
@@ -138,7 +137,7 @@ node10                        node11  node12
       return undefined;
     }
 
-    this._children.splice(index, 1); // 从子节点列表中移除掉
+    this._children.splice(index, 1);
     child._parent = undefined; // 将子节点的父亲节点设置为undefined
     return child;
   }
@@ -204,6 +203,7 @@ node10                        node11  node12
     return this._children !== undefined && this._children.length > 0;
   }
 
+  // 查看当前节点的父级有没有ancestor对象
   public isDescendantOf(ancestor: TreeNode<T> | undefined): boolean {
     if (ancestor === undefined)
       return false;
@@ -231,6 +231,7 @@ node10                        node11  node12
     return curr;
   }
 
+  // 深度，例如node1的深度是1
   public get depth(): number {
     let curr: TreeNode<T> | undefined = this;
     let level: number = 0;
@@ -332,6 +333,7 @@ node10                        node11  node12
     }
   }
 
+  // 直接子节点的第一个
   public get firstChild(): TreeNode<T> | undefined {
     if (this._children !== undefined && this._children.length > 0) {
       return this._children[0];
@@ -340,6 +342,7 @@ node10                        node11  node12
     }
   }
 
+  // 字节子节点的最后一个
   public get lastChild(): TreeNode<T> | undefined {
     if (this._children !== undefined && this._children.length > 0) {
       return this._children[this._children.length - 1];
@@ -348,6 +351,7 @@ node10                        node11  node12
     }
   }
 
+  // 下一个兄弟节点
   public get nextSibling(): TreeNode<T> | undefined {
     if (this._parent === undefined) {
       return undefined;
@@ -370,6 +374,7 @@ node10                        node11  node12
     }
   }
 
+  // 上一个兄弟节点
   public get prevSibling(): TreeNode<T> | undefined {
     if (this._parent === undefined) {
       return undefined;
@@ -392,6 +397,7 @@ node10                        node11  node12
     }
   }
 
+  // 所有子孙节点中最右侧的节点
   public get mostRight(): TreeNode<T> | undefined {
     let node: TreeNode<T> | undefined = this;
     while (true) {
@@ -407,6 +413,7 @@ node10                        node11  node12
     return node;
   }
 
+  // 所有子孙节点中最左侧的节点
   public get mostLeft(): TreeNode<T> | undefined {
     let node: TreeNode<T> | undefined = this;
     while (true) {
@@ -507,6 +514,7 @@ export class LinkTreeNode<T> {
   public data: T | undefined;
 }
 
+// 先上后下枚举器
 export class NodeT2BEnumerator<T, IdxFunc extends Indexer, Adapter extends IAdapter<TreeNode<T>>> implements IEnumerator<TreeNode<T>> {
 
   private _node: TreeNode<T> | undefined;
@@ -540,7 +548,7 @@ export class NodeT2BEnumerator<T, IdxFunc extends Indexer, Adapter extends IAdap
       return false;
     }
 
-    this._currNode = this._adapter.remove();
+    this._currNode = this._adapter.remove();  // 从适配器_adapter中拿出一个对象，并把此该对象的子级再放到适配去中
     if (this._currNode != undefined) {
       let len: number = this._currNode.childCount;
       for (let i = 0; i < len; i++) {
@@ -559,6 +567,7 @@ export class NodeT2BEnumerator<T, IdxFunc extends Indexer, Adapter extends IAdap
   }
 }
 
+// 先下后上枚举器（相当于把与之对应的先上后下的枚举器先执行一遍并缓存，当调用current时，把缓存倒着输出）
 export class NodeB2TEnumerator<T> implements IEnumerator<TreeNode<T>> {
   private _iter: IEnumerator<TreeNode<T>>;
   private _arr !: Array<TreeNode<T> | undefined>;
@@ -592,41 +601,56 @@ export class NodeB2TEnumerator<T> implements IEnumerator<TreeNode<T>> {
 
 export type NIter<T> = NodeT2BEnumerator<T, Indexer, IAdapter<TreeNode<T>>>;
 
+// 根据入参node，返回得到遍历node和它的自己的各种枚举器对象
 export class NodeEnumeratorFactory {
+
+  /** 
+   * -----
+   * 从上到下遍历
+   * -----
+   */
+  // 深度优先、从左到右
   public static create_df_l2r_t2b_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeT2BEnumerator(node, IndexerR2L, Stack);
     return iter;
   }
-
+  // 深度优先、从右到左
   public static create_df_r2l_t2b_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeT2BEnumerator(node, IndexerL2R, Stack);
     return iter;
   }
-
+  // 广度优先，从左到右
   public static create_bf_l2r_t2b_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeT2BEnumerator(node, IndexerL2R, Queue);
     return iter;
   }
+  // 广度优先，从有到左
   public static create_bf_r2l_t2b_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeT2BEnumerator(node, IndexerR2L, Queue);
     return iter;
   }
 
+  /** 
+   * -----
+   * 从下到上遍历
+   * -----
+   */
+  // 深度优先、从左到右
   public static create_df_l2r_b2t_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeB2TEnumerator<T>(NodeEnumeratorFactory.create_df_r2l_t2b_iter(node));
     return iter;
   }
-
+  // 深度优先、从右到左
   public static create_df_r2l_b2t_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeB2TEnumerator<T>(NodeEnumeratorFactory.create_df_l2r_t2b_iter(node));
     return iter;
   }
-
+  // 广度优先、从左到右
   public static create_bf_l2r_b2t_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeB2TEnumerator<T>(NodeEnumeratorFactory.create_bf_r2l_t2b_iter(node));
     return iter;
   }
-
+  // 广度优先、从右到左
   public static create_bf_r2l_b2t_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeB2TEnumerator<T>(NodeEnumeratorFactory.create_bf_l2r_t2b_iter(node));
     return iter;
