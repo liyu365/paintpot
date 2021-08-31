@@ -1,5 +1,5 @@
 import { Sprite2DApplication } from "./lib/spriteSystem/sprite2DApplication";
-import { ISprite, EOrder, IShape, Bounding, NodeType, ScenceMode, SpriteFactory, ERenderType } from "./lib/spriteSystem/interface";
+import { ISprite, EOrder, IShape, Bounding, NodeType, SceneMode, SpriteFactory, ERenderType } from "./lib/spriteSystem/interface";
 import { CanvasMouseEvent, EInputEventType } from "./lib/application";
 import { vec2, Math2D } from "./lib/math2d";
 import { SpriteNode, SpriteNodeGroup } from './lib/spriteSystem/sprite2dHierarchicalSystem'
@@ -104,12 +104,12 @@ export class TopologyApplication {
 
     const dragModeBtn: HTMLElement = document.querySelector('#dragModeBtn') as HTMLElement
     dragModeBtn.onclick = () => {
-      this._app.scenceMode = ScenceMode.DRAG
+      this._app.sceneMode = SceneMode.DRAG
     }
 
     const selectModeBtn: HTMLElement = document.querySelector('#selectModeBtn') as HTMLElement
     selectModeBtn.onclick = () => {
-      this._app.scenceMode = ScenceMode.SELECT
+      this._app.sceneMode = SceneMode.SELECT
     }
   }
 
@@ -182,7 +182,7 @@ export class TopologyApplication {
         this._isSatgeHasDrag = true
 
         // 拖动stage
-        if (this._app.scenceMode === ScenceMode.DRAG) {
+        if (this._app.sceneMode === SceneMode.DRAG) {
           let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
           rootSpr.x = mouseOffset.x - this._diffX
           rootSpr.y = mouseOffset.y - this._diffY
@@ -192,7 +192,7 @@ export class TopologyApplication {
         }
 
         // 绘制选框
-        if (this._app.scenceMode === ScenceMode.SELECT) {
+        if (this._app.sceneMode === SceneMode.SELECT) {
           let mouseOffset: vec2 = this._app._viewportToCanvasCoordinate(evt as MouseEvent)
           let p1 = new vec2(this._downX, this._downY)
           let p2 = new vec2(mouseOffset.x, mouseOffset.y)

@@ -1,12 +1,12 @@
 import { Canvas2DApplication, CanvasMouseEvent, CanvasKeyBoardEvent } from "../application";
-import { ISpriteContainer, IDispatcher, ISprite, ScenceMode } from "./interface";
+import { ISpriteContainer, IDispatcher, ISprite, SceneMode } from "./interface";
 import { Sprite2DManager } from "./sprite2dSystem";
 import { SpriteNodeManager } from "./sprite2dHierarchicalSystem"
 
 export class Sprite2DApplication extends Canvas2DApplication {
   protected _dispatcher: IDispatcher;
   public operations: Array<(context: CanvasRenderingContext2D | null) => void> = [];
-  public scenceMode: ScenceMode = ScenceMode.DRAG // 应用模式，现在有拖动和选择两种
+  public sceneMode: SceneMode = SceneMode.DRAG // 应用模式，现在有拖动和选择两种
 
   public constructor(canvas: HTMLCanvasElement, isHierarchical: boolean = true) {
     super(canvas);
