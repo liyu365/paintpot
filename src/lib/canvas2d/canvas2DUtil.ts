@@ -1,7 +1,3 @@
-import { IShape, ISprite, Bounding, EOrder } from "../spriteSystem/interface";
-import { CanvasMouseEvent, EInputEventType } from "../application";
-import { vec2, Math2D } from "../math2d";
-
 type LineCap = "butt" | "round" | "square";
 type LineJoin = "bevel" | "round" | "miter";
 
