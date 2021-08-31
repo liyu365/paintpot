@@ -46,7 +46,6 @@ export interface ITransformable {
   getWorldMatrix(): mat2d;
   getWorldMatrix2(): mat2d;
   getLocalMatrix(): mat2d;
-
 }
 
 export interface IRenderState {
@@ -188,7 +187,7 @@ export class SpriteFactory {
     return spr;
   }
 
-  public static createISprite(shape: IShape, x: number = 0, y: number = 0, rotation: number = 0, scaleX: number = 1.0, scaleY: number = 1.0, name: string = ' '): ISprite {
+  public static createISprite(shape: IShape, x: number = 0, y: number = 0, rotation: number = 0, scaleX: number = 1.0, scaleY: number = 1.0, name: string = ''): ISprite {
     let spr: ISprite = new Sprite2D(shape, name);
     spr.x = x;
     spr.y = y;
