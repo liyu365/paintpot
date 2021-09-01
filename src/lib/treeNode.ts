@@ -242,14 +242,6 @@ node10                        node11  node12
     return level;
   }
 
-  public repeatString(target: string, n: number): string {
-    let total: string = "";
-    for (let i = 0; i < n; i++) {
-      total += target;
-    }
-    return total;
-  }
-
   // 递归的遍历算法：深度优先，从上到下
   public visit(preOrderFunc: NodeCallback<T> | null = null, postOrderFunc: NodeCallback<T> | null = null, indexFunc: Indexer = IndexerL2R): void {
     if (preOrderFunc !== null) {
@@ -298,41 +290,6 @@ node10                        node11  node12
     }
     if (postOrderFunc) {
       postOrderFunc(this);
-    }
-  }
-
-  public printLevelInfo(idx: number = 0): void {
-    let str: string = this.repeatString(" ", idx * 4);
-    let arr: Array<TreeNode<T>> | undefined = this._children;
-    if (arr !== undefined) {
-      for (let i: number = 0; i < arr.length; i++) {
-        let child: TreeNode<T> | undefined = this.getChildAt(i);
-        if (child !== undefined) {
-          child.printLevelInfo(idx + 1);
-        }
-      }
-    }
-    console.log("后根：" + str + this.name);
-  }
-
-
-  public printInfo(idx: number = 0): void {
-    let str: string = this.repeatString(" ", idx * 4);
-    console.log("先根：" + str + this.name);
-    let node: TreeNode<T> | undefined = this.firstChild;
-    while (node !== undefined) {
-      node.printInfo(idx + 1);
-      node = node.nextSibling;
-    }
-  }
-
-  public printInfo2(idx: number = 0): void {
-    let str: string = this.repeatString(" ", idx * 4);
-    console.log("先根：" + str + this.name);
-    let node: TreeNode<T> | undefined = this.lastChild;
-    while (node !== undefined) {
-      node.printInfo(idx + 1);
-      node = node.prevSibling;
     }
   }
 
@@ -500,6 +457,49 @@ node10                        node11  node12
       prev = last;
     }
     return prev;
+  }
+
+  public repeatString(target: string, n: number): string {
+    let total: string = "";
+    for (let i = 0; i < n; i++) {
+      total += target;
+    }
+    return total;
+  }
+
+  public printLevelInfo(idx: number = 0): void {
+    let str: string = this.repeatString(" ", idx * 4);
+    let arr: Array<TreeNode<T>> | undefined = this._children;
+    if (arr !== undefined) {
+      for (let i: number = 0; i < arr.length; i++) {
+        let child: TreeNode<T> | undefined = this.getChildAt(i);
+        if (child !== undefined) {
+          child.printLevelInfo(idx + 1);
+        }
+      }
+    }
+    console.log("后根：" + str + this.name);
+  }
+
+
+  public printInfo(idx: number = 0): void {
+    let str: string = this.repeatString(" ", idx * 4);
+    console.log("先根：" + str + this.name);
+    let node: TreeNode<T> | undefined = this.firstChild;
+    while (node !== undefined) {
+      node.printInfo(idx + 1);
+      node = node.nextSibling;
+    }
+  }
+
+  public printInfo2(idx: number = 0): void {
+    let str: string = this.repeatString(" ", idx * 4);
+    console.log("先根：" + str + this.name);
+    let node: TreeNode<T> | undefined = this.lastChild;
+    while (node !== undefined) {
+      node.printInfo(idx + 1);
+      node = node.prevSibling;
+    }
   }
 
   private _parent: TreeNode<T> | undefined;
