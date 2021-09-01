@@ -111,7 +111,7 @@ export class SpriteNode extends TreeNode<ISprite> implements ISpriteContainer {
 
   // 从根节点开始遍历：把鼠标的世界坐标转化为相对于当前迭代到的SpriteNode包裹的Sprite2D对象的局部坐标，然后进行碰撞检测，一点碰撞检测成功就返回此Speite2D对象
   public findSprite(src: vec2, localPoint: vec2 | null = null): ISprite | undefined {
-    let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(this.root);
+    let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(this.root); // 从下到上、广度优先、从右到左遍历，也就是说最后绘制的对象优先碰撞检测
     let current: TreeNode<ISprite> | undefined = undefined;
     let mat: mat2d;
     let dest: vec2 = vec2.create();

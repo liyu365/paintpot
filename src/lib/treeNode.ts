@@ -543,12 +543,19 @@ export class NodeT2BEnumerator<T, IdxFunc extends Indexer, Adapter extends IAdap
     this._adapter.add(this._node);
   }
 
+  /**
+   * 核心：
+   * 每次调用moveNext()都是从_adapter中取出一个元素（取出哪个元素取决于_adapter的类型，有先进先出和先进后出）赋值给_currNode，作为当前枚举到的值
+   * 之后根据_indexer定义的迭代顺序（顺序或倒叙），把_currNode的所有直接子元素按顺序push进_adapter中
+   * 因此如果_adapter为Stack则是深度优先的枚举，_adapter为Queue则是深度优先的枚举
+   * 这个枚举器是先上后下的枚举器，因为放入初始化时放入_adapter的第一个元素是root元素
+   */
   public moveNext(): boolean {
     if (this._adapter.isEmpty) {
       return false;
     }
 
-    this._currNode = this._adapter.remove();  // 从适配器_adapter中拿出一个对象，并把此该对象的子级再放到适配去中
+    this._currNode = this._adapter.remove();
     if (this._currNode != undefined) {
       let len: number = this._currNode.childCount;
       for (let i = 0; i < len; i++) {
@@ -567,7 +574,7 @@ export class NodeT2BEnumerator<T, IdxFunc extends Indexer, Adapter extends IAdap
   }
 }
 
-// 先下后上枚举器（相当于把与之对应的先上后下的枚举器先执行一遍并缓存，当调用current时，把缓存倒着输出）
+// 先下后上枚举器（相当于把与之对应的先上后下的枚举器先执行一遍并缓存所有结果，当调用current时，把缓存倒着输出）
 export class NodeB2TEnumerator<T> implements IEnumerator<TreeNode<T>> {
   private _iter: IEnumerator<TreeNode<T>>;
   private _arr !: Array<TreeNode<T> | undefined>;
@@ -601,7 +608,7 @@ export class NodeB2TEnumerator<T> implements IEnumerator<TreeNode<T>> {
 
 export type NIter<T> = NodeT2BEnumerator<T, Indexer, IAdapter<TreeNode<T>>>;
 
-// 根据入参node，返回得到遍历node和它的自己的各种枚举器对象
+// 根据入参node，返回枚举此node的各种枚举器对象
 export class NodeEnumeratorFactory {
 
   /** 
@@ -624,7 +631,7 @@ export class NodeEnumeratorFactory {
     let iter: IEnumerator<TreeNode<T>> = new NodeT2BEnumerator(node, IndexerL2R, Queue);
     return iter;
   }
-  // 广度优先，从有到左
+  // 广度优先，从右到左
   public static create_bf_r2l_t2b_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeT2BEnumerator(node, IndexerR2L, Queue);
     return iter;
