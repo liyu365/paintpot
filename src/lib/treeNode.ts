@@ -250,6 +250,7 @@ node10                        node11  node12
     return total;
   }
 
+  // 递归的遍历算法：深度优先，从上到下
   public visit(preOrderFunc: NodeCallback<T> | null = null, postOrderFunc: NodeCallback<T> | null = null, indexFunc: Indexer = IndexerL2R): void {
     if (preOrderFunc !== null) {
       preOrderFunc(this);
@@ -270,6 +271,7 @@ node10                        node11  node12
     }
   }
 
+  // 递归的遍历算法：深度优先，从上到下，从左到右
   public visitForward(preOrderFunc: NodeCallback<T> | null = null, postOrderFunc: NodeCallback<T> | null = null): void {
     if (preOrderFunc) {
       preOrderFunc(this);
@@ -284,6 +286,7 @@ node10                        node11  node12
     }
   }
 
+  // 递归的遍历算法：深度优先，从上到下，从右到左
   public visitBackward(preOrderFunc: NodeCallback<T> | null = null, postOrderFunc: NodeCallback<T> | null = null): void {
     if (preOrderFunc) {
       preOrderFunc(this);
@@ -342,7 +345,7 @@ node10                        node11  node12
     }
   }
 
-  // 字节子节点的最后一个
+  // 直接子节点的最后一个
   public get lastChild(): TreeNode<T> | undefined {
     if (this._children !== undefined && this._children.length > 0) {
       return this._children[this._children.length - 1];
@@ -429,6 +432,7 @@ node10                        node11  node12
     return node;
   }
 
+  // 非递归的遍历算法：深度优先、从上到下、从左到右
   public moveNext(): TreeNode<T> | undefined {
     let ret: TreeNode<T> | undefined = this.firstChild;
     if (ret !== undefined) {
@@ -439,7 +443,7 @@ node10                        node11  node12
       return ret;
     }
     ret = this;
-    while (ret !== undefined && ret.nextSibling === undefined) {
+    while (ret !== undefined && ret.nextSibling === undefined) { // 一直回溯查找有右兄弟节点的祖先节点
       ret = ret.parent;
     }
     if (ret !== undefined) {
@@ -448,6 +452,7 @@ node10                        node11  node12
     return undefined;
   }
 
+  // 非递归的遍历算法：深度优先、从上到下、从右到左
   public movePrev(): TreeNode<T> | undefined {
     let ret: TreeNode<T> | undefined = this.lastChild;
     if (ret !== undefined) {
@@ -458,7 +463,7 @@ node10                        node11  node12
       return ret;
     }
     ret = this;
-    while (ret !== undefined && ret.prevSibling === undefined) {
+    while (ret !== undefined && ret.prevSibling === undefined) { // 一直回溯查找有左兄弟节点的祖先节点
       ret = ret.parent;
     }
     if (ret !== undefined) {
@@ -467,6 +472,8 @@ node10                        node11  node12
     return undefined;
   }
 
+  // 非递归的遍历算法：深度优先、从下到上、从左到右
+  // 需要使用mostLeft作为起始元素
   public moveNextPost(): TreeNode<T> | undefined {
     let next: TreeNode<T> | undefined = this.nextSibling;
     if (next === undefined) {
@@ -474,20 +481,22 @@ node10                        node11  node12
     }
 
     let first: TreeNode<T> | undefined = undefined;
-    while (next !== undefined && (first = next.firstChild)) {
+    while (next !== undefined && (first = next.firstChild)) { // 如果有右兄弟节点，则找到右兄弟节点最左侧的子孙节点
       next = first;
     }
 
     return next;
   }
 
+  // 非递归的遍历算法：深度优先、从下到上、从右到左
+  // 需要使用mostRight作为起始元素
   public movePrevPost(): TreeNode<T> | undefined {
     let prev: TreeNode<T> | undefined = this.prevSibling;
     if (prev === undefined) {
       return this.parent;
     }
     let last: TreeNode<T> | undefined = undefined;
-    while (prev !== undefined && (last = prev.lastChild)) {
+    while (prev !== undefined && (last = prev.lastChild)) { // 如果有左兄弟节点，则找到左兄弟节点最右侧的子孙节点
       prev = last;
     }
     return prev;
@@ -657,7 +666,7 @@ export class NodeEnumeratorFactory {
     let iter: IEnumerator<TreeNode<T>> = new NodeB2TEnumerator<T>(NodeEnumeratorFactory.create_bf_r2l_t2b_iter(node));
     return iter;
   }
-  // 广度优先、从右到左
+  // 广度优先、从右到左（做鼠标碰撞检测时，采用此种枚举方式）
   public static create_bf_r2l_b2t_iter<T>(node: TreeNode<T> | undefined): IEnumerator<TreeNode<T>> {
     let iter: IEnumerator<TreeNode<T>> = new NodeB2TEnumerator<T>(NodeEnumeratorFactory.create_bf_l2r_t2b_iter(node));
     return iter;

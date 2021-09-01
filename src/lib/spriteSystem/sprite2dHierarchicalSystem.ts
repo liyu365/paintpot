@@ -213,6 +213,7 @@ export class SpriteNodeManager implements IDispatcher {
     return this._hitSprite
   }
 
+  // 为鼠标命中的对象，派发鼠标事件
   public dispatchMouseEvent(evt: CanvasMouseEvent): void {
     if (evt.type === EInputEventType.MOUSEUP) {
       this._dragSprite = undefined;
@@ -248,7 +249,7 @@ export class SpriteNodeManager implements IDispatcher {
     }
   }
 
-
+  // 深度优先的递归遍历整个树，派发键盘事件
   public dispatchKeyEvent(evt: CanvasKeyBoardEvent): void {
     this._rootNode.visit(
       (node: TreeNode<ISprite>): void => {
