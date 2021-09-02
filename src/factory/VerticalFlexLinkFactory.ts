@@ -125,7 +125,7 @@ export class VerticalFlexLinkFactory {
         const linkSpr = (linkN as SpriteNode).sprite
         if (linkSpr) {
 
-          let yDeviation = index * 20 // yDeviation为连线中两个拐点的偏移量
+          let yDeviation = index * 20 // yDeviation为连线中两个拐点的y轴方向偏移量
           let change = (20 * (count - 1)) / 2 // 整体偏移（为了居中）
           if (pt2.x >= pt1.x) {
             if (pt2.y > pt1.y) {
