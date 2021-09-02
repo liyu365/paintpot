@@ -117,7 +117,7 @@ export class LinkFactory {
     }
     let fromParentSpr = from.owner.getParentSprite()
     let toParentSpr = to.owner.getParentSprite()
-    // 把from和to的局部坐标转换为相对于根sprite的局部坐标
+    // 把from和to的局部坐标转换为相对于根sprite的世界坐标
     if (fromParentSpr && toParentSpr) {
       pt1 = Math2D.transform(fromParentSpr.getWorldMatrix2(), pt1)
       pt2 = Math2D.transform(toParentSpr.getWorldMatrix2(), pt2)
@@ -135,7 +135,7 @@ export class LinkFactory {
       children.forEach((linkN, index) => {
         const linkSpr = (linkN as SpriteNode).sprite
         if (linkSpr) {
-          const gap = this._circleRadius + this._linkCircleGap
+          const gap = this._circleRadius + this._linkCircleGap // todo _circleRadius需要改成活的
           const line: Line = linkSpr.shape as Line
           line.start = vec2.create(gap, 0); // 注意line这个shap的start和end的坐标y值都是0
           line.end = vec2.create(d - gap, 0);

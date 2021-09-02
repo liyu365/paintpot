@@ -124,16 +124,31 @@ export class VerticalFlexLinkFactory {
       children.forEach((linkN, index) => {
         const linkSpr = (linkN as SpriteNode).sprite
         if (linkSpr) {
-          let yDeviation = index * 20
+
+          let yDeviation = index * 20 // yDeviation为连线中两个拐点的偏移量
+          let change = (20 * (count - 1)) / 2 // 整体偏移（为了居中）
           if (pt2.x >= pt1.x) {
-            yDeviation = pt2.y <= pt1.y ? index * 20 : - index * 20
+            if (pt2.y > pt1.y) {
+              yDeviation = -yDeviation
+              change = change
+            } else {
+              yDeviation = yDeviation
+              change = -change
+            }
           } else {
-            yDeviation = pt2.y <= pt1.y ? -index * 20 : index * 20
+            if (pt2.y > pt1.y) {
+              yDeviation = yDeviation
+              change = -change
+            } else {
+              yDeviation = -yDeviation
+              change = change
+            }
           }
+
           const line: RaduisLineShap = linkSpr.shape as RaduisLineShap
           line.pointArr[0] = vec2.create(0, 0);
-          line.pointArr[1] = vec2.create(0, yd / 2 + yDeviation);
-          line.pointArr[2] = vec2.create(xd, yd / 2 + yDeviation);
+          line.pointArr[1] = vec2.create(0, yd / 2 + yDeviation + change);
+          line.pointArr[2] = vec2.create(xd, yd / 2 + yDeviation + change);
           line.pointArr[3] = vec2.create(xd, yd);
           linkSpr.x = this._sameLinkGap * index + - (this._sameLinkGap * (count - 1)) / 2
 
@@ -164,7 +179,7 @@ export class VerticalFlexLinkFactory {
           if (lnikTextNode) {
             const lnikTextSpr = lnikTextNode.sprite as Sprite2D
             lnikTextSpr.x = xd / 2
-            lnikTextSpr.y = yd / 2 + yDeviation
+            lnikTextSpr.y = yd / 2 + yDeviation + change
           }
         }
       })

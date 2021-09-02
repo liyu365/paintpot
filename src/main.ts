@@ -470,6 +470,8 @@ export class TopologyApplication {
 
     VerticalFlexLinkFactory.create(root, rectNode6, rectNode7, '3');
     VerticalFlexLinkFactory.create(root, rectNode7, rectNode6, '4');
+    VerticalFlexLinkFactory.create(root, rectNode7, rectNode6, '5');
+
 
 
     console.log(root)
