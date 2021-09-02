@@ -52,8 +52,12 @@ export class LinkFactory {
       newGroup.params.from = from
       newGroup.params.to = to
       newGroup.addChild(linkNode)
+
+      /**
+       * 绘制顺序为containerNode->linkNode->其它Node
+       * 因此这里的group需要插到所有containerNode的后面，其他Node的前面
+       */
       if (Array.isArray(parent.children)) {
-        // 插入到所有containerNode的后面，其他元素的后面
         let hasAdd = false
         for (let i = 0; i < parent.children.length; i++) {
           if (parent.children[i].nodeType !== NodeType.CONTAINER) {
@@ -69,7 +73,9 @@ export class LinkFactory {
       } else {
         parent.addChildAt(newGroup, 0)
       }
+
       this._linkGroups.push(newGroup)
+
       if (newGroup.sprite) {
         newGroup.sprite.updateEvent = this.handleLinkGroupUpdate.bind(this)
       }

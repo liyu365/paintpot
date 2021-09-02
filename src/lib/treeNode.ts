@@ -400,10 +400,10 @@ node10                        node11  node12
       return ret;
     }
     ret = this;
-    while (ret !== undefined && ret.nextSibling === undefined) { // 一直回溯查找有右兄弟节点的祖先节点
+    while (ret !== undefined && ret.nextSibling === undefined) { // 一直回溯查找有右兄弟节点的祖先节点，并设置为此祖先节点
       ret = ret.parent;
     }
-    if (ret !== undefined) {
+    if (ret !== undefined) { // 如果存在这样的祖先节点，就取它的右兄弟节点返回
       return ret.nextSibling;
     }
     return undefined;
@@ -420,10 +420,10 @@ node10                        node11  node12
       return ret;
     }
     ret = this;
-    while (ret !== undefined && ret.prevSibling === undefined) { // 一直回溯查找有左兄弟节点的祖先节点
+    while (ret !== undefined && ret.prevSibling === undefined) { // 一直回溯查找有左兄弟节点的祖先节点，并设置为此祖先节点
       ret = ret.parent;
     }
-    if (ret !== undefined) {
+    if (ret !== undefined) { // 如果存在这样的祖先节点，就取它的左兄弟节点返回
       return ret.prevSibling;
     }
     return undefined;

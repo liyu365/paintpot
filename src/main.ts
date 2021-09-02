@@ -509,18 +509,21 @@ export class TopologyApplication {
       if (n.needSerialize === true) {
         let sprite = n.data
         if (sprite) {
+          // 父级对象的索引先统一设置成-1
           let nodeData = new NodeData(-1, n.nodeType)
           nodeData.x = sprite.x
           nodeData.y = sprite.y
           nodeData.name = n.name
+          // 在同一个循环里一起赋值datas和nodes，保证datas和nodes的同一索引对应的是同一个TreeNode数据
           datas.push(nodeData);
           nodes.push(n);
         }
       }
-    } while (n = n.moveNext());
+    } while (n = n.moveNext()); // 深度优先、从上到下、从左到右的遍历，保证父节点在数组中的索引肯定比子节点的索引小，这样反序列化的时候，父节点的实例才能先于子节点创建
+
     // 为parentIdx赋值
     for (let i: number = 0; i < datas.length; i++) {
-      // 这些node只会挂载到root上
+      // 连线node需要手动指定parent为root，因为再工厂函数中连线node都会放到一个SpriteNodeGroup中，再把SpriteNodeGroup放到root下
       if (
         nodes[i].nodeType === NodeType.LINK ||
         nodes[i].nodeType === NodeType.HORIZONTALFLEXLINK ||
@@ -540,7 +543,8 @@ export class TopologyApplication {
         }
       }
     }
-    // 为toIdx和fromIdx赋值
+
+    // 为detas数组中的连线数据的toIdx和fromIdx赋值，这里不需要管fromIdx和toIdx指向的node对象在反序列化的时候是否已经创建，因为反序列化的时候有特殊处理
     for (let i: number = 0; i < datas.length; i++) {
       if (nodes[i].nodeType === NodeType.LINK || nodes[i].nodeType === NodeType.HORIZONTALFLEXLINK || nodes[i].nodeType === NodeType.VERTICALFLEXLINK) {
         let sprite = nodes[i].data
@@ -595,14 +599,15 @@ export class TopologyApplication {
           let node = PanelRectFactory.create(nodes[data.parentIdx], data.name || '', new vec2(data.x, data.y), this);
           nodes.push(node)
         } else if (data.nodeType === NodeType.LINK || data.nodeType === NodeType.VERTICALFLEXLINK || data.nodeType === NodeType.HORIZONTALFLEXLINK) {
-          nodes.push(blankNode) // 占位用，nodes和datas必须一一对应
+          // 连线类型的node，因为他们的from或to指向的对象还没有建立，所以先用blankNode在nodes中做占位
+          nodes.push(blankNode)
         }
 
       }
     }
 
     // 把所有连线node都实例化并设置它们的from和to指向，因为此时的nodes中所有node都已经按顺序实例化（连线node已经进行了占位）
-    // 不用担心fromIdx索引或toIdx索引在nods中没有对应的成员
+    // 不用担心fromIdx索引或toIdx索引在nodes中没有对应的成员
     for (let i: number = 0; i < datas.length; i++) {
       data = datas[i] as NodeData;
       if (data.fromIdx !== undefined && data.toIdx !== undefined) {
