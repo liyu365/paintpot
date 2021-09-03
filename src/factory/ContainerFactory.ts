@@ -11,6 +11,7 @@ import { LinkTextShap } from '../shaps/LinkTextShap'
 
 import { Canvas2DUtil } from '../lib/canvas2d/canvas2DUtil'
 import { TopologyApplication } from '../main'
+import { spriteDragAction, spriteSelectAction, spriteHoverAction, spriteMenuAction, spriteDrawSelected, spriteDrawHover } from './factoryUtil'
 
 export class ContainerFactory {
 
@@ -24,9 +25,9 @@ export class ContainerFactory {
     containerSpr.fillStyle = 'rgba(0,0,0,.3)'
     containerSpr.updateEvent = this.handleUpdateEvent.bind(this)
     containerSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      app.spriteDragAction(spr, evt)
-      app.spriteSelectAction(spr, evt)
-      app.spriteHoverAction(spr, evt)
+      spriteDragAction(spr, evt, app)
+      spriteSelectAction(spr, evt, app)
+      spriteHoverAction(spr, evt, app)
     }
 
 

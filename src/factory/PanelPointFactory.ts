@@ -5,6 +5,7 @@ import { SpriteNode } from '../lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { CNodeTextShap } from '../shaps/CNodeTextShap'
 import { TopologyApplication } from '../main'
+import { spriteDragAction, spriteSelectAction, spriteHoverAction, spriteMenuAction, spriteDrawSelected, spriteDrawHover } from './factoryUtil'
 
 
 export class PanelPointFactory {
@@ -19,18 +20,18 @@ export class PanelPointFactory {
     circleSpr.y = position.y
 
     circleSpr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      app.spriteDragAction(spr, evt)
-      app.spriteSelectAction(spr, evt)
-      app.spriteHoverAction(spr, evt)
-      app.spriteMenuAction(spr, evt)
+      spriteDragAction(spr, evt, app)
+      spriteSelectAction(spr, evt, app)
+      spriteHoverAction(spr, evt, app)
+      spriteMenuAction(spr, evt, app)
       if (evt.type === EInputEventType.MOUSEDOWN) {
         console.log('点击了', spr)
       }
     }
 
     circleSpr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {
-      app.spriteDrawSelected(spr, context, renderOreder)
-      app.spriteDrawHover(spr, context, renderOreder)
+      spriteDrawSelected(spr, context, renderOreder)
+      spriteDrawHover(spr, context, renderOreder)
     }
 
     const circleN = new SpriteNode(circleSpr)

@@ -5,6 +5,7 @@ import { SpriteNode, SpriteNodeGroup } from '../lib/spriteSystem/sprite2dHierarc
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { Canvas2DUtil } from '../lib/canvas2d/canvas2DUtil'
 import { TopologyApplication } from '../main'
+import { spriteDragAction, spriteSelectAction, spriteHoverAction, spriteMenuAction, spriteDrawSelected, spriteDrawHover } from './factoryUtil'
 
 
 export class PanelRectFactory {
@@ -17,15 +18,15 @@ export class PanelRectFactory {
     spr.x = position.x
     spr.y = position.y
     spr.mouseEvent = (spr: ISprite, evt: CanvasMouseEvent) => {
-      app.spriteDragAction(spr, evt)
-      app.spriteSelectAction(spr, evt)
-      app.spriteHoverAction(spr, evt)
-      app.spriteMenuAction(spr, evt)
+      spriteDragAction(spr, evt, app)
+      spriteSelectAction(spr, evt, app)
+      spriteHoverAction(spr, evt, app)
+      spriteMenuAction(spr, evt, app)
     }
 
     spr.renderEvent = (spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder) => {
-      app.spriteDrawSelected(spr, context, renderOreder)
-      app.spriteDrawHover(spr, context, renderOreder)
+      spriteDrawSelected(spr, context, renderOreder)
+      spriteDrawHover(spr, context, renderOreder)
     }
 
     let node = new SpriteNode(spr)

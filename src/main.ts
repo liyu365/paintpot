@@ -30,19 +30,19 @@ export enum WheelType {
 
 export class TopologyApplication {
   private _app: Sprite2DApplication
-  private _curZoom = 1
-  private lastWheelMouseX = 0
-  private lastWheelMouseY = 0
-  private _isMouseDown = false
-  private _isStageHasDrag = false
-  private _diffX = 0 // 鼠标按下的世界坐标与rootSpr左上角世界坐标的差
-  private _diffY = 0
-  private _downX = 0 // 鼠标按下时的世界坐标
-  private _downY = 0
-  private _selectAreaVertexs: Array<number> = [] // 选框的x,y,w,h
-  private _selectedSprites: Array<ISprite> = []
-  private _hoveringSprite: ISprite | null = null
-  private _sprMenu: HTMLElement | null
+  public _curZoom = 1
+  public lastWheelMouseX = 0
+  public lastWheelMouseY = 0
+  public _isMouseDown = false
+  public _isStageHasDrag = false
+  public _diffX = 0 // 鼠标按下的世界坐标与rootSpr左上角世界坐标的差
+  public _diffY = 0
+  public _downX = 0 // 鼠标按下时的世界坐标
+  public _downY = 0
+  public _selectAreaVertexs: Array<number> = [] // 选框的x,y,w,h
+  public _selectedSprites: Array<ISprite> = []
+  public _hoveringSprite: ISprite | null = null
+  public _sprMenu: HTMLElement | null
 
   public constructor(app: Sprite2DApplication) {
     this._app = app
@@ -113,14 +113,14 @@ export class TopologyApplication {
     }
   }
 
-  private clearAllSelectedSprite(): void {
+  public clearAllSelectedSprite(): void {
     this._selectedSprites.forEach(spr => {
       spr.isSelected = false
     })
     this._selectedSprites = []
   }
 
-  private removeSelectedSprite(spr: ISprite): ISprite {
+  public removeSelectedSprite(spr: ISprite): ISprite {
     spr.isSelected = false
     let index = this._selectedSprites.findIndex(item => {
       return item === spr
@@ -131,7 +131,7 @@ export class TopologyApplication {
     return spr
   }
 
-  private addSelectedSprite(spr: ISprite): ISprite {
+  public addSelectedSprite(spr: ISprite): ISprite {
     spr.isSelected = true
     let index = this._selectedSprites.findIndex(item => {
       return item === spr
@@ -310,111 +310,7 @@ export class TopologyApplication {
   }
 
 
-  public spriteDragAction(spr: ISprite, evt: CanvasMouseEvent): void {
-    let position = new vec2(evt.canvasPosition.x, evt.canvasPosition.y)
-    let parentSpr = spr.owner.getParentSprite()
-    if (parentSpr) {
-      position = Math2D.transform(parentSpr.getLocalMatrix(), position) // 把鼠标的坐标用父sprite的局部矩阵进行转换
-    }
-    if (evt.type === EInputEventType.MOUSEDOWN) {
-      spr.diffX = position.x - spr.x
-      spr.diffY = position.y - spr.y
-    }
-    if (evt.type === EInputEventType.MOUSEDRAG) {
-      spr.isDragging = true
 
-      // 设置当前被拖拽的元素为isHovering状态
-      if (spr.isSelected !== true) {
-        spr.isHovering = true
-      }
-      if (this._hoveringSprite && this._hoveringSprite !== spr) {
-        this._hoveringSprite.isHovering = false
-      }
-      this._hoveringSprite = spr
-
-      spr.x = position.x - spr.diffX
-      spr.y = position.y - spr.diffY
-      // console.log('相对于根sprite的坐标（而不是canvas）', Math2D.transform(parentSpr.getWorldMatrix2(), new vec2(this.x, this.y)))
-      // console.log('局部坐标', new vec2(this.x, this.y))
-    }
-  }
-
-  public spriteSelectAction(spr: ISprite, evt: CanvasMouseEvent): void {
-    if (evt.type === EInputEventType.MOUSEUP && evt.button === 0) {
-      if (spr.isDragging === false) {
-        if (spr.isSelected === true) {
-          this.removeSelectedSprite(spr)
-          spr.isHovering = true
-        } else {
-          this.clearAllSelectedSprite()
-          this.addSelectedSprite(spr)
-          spr.isHovering = false
-        }
-      }
-
-      if (spr.isDragging === true) {
-        spr.isDragging = false
-      }
-    }
-  }
-
-  public spriteMenuAction(spr: ISprite, evt: CanvasMouseEvent): void {
-    if (evt.type === EInputEventType.MOUSEUP && evt.button === 2) {
-      let bounding: Bounding = spr.shape.getBounding()
-      let position = new vec2(spr.x + (bounding.right - bounding.left) / 2, spr.y)
-      let parentSpr = spr.owner.getParentSprite()
-      if (parentSpr) {
-        position = Math2D.transform(parentSpr.getWorldMatrix(), position)
-      }
-      if (this._sprMenu) {
-        this._sprMenu.style.display = 'block'
-        this._sprMenu.style.left = position.x + 'px'
-        this._sprMenu.style.top = position.y + 'px'
-      }
-    }
-  }
-
-  public spriteHoverAction(spr: ISprite, evt: CanvasMouseEvent): void {
-    if (evt.type === EInputEventType.MOUSEMOVE) {
-      if (spr.isSelected !== true) {
-        spr.isHovering = true
-      }
-      if (this._hoveringSprite && this._hoveringSprite !== spr) {
-        this._hoveringSprite.isHovering = false
-      }
-      this._hoveringSprite = spr
-    }
-  }
-
-  public spriteDrawSelected(spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder): void {
-    if (renderOreder === EOrder.PREORDER && spr.isSelected === true) {
-      let shap: IShape = spr.shape
-      let bounding: Bounding = shap.getBounding()
-      let margin = 5
-      context.save()
-      context.beginPath()
-      context.fillStyle = 'rgba(0, 0, 0, 1)'
-      context.lineWidth = 7
-      context.rect(bounding.left - margin, bounding.top - margin, bounding.right - bounding.left + margin * 2, bounding.bottom - bounding.top + margin * 2)
-      context.fill()
-      context.restore()
-    }
-  }
-
-  public spriteDrawHover(spr: ISprite, context: CanvasRenderingContext2D, renderOreder: EOrder): void {
-    if (renderOreder === EOrder.PREORDER && spr.isHovering === true) {
-      let shap: IShape = spr.shape
-      let bounding: Bounding = shap.getBounding()
-      let margin = 5
-      context.save()
-      context.beginPath()
-      context.fillStyle = 'rgba(0, 255, 255, 0.5)'
-      context.lineWidth = 7
-      context.rect(bounding.left - margin, bounding.top - margin, bounding.right - bounding.left + margin * 2, bounding.bottom - bounding.top + margin * 2)
-      context.fill()
-      context.restore()
-    }
-  }
 
   private init(): void {
     const root = this._app.rootContainer as SpriteNode
