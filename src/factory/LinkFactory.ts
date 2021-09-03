@@ -5,6 +5,7 @@ import { Line } from "../lib/spriteSystem/shapes";
 import { SpriteNode, SpriteNodeGroup } from '../lib/spriteSystem/sprite2dHierarchicalSystem'
 import { Sprite2D } from '../lib/spriteSystem/sprite2d'
 import { LinkTextShap } from '../shaps/LinkTextShap'
+import { mountLinkNode } from './factoryUtil'
 
 export class LinkFactory {
 
@@ -43,61 +44,8 @@ export class LinkFactory {
     textSpr.data.text = name
     linkNode.addSprite(textSpr);
 
-
-    const sameGroup: SpriteNodeGroup | null = this.getSameLinkGroup(from, to)
-
-    // 如果已经存在相同的group，则放到此group中，否则新建一个group，再作为新group的子集
-    if (!sameGroup) {
-      const newGroup = new SpriteNodeGroup({})
-      newGroup.params.from = from
-      newGroup.params.to = to
-      newGroup.addChild(linkNode)
-
-      /**
-       * 绘制顺序为containerNode->linkNode->其它Node
-       * 因此这里的group需要插到所有containerNode的后面，其他Node的前面
-       */
-      if (Array.isArray(parent.children)) {
-        let hasAdd = false
-        for (let i = 0; i < parent.children.length; i++) {
-          if (parent.children[i].nodeType !== NodeType.CONTAINER) {
-            parent.addChildAt(newGroup, i)
-            hasAdd = true
-            break
-          }
-        }
-        //证明当前root下的子元素都为containerNode
-        if (hasAdd === false) {
-          parent.addChildAt(newGroup, parent.children.length)
-        }
-      } else {
-        parent.addChildAt(newGroup, 0)
-      }
-
-      this._linkGroups.push(newGroup)
-
-      if (newGroup.sprite) {
-        newGroup.sprite.updateEvent = this.handleLinkGroupUpdate.bind(this)
-      }
-    } else {
-      sameGroup.addChild(linkNode)
-    }
-  }
-
-  private static getSameLinkGroup(from: SpriteNode | undefined, to: SpriteNode | undefined): SpriteNodeGroup | null {
-    let o = null
-    if (from === undefined || to === undefined) {
-      return o
-    }
-    this._linkGroups.forEach(item => {
-      if (
-        (item.params.from === from && item.params.to === to) ||
-        (item.params.from === to && item.params.to === from)
-      ) {
-        o = item
-      }
-    })
-    return o
+    // 挂载linkNode对象
+    mountLinkNode(linkNode, parent, from, to, this._linkGroups, this.handleLinkGroupUpdate.bind(this))
   }
 
   private static handleLinkEvent(spr: ISprite, evt: CanvasMouseEvent): void {
@@ -117,7 +65,7 @@ export class LinkFactory {
     }
     let fromParentSpr = from.owner.getParentSprite()
     let toParentSpr = to.owner.getParentSprite()
-    // 把from和to的局部坐标转换为相对于根sprite的世界坐标
+    // 把from和to的局部坐标转换为相对于根sprite的全局坐标
     if (fromParentSpr && toParentSpr) {
       pt1 = Math2D.transform(fromParentSpr.getWorldMatrix2(), pt1)
       pt2 = Math2D.transform(toParentSpr.getWorldMatrix2(), pt2)
