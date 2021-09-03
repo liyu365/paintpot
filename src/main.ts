@@ -34,7 +34,7 @@ export class TopologyApplication {
   private lastWheelMouseX = 0
   private lastWheelMouseY = 0
   private _isMouseDown = false
-  private _isSatgeHasDrag = false
+  private _isStageHasDrag = false
   private _diffX = 0 // 鼠标按下的世界坐标与rootSpr左上角世界坐标的差
   private _diffY = 0
   private _downX = 0 // 鼠标按下时的世界坐标
@@ -113,7 +113,7 @@ export class TopologyApplication {
     }
   }
 
-  private clearAllSprite(): void {
+  private clearAllSelectedSprite(): void {
     this._selectedSprites.forEach(spr => {
       spr.isSelected = false
     })
@@ -167,10 +167,10 @@ export class TopologyApplication {
 
     let hitSprite = this._app.getHitSprite()
     // 如果点击了空白区域（并且没有拖动任何元素），则取消所有sprite的选中状态
-    if ((hitSprite === undefined || hitSprite.owner.name === 'root') && this._isSatgeHasDrag === false) {
-      this.clearAllSprite()
+    if ((hitSprite === undefined || hitSprite.owner.name === 'root') && this._isStageHasDrag === false) {
+      this.clearAllSelectedSprite()
     }
-    this._isSatgeHasDrag = false
+    this._isStageHasDrag = false
     this._app.operations = []
   }
 
@@ -179,7 +179,7 @@ export class TopologyApplication {
     const rootSpr = root.sprite
     if (rootSpr) {
       if (this._isMouseDown && !this._app.getDragSprite() || this._app.getDragSprite() === rootSpr) {
-        this._isSatgeHasDrag = true
+        this._isStageHasDrag = true
 
         // 拖动stage
         if (this._app.sceneMode === SceneMode.DRAG) {
@@ -239,7 +239,7 @@ export class TopologyApplication {
     const root = this._app.rootContainer as SpriteNode
     let iter: IEnumerator<TreeNode<ISprite>> = NodeEnumeratorFactory.create_bf_r2l_b2t_iter(root);
     let current: TreeNode<ISprite> | undefined = undefined;
-    this.clearAllSprite()
+    this.clearAllSelectedSprite()
     while (iter.moveNext()) {
       current = iter.current;
       if (current && current.data) {
@@ -346,7 +346,7 @@ export class TopologyApplication {
           this.removeSelectedSprite(spr)
           spr.isHovering = true
         } else {
-          this.clearAllSprite()
+          this.clearAllSelectedSprite()
           this.addSelectedSprite(spr)
           spr.isHovering = false
         }
