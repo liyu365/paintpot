@@ -1,0 +1,51 @@
+<html>
+
+<head>
+  <title>paintpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <style>
+    body {
+      background: #eeeeee;
+    }
+
+    #canvas {
+      background: #ffffff;
+      box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    #canvas_wrapper {
+      position: relative;
+    }
+
+    #sprMenu {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 200;
+      width: 150px;
+      height: 200px;
+      background: rgba(0, 0, 0, 0.7);
+    }
+  </style>
+
+</head>
+
+<body id="body">
+  <div id="canvas_wrapper">
+    <div id="sprMenu"></div>
+    <canvas id="canvas" width="1000" height="600"></canvas>
+  </div>
+
+  <button id="zoomIN">+</button>
+  <button id="zoomOut">-</button>
+  <button id="addBtn">增加</button>
+  <button id="saveBtn">保存</button>
+  <button id="restoreBtn">恢复</button>
+  <button id="dragModeBtn" mode="select">拖动模式</button>
+  <button id="selectModeBtn" mode="select">选择模式</button>
+</body>
+
+<script src="main-bundle.js"></script>
+
+</html>
